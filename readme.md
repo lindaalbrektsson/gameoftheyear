@@ -15,16 +15,16 @@ SRC
 ├── Modules (Typescript)
 │ ├── loadGame.ts
 │ ├── endGame.ts
-│ └── renderHighschore.ts
+│ ├── renderHighschore.ts
 
 ├── SASS (Sass)
 │ ├── Base
-│ │ └── \_base.scss
+│ └── \_base.scss
 │ ├── Abstracts
-│ │ ├── \_variables.scss
-│ │ └── \_mixins.scss
-│ └── Components
-│ ├── \_buttons.scss
+│ └── \_variables.scss
+│ └── \_mixins.scss
+│ ├── Components
+│ └── \_buttons.scss
 │ └── \_highscore.scss
 
 ## Funktioner/variabler
