@@ -41,8 +41,9 @@ SRC
 ## Namngivning
 
 Views: – `startPage`, `activePlayerStartPage`, `inGamePage`, `gameOverPage`
+
 - Player – `playerName`, `playerID`, `playerScore`, `playerLives`
-- Game – `startGame`, `endGame`, `restartGame`, 
+- Game – `startGame`, `endGame`, `restartGame`,
 - Highscore, Score (inte points)
 - Shape
 - Instruction
