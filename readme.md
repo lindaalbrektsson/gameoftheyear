@@ -8,21 +8,27 @@ Spelet går ut på att följa instruktionen som dyker upp gällande vilken eller
 
 ## Mappstruktur
 
+GAMEOFTHEYEAR
+
+│ index.html
+
 SRC
 │ main.ts
 │ styles.scss
 
-├── Modules (Typescript)
-│ ├── loadGame.ts
+├── Modules
+│ ├── startGame.ts
 │ ├── endGame.ts
-│ ├── renderHighschore.ts
+│ ├── restartGame.ts
 
-├── SASS (Sass)
+├── SCSS
 │ ├── Base
 │ └── \_base.scss
 │ ├── Abstracts
 │ └── \_variables.scss
 │ └── \_mixins.scss
+│ ├── Layout
+│ └── \_header.scss
 │ ├── Components
 │ └── \_buttons.scss
 │ └── \_highscore.scss
@@ -34,10 +40,10 @@ SRC
 
 ## Namngivning
 
-- Player – `playerName`, `playerID`
-- Game – `loadGame`, `endGame`, `initGame`
-- Level – varje ny instruction
-- Highscore, score (inte points)
+Views: – `startPage`, `activePlayerStartPage`, `inGamePage`, `gameOverPage`
+- Player – `playerName`, `playerID`, `playerScore`, `playerLives`
+- Game – `startGame`, `endGame`, `restartGame`, 
+- Highscore, Score (inte points)
 - Shape
 - Instruction
 
