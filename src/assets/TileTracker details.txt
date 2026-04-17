@@ -1,0 +1,94 @@
+TILE TRACKER
+
+startPage
+- header
+- nameLogo (left)
+- howToPlay
+- inputName
+- startGameBtn -> checkPlayer
+  - Play button disabled until name is entered
+  - Check if user exists in localStorage
+
+IF newUser
+- startGame -> initNewPlayer
+- addPlayer (json-server)
+- addActivePlayer (localStorage)
+- startGame
+- inGamePage
+
+IF existingUser
+- popup ContinueAs?
+
+IF yes
+- Start game
+- Set user as active
+
+IF no
+- Close popup
+- Clear input field
+- inputName
+- startGameBtn
+
+- startBanner (game shapes image)
+
+activePlayerStartPage
+- header
+- nameLogo (left)
+- playerHighscore
+- playerRecentGames
+- welcomePlayer (text)
+- startGameBtn
+- changePlayerBtn
+- globalHighscore
+- howToPlayBtn -> popup/toggle
+
+inGamePage
+- header
+- nameLogo (left)
+- activeUserText (right)
+- endGameBtn (right) -> activePlayerStartPage
+
+restartGameBtn -> startNewGame
+
+Variables
+- gameLevel
+  IF success +1
+
+- playerScore
+  IF success +1
+  IF fail -1
+
+- playerLives
+  IF fail -1
+
+- countdownLevelTimer (10 sec)
+  -> success or fail
+  -> stop timer on success
+
+- initNewRound
+- render:
+  - gameShape
+  - gameInstruction
+  - gameBoard
+
+- countdownNewGameTimer
+
+gameOverPage
+- header
+- nameLogo (left)
+- activePlayerText (right)
+- endGameBtn (right) -> activePlayerStartPage
+
+- yourScoreThisRound: playerScore
+
+- startGameBtn
+- playerHighscore
+- playerRecentGames
+- restartGameBtn -> startNewGame
+
+- globalHighscore
+- top10Games
+
+IF playerScore = top10
+- add to globalHighscore
+- highlight score
