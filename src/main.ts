@@ -1,2 +1,6 @@
-import { renderInGamePage } from "./modules/inGame";
-renderInGamePage();
+import "./styles.scss";
+
+import { renderInGame } from "./modules/inGame";
+
+
+renderInGame();
