@@ -1,0 +1,33 @@
+header {
+    display: flex;
+    justify-content: space-between;
+}
+.header-menu {
+    display: flex;
+    gap: 1rem;
+    li {
+        list-style: none;
+    }
+}
+.gameboard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.restart-level-score-div {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+.level-and-score-div {
+    display: flex;
+    gap: 1rem;
+}
+
+.timer-and-lives-div {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-end;
+}

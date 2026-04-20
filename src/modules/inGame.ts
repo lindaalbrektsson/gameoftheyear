@@ -29,6 +29,7 @@ export function renderInGame (): void {
 
 function renderHeaderMenu () {
     const headerMenu = document.querySelector(".header-menu");
+    headerMenu?.classList.add("header-menu");
     if (!headerMenu) {
         throw new Error("Can't find UL in header")
     }
@@ -38,7 +39,7 @@ function renderHeaderMenu () {
     const endGameBtn = document.createElement("button");
     const homepageIcon = document.createElement("i");
     homepageIcon.classList.add("fa-regular", "fa-house");
-    endGameBtn.textContent = "End game "
+    endGameBtn.textContent = "End Game "
     endGameBtn.appendChild(homepageIcon);
     
     endGameLi.appendChild(endGameBtn);
@@ -48,6 +49,7 @@ function renderHeaderMenu () {
 
 function renderRestartLevelScore (): HTMLDivElement {
     const restartLevelScoreDiv = document.createElement("div");
+    restartLevelScoreDiv.classList.add("restart-level-score-div");
 
     const restartBtn = document.createElement("button");
     restartBtn.classList.add("restartBtn");
@@ -80,8 +82,10 @@ function renderTimerAndLives (): HTMLDivElement {
     const timerAndLivesDiv = document.createElement("div");
     timerAndLivesDiv.classList.add("timer-and-lives-div")
     const timer = document.createElement("p");
+    timer.classList.add("timer");
     timer.textContent = "00:00"; // Vi kommer behöva lägga in någon funktion här för nedräkningen som uppdaterar denna text
     const lives = document.createElement("p");
+    lives.classList.add("lives");
     lives.textContent = "❤️❤️❤️";
     timerAndLivesDiv.append(timer, lives);
     return timerAndLivesDiv;
