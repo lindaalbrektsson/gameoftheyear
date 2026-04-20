@@ -1,6 +1,3 @@
-
-
-
 export function renderInGame (): void {
     renderHeaderMenu();
     const main = document.querySelector("main");
@@ -70,6 +67,7 @@ function renderRestartLevelScore (): HTMLDivElement {
     const score = document.createElement("p");
     score.textContent = "Score: ";
     const scoreCounter = document.createElement("span");
+    scoreCounter.classList.add("score-counter");
     scoreCounter.textContent = "0";
     score.appendChild(scoreCounter);
 
