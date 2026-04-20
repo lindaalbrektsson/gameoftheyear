@@ -1,5 +1,16 @@
+@use "./SASS/abstracts/mixins" as *;
+@use "./SASS/abstracts/variables" as *;
+
+@use "./SASS/base/base" as *;
+
+@use "./SASS/components/buttons" as *;
+@use "./SASS/components/highscore" as *;
+
+@use "./SASS/layout/header" as *;
+@use "./SASS/layout/footer" as *;
+
 @use "./SASS/pages/activePlayerStart" as *;
 @use "./SASS/pages/startPage" as *;
 @use "./SASS/pages/inGame" as *;
 @use "./SASS/pages/gameOver" as *;
-@use "./SASS/layout/header" as *;
+
