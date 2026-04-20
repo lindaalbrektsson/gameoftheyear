@@ -1,6 +1,7 @@
-const headerMenu = document.querySelector(".header-menu");
+const headerMenu = document.querySelector(".header-menu") as HTMLUListElement;
 
-export function renderInGamePage () {
+
+export function renderInGamePage (): void {
     if (headerMenu) {
         const activePlayerInfo = document.createElement("li");
         activePlayerInfo.textContent = `Logged in as: ` //Lägg till spelarens namn, hämta från local storage? db?
@@ -10,5 +11,6 @@ export function renderInGamePage () {
         endGameLi.appendChild(endGameBtn);
         headerMenu.append(activePlayerInfo, endGameLi);
     }
+    
 }
 
