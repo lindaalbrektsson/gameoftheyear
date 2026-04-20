@@ -1,14 +1,4 @@
-* {
-  margin: 0px;
-  padding: 0px;
-  box-sizing: border-box;
-}
-
-.headerContainer {
-  margin: 10px;
-}
-
-.headerLogo {
-  width: 200px;
-  height: 50px;
-}
+@use "./SASS/pages/activePlayerStart" as *;
+@use "./SASS/pages/startPage" as *;
+@use "./SASS/pages/inGame" as *;
+@use "./SASS/pages/gameOver" as *;
