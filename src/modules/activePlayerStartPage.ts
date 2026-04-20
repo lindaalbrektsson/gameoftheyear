@@ -16,11 +16,13 @@ export function renderActivePlayerStartPage(): void {
     throw new Error("Could not find main element");
   }
 
+  // Tillfällig data för aktiv spelare
   const activePlayer: ActivePlayer = {
     name: "PlayerOne",
     highscore: "80 points",
   };
 
+  // Tillfällig data för spelarens senaste resultat
   const recentGames: ScoreEntry[] = [
     { name: "PlayerOne", level: "5", points: "80" },
     { name: "PlayerOne", level: "4", points: "70" },
@@ -28,42 +30,82 @@ export function renderActivePlayerStartPage(): void {
     { name: "PlayerOne", level: "2", points: "50" },
   ];
 
-  const globalHighscore: ScoreEntry[] = [
+  // Tillfällig data för global highscore
+  const globalHighscoreRows: ScoreEntry[] = [
     { name: "Player1", level: "10", points: "1000" },
     { name: "Player2", level: "9", points: "900" },
     { name: "Player3", level: "8", points: "800" },
     { name: "Player4", level: "7", points: "700" },
     { name: "Player5", level: "6", points: "600" },
     { name: "Player6", level: "5", points: "500" },
-    { name: "Player7", level: "4", points: "400" },
-    { name: "Player8", level: "3", points: "300" },
-    { name: "Player9", level: "2", points: "200" },
-    { name: "Player10", level: "1", points: "100" },
   ];
 
+  // Håller koll på om How to play visas eller inte
+  let isShowingHowToPlay = false;
+
+  // Wrapper för hela vyn
   const activePlayerStartPage = document.createElement("section");
   activePlayerStartPage.classList.add("active-player-start-page");
 
-  const leftSection = createLeftSection(activePlayer.highscore, recentGames);
-  const rightSection = createRightSection(activePlayer.name, globalHighscore);
-
-  activePlayerStartPage.append(leftSection, rightSection);
-  main.replaceChildren(activePlayerStartPage);
-}
-
-function createLeftSection(
-  highscore: string,
-  recentGames: ScoreEntry[]
-): HTMLElement {
+  // Vänster kolumn
   const leftSection = document.createElement("section");
   leftSection.classList.add("left-section");
 
-  const playerHighscore = createPlayerHighscore(highscore);
-  const playerRecentGames = createPlayerRecentGames(recentGames);
+  // Övre vänstra panelen: spelarens highscore
+  const playerHighscore = createPlayerHighscore(activePlayer.highscore);
 
-  leftSection.append(playerHighscore, playerRecentGames);
+  // Nedre vänstra panelen: här växlar vi mellan recent games och how to play
+  const bottomPanelContainer = document.createElement("div");
+  bottomPanelContainer.classList.add("bottom-panel-container");
 
-  return leftSection;
+  // Toggle-knappen som byter innehåll i nedre vänstra panelen
+  const howToPlayBtn = document.createElement("button");
+  howToPlayBtn.classList.add("game-button", "how-to-play-btn");
+  howToPlayBtn.type = "button";
+  howToPlayBtn.textContent = "How to play";
+
+  // Visar spelarens senaste resultat
+  function showRecentGames(): void {
+    bottomPanelContainer.replaceChildren(createPlayerRecentGames(recentGames));
+    howToPlayBtn.textContent = "How to play";
+  }
+
+  // Visar instruktioner för hur spelet fungerar
+  function showHowToPlayPanel(): void {
+    bottomPanelContainer.replaceChildren(createHowToPlayPanel());
+    howToPlayBtn.textContent = "Your recent game scores";
+  }
+
+  // Växlar mellan recent games och how to play
+  function toggleHowToPlayPanel(): void {
+    if (isShowingHowToPlay) {
+      showRecentGames();
+      isShowingHowToPlay = false;
+      return;
+    }
+
+    showHowToPlayPanel();
+    isShowingHowToPlay = true;
+  }
+
+  // Kopplar toggle-funktionen till knappen
+  howToPlayBtn.addEventListener("click", toggleHowToPlayPanel);
+
+  // Standardläge när sidan laddas: recent games visas
+  showRecentGames();
+
+  leftSection.append(playerHighscore, bottomPanelContainer);
+
+  // Höger kolumn
+  const rightSection = createRightSection(
+    activePlayer.name,
+    globalHighscoreRows,
+    howToPlayBtn
+  );
+
+  // Lägg in båda kolumnerna i huvudvyn
+  activePlayerStartPage.append(leftSection, rightSection);
+  main.replaceChildren(activePlayerStartPage);
 }
 
 function createPlayerHighscore(highscore: string): HTMLElement {
@@ -89,13 +131,14 @@ function createPlayerRecentGames(recentGames: ScoreEntry[]): HTMLElement {
 
   const recentGamesTitle = document.createElement("h2");
   recentGamesTitle.classList.add("panel-title");
-  recentGamesTitle.textContent = "Your recent games";
+  recentGamesTitle.textContent = "Your recent game scores";
 
   const recentGamesSubtitle = document.createElement("p");
   recentGamesSubtitle.classList.add("panel-subtitle");
-  recentGamesSubtitle.textContent = "Top 10 latest games";
+  recentGamesSubtitle.textContent = "Latest scores";
 
-  const scoreTable = createScoreTable(recentGames);
+  // Skapar tabellen utan medaljer/rank-ikoner
+  const scoreTable = createScoreTable(recentGames, false);
 
   playerRecentGames.append(
     recentGamesTitle,
@@ -106,16 +149,49 @@ function createPlayerRecentGames(recentGames: ScoreEntry[]): HTMLElement {
   return playerRecentGames;
 }
 
+function createHowToPlayPanel(): HTMLElement {
+  const howToPlayPanel = document.createElement("section");
+  howToPlayPanel.classList.add("how-to-play-panel");
+
+  const title = document.createElement("h2");
+  title.classList.add("panel-title");
+  title.textContent = "How to play";
+
+  const list = document.createElement("ul");
+  list.classList.add("how-to-play-list");
+
+  const steps = [
+    "Enter your name and start a new game",
+    "Match the correct tiles based on the given rule",
+    "Each correct move gives you points",
+    "Advance through levels as difficulty increases",
+    "Avoid mistakes to keep your score high",
+    "Try to beat your previous highscore",
+    "Compete for a spot on the global leaderboard",
+  ];
+
+  // Skapar en punktlista med instruktioner
+  steps.forEach((step) => {
+    const li = document.createElement("li");
+    li.textContent = step;
+    list.append(li);
+  });
+
+  howToPlayPanel.append(title, list);
+
+  return howToPlayPanel;
+}
+
 function createRightSection(
   playerName: string,
-  globalHighscoreRows: ScoreEntry[]
+  globalHighscoreRows: ScoreEntry[],
+  howToPlayBtn: HTMLButtonElement
 ): HTMLElement {
   const rightSection = document.createElement("section");
   rightSection.classList.add("right-section");
 
   const welcomePlayer = createWelcomePlayer(playerName);
-  const buttonRow = createButtonRow();
-  const howToPlayBtn = createHowToPlayBtn();
+  const buttonRow = createButtonRow(playerName);
   const globalHighscore = createGlobalHighscore(globalHighscoreRows);
 
   rightSection.append(
@@ -141,7 +217,7 @@ function createWelcomePlayer(playerName: string): HTMLElement {
   return welcomePlayer;
 }
 
-function createButtonRow(): HTMLElement {
+function createButtonRow(playerName: string): HTMLElement {
   const buttonRow = document.createElement("div");
   buttonRow.classList.add("button-row");
 
@@ -150,6 +226,10 @@ function createButtonRow(): HTMLElement {
   startGameBtn.type = "button";
   startGameBtn.textContent = "Start Game";
   startGameBtn.addEventListener("click", () => {
+    // Sparar aktiv spelare i localStorage
+    localStorage.setItem("activePlayer", playerName);
+
+    // TODO: Byt till renderInGame() när inGame-modulen finns
     console.log("Start game clicked");
   });
 
@@ -158,24 +238,13 @@ function createButtonRow(): HTMLElement {
   changePlayerBtn.type = "button";
   changePlayerBtn.textContent = "Change Player";
   changePlayerBtn.addEventListener("click", () => {
+    // TODO: Byt till logik för att gå tillbaka till startPage
     console.log("Change player clicked");
   });
 
   buttonRow.append(startGameBtn, changePlayerBtn);
 
   return buttonRow;
-}
-
-function createHowToPlayBtn(): HTMLElement {
-  const howToPlayBtn = document.createElement("button");
-  howToPlayBtn.classList.add("game-button", "how-to-play-btn");
-  howToPlayBtn.type = "button";
-  howToPlayBtn.textContent = "How to play?";
-  howToPlayBtn.addEventListener("click", () => {
-    console.log("How to play clicked");
-  });
-
-  return howToPlayBtn;
 }
 
 function createGlobalHighscore(globalHighscoreRows: ScoreEntry[]): HTMLElement {
@@ -186,25 +255,33 @@ function createGlobalHighscore(globalHighscoreRows: ScoreEntry[]): HTMLElement {
   globalHighscoreTitle.classList.add("panel-title");
   globalHighscoreTitle.textContent = "Global Highscore";
 
+  // Visar bara topp 5 i global highscore
   const topFive = globalHighscoreRows.slice(0, 5);
-  const scoreTable = createScoreTable(topFive);
+
+  // Skapar tabellen med medaljer för topp 3
+  const scoreTable = createScoreTable(topFive, true);
 
   globalHighscore.append(globalHighscoreTitle, scoreTable);
 
   return globalHighscore;
 }
 
-function createScoreTable(rows: ScoreEntry[]): HTMLElement {
+function createScoreTable(
+  rows: ScoreEntry[],
+  showRankIcons = false
+): HTMLElement {
   const scoreTable = document.createElement("div");
   scoreTable.classList.add("score-table");
 
   const scoreHeaderRow = createScoreHeaderRow();
   scoreTable.append(scoreHeaderRow);
 
-  for (const row of rows) {
-    const scoreRow = createScoreRow(row.name, row.level, row.points);
+  // Skapar alla rader i tabellen
+  rows.forEach((row, index) => {
+    const rank = showRankIcons ? index : undefined;
+    const scoreRow = createScoreRow(row.name, row.level, row.points, rank);
     scoreTable.append(scoreRow);
-  }
+  });
 
   return scoreTable;
 }
@@ -233,14 +310,28 @@ function createScoreHeaderRow(): HTMLElement {
 function createScoreRow(
   playerName: string,
   levelValue: string,
-  pointsValue: string
+  pointsValue: string,
+  rank?: number
 ): HTMLElement {
   const scoreRow = document.createElement("div");
   scoreRow.classList.add("score-row");
 
   const name = document.createElement("span");
   name.classList.add("score-cell", "score-name");
-  name.textContent = playerName;
+
+  // Lägg till medalj för topp 3 i global highscore
+  if (rank === 0) {
+    name.textContent = `🥇 ${playerName}`;
+    scoreRow.classList.add("gold-rank");
+  } else if (rank === 1) {
+    name.textContent = `🥈 ${playerName}`;
+    scoreRow.classList.add("silver-rank");
+  } else if (rank === 2) {
+    name.textContent = `🥉 ${playerName}`;
+    scoreRow.classList.add("bronze-rank");
+  } else {
+    name.textContent = playerName;
+  }
 
   const level = document.createElement("span");
   level.classList.add("score-cell", "score-level");
