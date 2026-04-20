@@ -16,6 +16,11 @@ export function renderStartPage() {
     nameInput.placeholder = 'Enter your name';
     playerForm.appendChild(nameInput);
 
+    const startButton = document.createElement('button');
+    startButton.classList.add('start-button');
+    startButton.textContent = 'Start Game';
+    playerForm.appendChild(startButton);
+
     startPage.appendChild(howToPlay);
     startPage.appendChild(playerForm);
 
