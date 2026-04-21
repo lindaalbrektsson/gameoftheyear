@@ -8,4 +8,3 @@ if (activePlayer) {
   renderActivePlayerStartPage();
 } else {
   renderStartPage();
-} */

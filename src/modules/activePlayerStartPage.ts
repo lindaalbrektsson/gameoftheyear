@@ -1,12 +1,10 @@
+import { renderInGame } from "./inGame";
+import { renderStartPage } from "./startPage";
+
 type ScoreEntry = {
   name: string;
   level: string;
   points: string;
-};
-
-type ActivePlayer = {
-  name: string;
-  highscore: string;
 };
 
 export function renderActivePlayerStartPage(): void {
@@ -16,18 +14,22 @@ export function renderActivePlayerStartPage(): void {
     throw new Error("Could not find main element");
   }
 
-  // Tillfällig data för aktiv spelare
-  const activePlayer: ActivePlayer = {
-    name: "PlayerOne",
-    highscore: "80 points",
-  };
+  // Hämtar aktiv spelare från localStorage
+  const activePlayer = localStorage.getItem("activePlayer");
+
+  if (!activePlayer) {
+    throw new Error("No active player found");
+  }
+
+  // Tillfällig data för spelarens highscore
+  const playerHighscoreValue = "80 points";
 
   // Tillfällig data för spelarens senaste resultat
   const recentGames: ScoreEntry[] = [
-    { name: "PlayerOne", level: "5", points: "80" },
-    { name: "PlayerOne", level: "4", points: "70" },
-    { name: "PlayerOne", level: "3", points: "60" },
-    { name: "PlayerOne", level: "2", points: "50" },
+    { name: activePlayer, level: "5", points: "80" },
+    { name: activePlayer, level: "4", points: "70" },
+    { name: activePlayer, level: "3", points: "60" },
+    { name: activePlayer, level: "2", points: "50" },
   ];
 
   // Tillfällig data för global highscore
@@ -52,7 +54,7 @@ export function renderActivePlayerStartPage(): void {
   leftSection.classList.add("left-section");
 
   // Övre vänstra panelen: spelarens highscore
-  const playerHighscore = createPlayerHighscore(activePlayer.highscore);
+  const playerHighscore = createPlayerHighscore(playerHighscoreValue);
 
   // Nedre vänstra panelen: här växlar vi mellan recent games och how to play
   const bottomPanelContainer = document.createElement("div");
@@ -98,7 +100,7 @@ export function renderActivePlayerStartPage(): void {
 
   // Höger kolumn
   const rightSection = createRightSection(
-    activePlayer.name,
+    activePlayer,
     globalHighscoreRows,
     howToPlayBtn
   );
@@ -229,8 +231,7 @@ function createButtonRow(playerName: string): HTMLElement {
     // Sparar aktiv spelare i localStorage
     localStorage.setItem("activePlayer", playerName);
 
-    // TODO: Byt till renderInGame() när inGame-modulen finns
-    console.log("Start game clicked");
+    renderInGame();
   });
 
   const changePlayerBtn = document.createElement("button");
@@ -238,8 +239,10 @@ function createButtonRow(playerName: string): HTMLElement {
   changePlayerBtn.type = "button";
   changePlayerBtn.textContent = "Change Player";
   changePlayerBtn.addEventListener("click", () => {
-    // TODO: Byt till logik för att gå tillbaka till startPage
-    console.log("Change player clicked");
+    // Tar bort aktiv spelare från localStorage
+    localStorage.removeItem("activePlayer");
+
+    renderStartPage();
   });
 
   buttonRow.append(startGameBtn, changePlayerBtn);
