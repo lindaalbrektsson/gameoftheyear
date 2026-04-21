@@ -41,6 +41,12 @@ export function renderStartPage(): void {
   const startGameBtn = document.createElement("button");
   startGameBtn.classList.add("start-game-button");
   startGameBtn.textContent = "Start Game";
+  startGameBtn.disabled = true;
+
+  function updateStartButtonState(): void {
+    const playerName = playerNameInput.value.trim();
+    startGameBtn.disabled = playerName === "";
+  }
 
   startGameBtn.addEventListener("click", () => {
     const playerName = playerNameInput.value.trim();
@@ -65,6 +71,7 @@ export function renderStartPage(): void {
       }
 
       playerNameInput.value = "";
+      updateStartButtonState();
       playerNameInput.focus();
       return;
     }
@@ -72,6 +79,8 @@ export function renderStartPage(): void {
     localStorage.setItem("activePlayer", playerName);
     renderInGame();
   });
+
+  playerNameInput.addEventListener("input", updateStartButtonState);
 
   playerNameInput.addEventListener("keydown", (event) => {
     if (event.key === "Enter") {

@@ -64,7 +64,12 @@ main {
   letter-spacing: 0.1em;
   cursor: pointer;
 
-  &:hover {
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &:not(:disabled):hover {
     background: rgba(255, 255, 255, 0.1);
   }
 }
