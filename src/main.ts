@@ -1,8 +1,6 @@
-/* import "./styles.scss";
+import "./styles.scss";
 import { renderStartPage } from "./modules/startPage";
 import { renderActivePlayerStartPage } from "./modules/activePlayerStartPage";
-import { renderInGame } from "./modules/inGame";
-import { renderGameOver } from "./modules/gameOver";
 
 const activePlayer = localStorage.getItem("activePlayer");
 
@@ -11,8 +9,3 @@ if (activePlayer) {
 } else {
   renderStartPage();
 } */
-
-  import "./styles.scss";
-import { renderActivePlayerStartPage } from "./modules/activePlayerStartPage";
-
-renderActivePlayerStartPage();
