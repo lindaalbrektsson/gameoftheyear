@@ -1,7 +1,3 @@
-main {
-  padding: 1rem 2rem 2rem;
-}
-
 body {
   background:
     radial-gradient(circle at top center, rgba(255, 0, 140, 0.16), transparent 32%),
@@ -20,6 +16,9 @@ body {
   gap: 2rem;
   align-items: stretch;
   min-height: 70vh;
+  width: 100%;
+  max-width: 1150px;
+  margin: 1rem auto 0;
 }
 
 .left-section,
@@ -77,6 +76,18 @@ body {
   height: 100%;
 }
 
+.player-recent-games,
+.global-highscore {
+  display: flex;
+  flex-direction: column;
+  min-height: 380px;
+}
+
+.player-score-table,
+.global-highscore .score-table {
+  flex-grow: 1;
+}
+
 .welcome-player {
   display: grid;
   align-content: center;
@@ -119,12 +130,6 @@ body {
   color: #b8c7ff;
   font-size: 0.95rem;
   margin-bottom: 1rem;
-}
-
-.how-to-play-text {
-  margin: 0.75rem 0 0;
-  line-height: 1.6;
-  color: #dfe8ff;
 }
 
 .how-to-play-list {
@@ -239,7 +244,7 @@ body {
 
 .score-level,
 .score-points {
-  text-align: right;
+  text-align: center;
   color: #dfe8ff;
 }
 
@@ -247,6 +252,110 @@ body {
 .global-highscore .score-row:not(.score-header) {
   padding: 0.18rem 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.player-score-table {
+  display: grid;
+  gap: 0.45rem;
+  margin-top: 0.6rem;
+}
+
+.player-score-row {
+  display: grid;
+  grid-template-columns: 1fr 0.55fr 0.55fr 0.55fr;
+  gap: 0.65rem;
+  align-items: center;
+}
+
+.player-score-row.score-header {
+  grid-template-columns: 1fr 0.55fr 0.55fr 0.55fr;
+}
+
+.score-date {
+  text-align: left;
+  color: #ffffff;
+}
+
+.score-delete {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-left: 0.25rem;
+}
+
+.delete-game-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #ff9bbb;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 1rem;
+  transition:
+    transform 0.15s ease,
+    filter 0.15s ease,
+    border-color 0.15s ease,
+    background 0.15s ease;
+}
+
+.delete-game-btn:hover {
+  transform: scale(1.08);
+  filter: brightness(1.1);
+  border-color: rgba(255, 155, 187, 0.7);
+  background: rgba(255, 76, 145, 0.08);
+}
+
+.delete-game-btn:active {
+  transform: scale(0.95);
+}
+
+.delete-confirmation {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+}
+
+.delete-confirmation-text {
+  color: #ffb3cb;
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.delete-confirmation-buttons {
+  display: flex;
+  gap: 0.3rem;
+  flex-wrap: nowrap;
+}
+
+.confirm-delete-btn,
+.cancel-delete-btn {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+  border-radius: 0.4rem;
+  padding: 0.15rem 0.4rem;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.72rem;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+.confirm-delete-btn:hover {
+  background: rgba(255, 76, 145, 0.18);
+  border-color: rgba(255, 76, 145, 0.55);
+  transform: scale(1.04);
+}
+
+.cancel-delete-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: scale(1.04);
 }
 
 .gold-rank .score-name {
@@ -271,23 +380,86 @@ body {
 }
 
 @media (max-width: 900px) {
-  main {
-    padding: 1rem;
-  }
-
-  .active-player-start-page {
+.active-player-start-page {
     grid-template-columns: 1fr;
     min-height: auto;
+    max-width: 720px;
   }
 
   .left-section,
   .right-section {
-    grid-template-rows: auto;
+    display: contents;
+  }
+
+  .welcome-player {
+    order: 1;
+  }
+
+  .button-row {
+    order: 2;
+    grid-template-columns: 1fr;
+  }
+
+  .how-to-play-btn {
+    order: 3;
+  }
+
+  .player-highscore {
+    order: 4;
+  }
+
+  .bottom-panel-container {
+    order: 5;
     height: auto;
   }
 
-  .bottom-panel-container,
-  .bottom-panel-container>* {
-    height: auto;
+  .global-highscore {
+    order: 6;
+  }
+
+  .player-score-row,
+  .player-score-row.score-header {
+    grid-template-columns: 1.05fr 0.6fr 0.6fr 0.55fr;
+    gap: 0.55rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .active-player-start-page {
+    gap: 1.25rem;
+  }
+
+  .left-section,
+  .right-section {
+    gap: 1rem;
+  }
+
+  .active-player-start-page .game-button {
+    min-height: 4rem;
+    font-size: 1.05rem;
+    padding: 0.9rem 1rem;
+  }
+
+  .player-score-row,
+  .player-score-row.score-header {
+    grid-template-columns: 0.9fr 0.55fr 0.55fr 0.55fr;
+    gap: 0.4rem;
+    font-size: 0.92rem;
+  }
+
+  .delete-game-btn {
+    width: 1.8rem;
+    height: 1.8rem;
+    font-size: 0.9rem;
+  }
+
+  .delete-confirmation-text {
+    font-size: 0.72rem;
+  }
+
+  .confirm-delete-btn,
+  .cancel-delete-btn {
+    font-size: 0.68rem;
+    padding: 0.15rem 0.35rem;
   }
 }
