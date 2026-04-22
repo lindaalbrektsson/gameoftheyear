@@ -1,12 +1,23 @@
-type ScoreEntry = {
-  name: string;
-  level: string;
-  points: string;
+import { renderInGame } from "./inGame";
+import { renderStartPage } from "./startPage";
+
+type Player = {
+  id: string;
+  playerName: string;
 };
 
-type ActivePlayer = {
-  name: string;
-  highscore: string;
+type Game = {
+  id: string;
+  gameDate: string;
+  score: number;
+  level: number;
+  playerId: string;
+};
+
+type GlobalHighscoreEntry = {
+  playerName: string;
+  level: number;
+  score: number;
 };
 
 export function renderActivePlayerStartPage(): void {
@@ -16,70 +27,137 @@ export function renderActivePlayerStartPage(): void {
     throw new Error("Could not find main element");
   }
 
-  // Tillfällig data för aktiv spelare
-  const activePlayer: ActivePlayer = {
-    name: "PlayerOne",
-    highscore: "80 points",
-  };
+  const activePlayerName = localStorage.getItem("activePlayer");
 
-  // Tillfällig data för spelarens senaste resultat
-  const recentGames: ScoreEntry[] = [
-    { name: "PlayerOne", level: "5", points: "80" },
-    { name: "PlayerOne", level: "4", points: "70" },
-    { name: "PlayerOne", level: "3", points: "60" },
-    { name: "PlayerOne", level: "2", points: "50" },
+  if (!activePlayerName) {
+    throw new Error("No active player found");
+  }
+
+  // Tillfällig mockdata för players
+  // TODO: Byt till players från data.json / json-server
+  const players: Player[] = [
+    { id: "p1", playerName: activePlayerName },
+    { id: "p2", playerName: "Player2" },
+    { id: "p3", playerName: "Player3" },
   ];
+
+  const activePlayer = players.find(
+    (player) => player.playerName === activePlayerName
+  );
+
+  if (!activePlayer) {
+    throw new Error("Active player not found in players");
+  }
+
+  // Tillfällig mockdata för games
+  // TODO: Byt till games från data.json när spelet sparar riktiga game-objekt
+  const games: Game[] = [
+    {
+      id: "g1",
+      gameDate: "2026-04-21",
+      score: 80,
+      level: 5,
+      playerId: activePlayer.id,
+    },
+    {
+      id: "g2",
+      gameDate: "2026-04-20",
+      score: 70,
+      level: 4,
+      playerId: activePlayer.id,
+    },
+    {
+      id: "g3",
+      gameDate: "2026-04-19",
+      score: 60,
+      level: 3,
+      playerId: activePlayer.id,
+    },
+    {
+      id: "g4",
+      gameDate: "2026-04-19",
+      score: 60,
+      level: 3,
+      playerId: activePlayer.id,
+    },
+    {
+      id: "g5",
+      gameDate: "2026-04-19",
+      score: 60,
+      level: 3,
+      playerId: activePlayer.id,
+    },
+    {
+      id: "g6",
+      gameDate: "2026-04-19",
+      score: 60,
+      level: 3,
+      playerId: activePlayer.id
+    },
+    {
+      id: "g7",
+      gameDate: "2026-04-19",
+      score: 60,
+      level: 3,
+      playerId: activePlayer.id
+    }
+  ];
+
+  // Filtrerar fram aktiv spelares games
+  // TODO: Använd riktig data från json när games finns
+  const playerGames = games.filter((game) => game.playerId === activePlayer.id);
+
+  // Räknar fram spelarens highscore från games
+  // TODO: Behåll denna logik när riktig data används
+  const playerHighscoreValue =
+    playerGames.length > 0
+      ? Math.max(...playerGames.map((game) => game.score))
+      : 0;
 
   // Tillfällig data för global highscore
-  const globalHighscoreRows: ScoreEntry[] = [
-    { name: "Player1", level: "10", points: "1000" },
-    { name: "Player2", level: "9", points: "900" },
-    { name: "Player3", level: "8", points: "800" },
-    { name: "Player4", level: "7", points: "700" },
-    { name: "Player5", level: "6", points: "600" },
-    { name: "Player6", level: "5", points: "500" },
+  // TODO: Byt till riktig sammanställning från players + games
+  const globalHighscoreEntries: GlobalHighscoreEntry[] = [
+    { playerName: "Player1", level: 10, score: 1000 },
+    { playerName: "Player2", level: 9, score: 900 },
+    { playerName: "Player3", level: 8, score: 800 },
+    { playerName: "Player4", level: 7, score: 700 },
+    { playerName: "Player5", level: 6, score: 600 },
+    { playerName: "Player6", level: 5, score: 500 },
   ];
 
-  // Håller koll på om How to play visas eller inte
   let isShowingHowToPlay = false;
 
-  // Wrapper för hela vyn
   const activePlayerStartPage = document.createElement("section");
   activePlayerStartPage.classList.add("active-player-start-page");
 
-  // Vänster kolumn
   const leftSection = document.createElement("section");
   leftSection.classList.add("left-section");
 
-  // Övre vänstra panelen: spelarens highscore
-  const playerHighscore = createPlayerHighscore(activePlayer.highscore);
+  const playerHighscore = createPlayerHighscore(playerHighscoreValue);
 
-  // Nedre vänstra panelen: här växlar vi mellan recent games och how to play
   const bottomPanelContainer = document.createElement("div");
   bottomPanelContainer.classList.add("bottom-panel-container");
 
-  // Toggle-knappen som byter innehåll i nedre vänstra panelen
   const howToPlayBtn = document.createElement("button");
   howToPlayBtn.classList.add("game-button", "how-to-play-btn");
   howToPlayBtn.type = "button";
   howToPlayBtn.textContent = "How to play";
 
-  // Visar spelarens senaste resultat
-  function showRecentGames(): void {
-    bottomPanelContainer.replaceChildren(createPlayerRecentGames(recentGames));
+  function showPlayerGameHistory(): void {
+    bottomPanelContainer.replaceChildren(
+      createPlayerGameHistorySection(playerGames)
+    );
     howToPlayBtn.textContent = "How to play";
   }
 
-  // Visar instruktioner för hur spelet fungerar
   function showHowToPlayPanel(): void {
     bottomPanelContainer.replaceChildren(createHowToPlayPanel());
-    howToPlayBtn.textContent = "Your recent game scores";
+    howToPlayBtn.textContent = "Your game history";
   }
 
-  // Växlar mellan recent games och how to play
   function toggleHowToPlayPanel(): void {
     if (isShowingHowToPlay) {
-      showRecentGames();
+      showPlayerGameHistory();
       isShowingHowToPlay = false;
       return;
     }
@@ -88,27 +166,23 @@ export function renderActivePlayerStartPage(): void {
     isShowingHowToPlay = true;
   }
 
-  // Kopplar toggle-funktionen till knappen
   howToPlayBtn.addEventListener("click", toggleHowToPlayPanel);
 
-  // Standardläge när sidan laddas: recent games visas
-  showRecentGames();
+  showPlayerGameHistory();
 
   leftSection.append(playerHighscore, bottomPanelContainer);
 
-  // Höger kolumn
   const rightSection = createRightSection(
-    activePlayer.name,
-    globalHighscoreRows,
+    activePlayer.playerName,
+    globalHighscoreEntries,
     howToPlayBtn
   );
 
-  // Lägg in båda kolumnerna i huvudvyn
   activePlayerStartPage.append(leftSection, rightSection);
   main.replaceChildren(activePlayerStartPage);
 }
 
-function createPlayerHighscore(highscore: string): HTMLElement {
+function createPlayerHighscore(highscoreValue: number): HTMLElement {
   const playerHighscore = document.createElement("section");
   playerHighscore.classList.add("player-highscore");
 
@@ -116,37 +190,162 @@ function createPlayerHighscore(highscore: string): HTMLElement {
   highscoreTitle.classList.add("panel-title");
   highscoreTitle.textContent = "Your Highscore";
 
-  const highscoreValue = document.createElement("p");
-  highscoreValue.classList.add("highscore-value");
-  highscoreValue.textContent = highscore;
+  const highscoreText = document.createElement("p");
+  highscoreText.classList.add("highscore-value");
+  highscoreText.textContent = `${highscoreValue} points`;
 
-  playerHighscore.append(highscoreTitle, highscoreValue);
+  playerHighscore.append(highscoreTitle, highscoreText);
 
   return playerHighscore;
 }
 
-function createPlayerRecentGames(recentGames: ScoreEntry[]): HTMLElement {
-  const playerRecentGames = document.createElement("section");
-  playerRecentGames.classList.add("player-recent-games");
+function createPlayerGameHistorySection(playerGames: Game[]): HTMLElement {
+  const playerGameHistorySection = document.createElement("section");
+  playerGameHistorySection.classList.add("player-recent-games");
 
-  const recentGamesTitle = document.createElement("h2");
-  recentGamesTitle.classList.add("panel-title");
-  recentGamesTitle.textContent = "Your recent game scores";
+  const sectionTitle = document.createElement("h2");
+  sectionTitle.classList.add("panel-title");
+  sectionTitle.textContent = "Your Game History";
 
-  const recentGamesSubtitle = document.createElement("p");
-  recentGamesSubtitle.classList.add("panel-subtitle");
-  recentGamesSubtitle.textContent = "Latest scores";
+  const sectionSubtitle = document.createElement("p");
+  sectionSubtitle.classList.add("panel-subtitle");
+  sectionSubtitle.textContent = "Latest games";
 
-  // Skapar tabellen utan medaljer/rank-ikoner
-  const scoreTable = createScoreTable(recentGames, false);
+  const latestEightGames = playerGames.slice(0, 8);
+  const playerScoreTable = createPlayerScoreTable(latestEightGames);
 
-  playerRecentGames.append(
-    recentGamesTitle,
-    recentGamesSubtitle,
-    scoreTable
+  playerGameHistorySection.append(
+    sectionTitle,
+    sectionSubtitle,
+    playerScoreTable
   );
 
-  return playerRecentGames;
+  return playerGameHistorySection;
+}
+
+function createPlayerScoreTable(rows: Game[]): HTMLElement {
+  const playerScoreTable = document.createElement("div");
+  playerScoreTable.classList.add("score-table", "player-score-table");
+
+  const headerRow = createPlayerScoreHeaderRow();
+  playerScoreTable.append(headerRow);
+
+  rows.forEach((game) => {
+    const scoreRow = createPlayerScoreRow(game);
+    playerScoreTable.append(scoreRow);
+  });
+
+  return playerScoreTable;
+}
+
+function createPlayerScoreHeaderRow(): HTMLElement {
+  const headerRow = document.createElement("div");
+  headerRow.classList.add("score-row", "score-header", "player-score-row");
+
+  const dateHeader = document.createElement("span");
+  dateHeader.classList.add("score-cell", "score-date");
+  dateHeader.textContent = "Date";
+
+  const levelHeader = document.createElement("span");
+  levelHeader.classList.add("score-cell", "score-level");
+  levelHeader.textContent = "Level";
+
+  const scoreHeader = document.createElement("span");
+  scoreHeader.classList.add("score-cell", "score-points");
+  scoreHeader.textContent = "Score";
+
+  const deleteHeader = document.createElement("span");
+  deleteHeader.classList.add("score-cell", "score-delete");
+  deleteHeader.textContent = "";
+
+  headerRow.append(dateHeader, levelHeader, scoreHeader, deleteHeader);
+
+  return headerRow;
+}
+
+function createPlayerScoreRow(game: Game): HTMLElement {
+  const scoreRow = document.createElement("div");
+  scoreRow.classList.add("score-row", "player-score-row");
+
+  const gameDate = document.createElement("span");
+  gameDate.classList.add("score-cell", "score-date");
+  gameDate.textContent = game.gameDate;
+
+  const gameLevel = document.createElement("span");
+  gameLevel.classList.add("score-cell", "score-level");
+  gameLevel.textContent = String(game.level);
+
+  const gameScore = document.createElement("span");
+  gameScore.classList.add("score-cell", "score-points");
+  gameScore.textContent = String(game.score);
+
+  const deleteCell = document.createElement("span");
+  deleteCell.classList.add("score-cell", "score-delete");
+
+  const deleteBtn = createDeleteButton(game, deleteCell);
+  deleteCell.append(deleteBtn);
+
+  scoreRow.append(gameDate, gameLevel, gameScore, deleteCell);
+
+  return scoreRow;
+}
+
+function createDeleteButton(
+  game: Game,
+  deleteCell: HTMLElement
+): HTMLButtonElement {
+  const deleteBtn = document.createElement("button");
+  deleteBtn.classList.add("delete-game-btn");
+  deleteBtn.type = "button";
+  deleteBtn.textContent = "🗑";
+  deleteBtn.setAttribute("aria-label", "Delete game");
+
+  deleteBtn.addEventListener("click", () => {
+    const deleteConfirmation = createDeleteConfirmation(game, deleteCell);
+    deleteCell.replaceChildren(deleteConfirmation);
+  });
+
+  return deleteBtn;
+}
+
+function createDeleteConfirmation(
+  game: Game,
+  deleteCell: HTMLElement
+): HTMLElement {
+  const confirmationWrapper = document.createElement("div");
+  confirmationWrapper.classList.add("delete-confirmation");
+
+  const confirmationText = document.createElement("span");
+  confirmationText.classList.add("delete-confirmation-text");
+  confirmationText.textContent = "Delete game?";
+
+  const buttonsWrapper = document.createElement("div");
+  buttonsWrapper.classList.add("delete-confirmation-buttons");
+
+  const confirmBtn = document.createElement("button");
+  confirmBtn.classList.add("confirm-delete-btn");
+  confirmBtn.type = "button";
+  confirmBtn.textContent = "Yes";
+
+  const cancelBtn = document.createElement("button");
+  cancelBtn.classList.add("cancel-delete-btn");
+  cancelBtn.type = "button";
+  cancelBtn.textContent = "No";
+
+  confirmBtn.addEventListener("click", () => {
+    // TODO: DELETE game from json-server using game.id
+    console.log(`Delete game with id: ${game.id}`);
+  });
+
+  cancelBtn.addEventListener("click", () => {
+    const deleteBtn = createDeleteButton(game, deleteCell);
+    deleteCell.replaceChildren(deleteBtn);
+  });
+
+  buttonsWrapper.append(confirmBtn, cancelBtn);
+  confirmationWrapper.append(confirmationText, buttonsWrapper);
+
+  return confirmationWrapper;
 }
 
 function createHowToPlayPanel(): HTMLElement {
@@ -162,19 +361,20 @@ function createHowToPlayPanel(): HTMLElement {
 
   const steps = [
     "Enter your name and start a new game",
-    "Match the correct tiles based on the given rule",
-    "Each correct move gives you points",
+    "Click on the correct tiles based on the given rule",
+    "Complete the round before the timer runs out",
+    "You have three lives, so avoid mistakes to keep playing",
+    "Each succesful round gives you score",
+    "A failed round costs you a life and decreases your score",
     "Advance through levels as difficulty increases",
-    "Avoid mistakes to keep your score high",
     "Try to beat your previous highscore",
     "Compete for a spot on the global leaderboard",
   ];
 
-  // Skapar en punktlista med instruktioner
   steps.forEach((step) => {
-    const li = document.createElement("li");
-    li.textContent = step;
-    list.append(li);
+    const listItem = document.createElement("li");
+    listItem.textContent = step;
+    list.append(listItem);
   });
 
   howToPlayPanel.append(title, list);
@@ -183,16 +383,16 @@ function createHowToPlayPanel(): HTMLElement {
 }
 
 function createRightSection(
-  playerName: string,
-  globalHighscoreRows: ScoreEntry[],
+  activePlayerName: string,
+  globalHighscoreEntries: GlobalHighscoreEntry[],
   howToPlayBtn: HTMLButtonElement
 ): HTMLElement {
   const rightSection = document.createElement("section");
   rightSection.classList.add("right-section");
 
-  const welcomePlayer = createWelcomePlayer(playerName);
-  const buttonRow = createButtonRow(playerName);
-  const globalHighscore = createGlobalHighscore(globalHighscoreRows);
+  const welcomePlayer = createWelcomePlayer(activePlayerName);
+  const buttonRow = createButtonRow(activePlayerName);
+  const globalHighscore = createGlobalHighscore(globalHighscoreEntries);
 
   rightSection.append(
     welcomePlayer,
@@ -204,20 +404,20 @@ function createRightSection(
   return rightSection;
 }
 
-function createWelcomePlayer(playerName: string): HTMLElement {
+function createWelcomePlayer(activePlayerName: string): HTMLElement {
   const welcomePlayer = document.createElement("div");
   welcomePlayer.classList.add("welcome-player");
 
   const welcomeText = document.createElement("h2");
   welcomeText.classList.add("welcome-text");
-  welcomeText.textContent = `Welcome, ${playerName}`;
+  welcomeText.textContent = `Hello ${activePlayerName}!`;
 
   welcomePlayer.append(welcomeText);
 
   return welcomePlayer;
 }
 
-function createButtonRow(playerName: string): HTMLElement {
+function createButtonRow(activePlayerName: string): HTMLElement {
   const buttonRow = document.createElement("div");
   buttonRow.classList.add("button-row");
 
@@ -226,11 +426,8 @@ function createButtonRow(playerName: string): HTMLElement {
   startGameBtn.type = "button";
   startGameBtn.textContent = "Start Game";
   startGameBtn.addEventListener("click", () => {
-    // Sparar aktiv spelare i localStorage
-    localStorage.setItem("activePlayer", playerName);
-
-    // TODO: Byt till renderInGame() när inGame-modulen finns
-    console.log("Start game clicked");
+    localStorage.setItem("activePlayer", activePlayerName);
+    renderInGame();
   });
 
   const changePlayerBtn = document.createElement("button");
@@ -238,8 +435,8 @@ function createButtonRow(playerName: string): HTMLElement {
   changePlayerBtn.type = "button";
   changePlayerBtn.textContent = "Change Player";
   changePlayerBtn.addEventListener("click", () => {
-    // TODO: Byt till logik för att gå tillbaka till startPage
-    console.log("Change player clicked");
+    localStorage.removeItem("activePlayer");
+    renderStartPage();
   });
 
   buttonRow.append(startGameBtn, changePlayerBtn);
@@ -247,48 +444,49 @@ function createButtonRow(playerName: string): HTMLElement {
   return buttonRow;
 }
 
-function createGlobalHighscore(globalHighscoreRows: ScoreEntry[]): HTMLElement {
+function createGlobalHighscore(
+  globalHighscoreEntries: GlobalHighscoreEntry[]
+): HTMLElement {
   const globalHighscore = document.createElement("section");
   globalHighscore.classList.add("global-highscore");
 
-  const globalHighscoreTitle = document.createElement("h2");
-  globalHighscoreTitle.classList.add("panel-title");
-  globalHighscoreTitle.textContent = "Global Highscore";
+  const sectionTitle = document.createElement("h2");
+  sectionTitle.classList.add("panel-title");
+  sectionTitle.textContent = "Global Highscore";
 
-  // Visar bara topp 5 i global highscore
-  const topFive = globalHighscoreRows.slice(0, 5);
+  const topFive = globalHighscoreEntries.slice(0, 5);
+  const globalHighscoreTable = createGlobalHighscoreTable(topFive);
 
-  // Skapar tabellen med medaljer för topp 3
-  const scoreTable = createScoreTable(topFive, true);
-
-  globalHighscore.append(globalHighscoreTitle, scoreTable);
+  globalHighscore.append(sectionTitle, globalHighscoreTable);
 
   return globalHighscore;
 }
 
-function createScoreTable(
-  rows: ScoreEntry[],
-  showRankIcons = false
+function createGlobalHighscoreTable(
+  rows: GlobalHighscoreEntry[]
 ): HTMLElement {
-  const scoreTable = document.createElement("div");
-  scoreTable.classList.add("score-table");
+  const globalHighscoreTable = document.createElement("div");
+  globalHighscoreTable.classList.add("score-table");
 
-  const scoreHeaderRow = createScoreHeaderRow();
-  scoreTable.append(scoreHeaderRow);
+  const headerRow = createGlobalHighscoreHeaderRow();
+  globalHighscoreTable.append(headerRow);
 
-  // Skapar alla rader i tabellen
   rows.forEach((row, index) => {
-    const rank = showRankIcons ? index : undefined;
-    const scoreRow = createScoreRow(row.name, row.level, row.points, rank);
-    scoreTable.append(scoreRow);
+    const scoreRow = createGlobalHighscoreRow(
+      row.playerName,
+      row.level,
+      row.score,
+      index
+    );
+    globalHighscoreTable.append(scoreRow);
   });
 
-  return scoreTable;
+  return globalHighscoreTable;
 }
 
-function createScoreHeaderRow(): HTMLElement {
-  const scoreHeaderRow = document.createElement("div");
-  scoreHeaderRow.classList.add("score-row", "score-header");
+function createGlobalHighscoreHeaderRow(): HTMLElement {
+  const headerRow = document.createElement("div");
+  headerRow.classList.add("score-row", "score-header");
 
   const nameHeader = document.createElement("span");
   nameHeader.classList.add("score-cell", "score-name");
@@ -298,19 +496,19 @@ function createScoreHeaderRow(): HTMLElement {
   levelHeader.classList.add("score-cell", "score-level");
   levelHeader.textContent = "Level";
 
-  const pointsHeader = document.createElement("span");
-  pointsHeader.classList.add("score-cell", "score-points");
-  pointsHeader.textContent = "Points";
+  const scoreHeader = document.createElement("span");
+  scoreHeader.classList.add("score-cell", "score-points");
+  scoreHeader.textContent = "Score";
 
-  scoreHeaderRow.append(nameHeader, levelHeader, pointsHeader);
+  headerRow.append(nameHeader, levelHeader, scoreHeader);
 
-  return scoreHeaderRow;
+  return headerRow;
 }
 
-function createScoreRow(
+function createGlobalHighscoreRow(
   playerName: string,
-  levelValue: string,
-  pointsValue: string,
+  levelValue: number,
+  scoreValue: number,
   rank?: number
 ): HTMLElement {
   const scoreRow = document.createElement("div");
@@ -319,7 +517,6 @@ function createScoreRow(
   const name = document.createElement("span");
   name.classList.add("score-cell", "score-name");
 
-  // Lägg till medalj för topp 3 i global highscore
   if (rank === 0) {
     name.textContent = `🥇 ${playerName}`;
     scoreRow.classList.add("gold-rank");
@@ -335,13 +532,13 @@ function createScoreRow(
 
   const level = document.createElement("span");
   level.classList.add("score-cell", "score-level");
-  level.textContent = levelValue;
+  level.textContent = String(levelValue);
 
-  const points = document.createElement("span");
-  points.classList.add("score-cell", "score-points");
-  points.textContent = pointsValue;
+  const score = document.createElement("span");
+  score.classList.add("score-cell", "score-points");
+  score.textContent = String(scoreValue);
 
-  scoreRow.append(name, level, points);
+  scoreRow.append(name, level, score);
 
   return scoreRow;
 }

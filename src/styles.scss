@@ -13,4 +13,9 @@
 @use "./SASS/pages/startPage" as *;
 @use "./SASS/pages/inGame" as *;
 @use "./SASS/pages/gameOver" as *;
-@use "./SASS/layout/header" as *;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}

@@ -1,0 +1,175 @@
+{
+    "players": [],
+    "games": [],
+    "shapes": [
+        {
+            "id": "1",
+            "type": "triangle",
+            "color": "blank",
+            "difficultyLevel": 1
+        },
+        {
+            "id": "2",
+            "type": "triangle",
+            "color": "blue",
+            "difficultyLevel": 1
+        },
+        {
+            "id": "3",
+            "type": "triangle",
+            "color": "red",
+            "difficultyLevel": 1
+        },
+        {
+            "id": "4",
+            "type": "triangle",
+            "color": "yellow",
+            "difficultyLevel": 1
+        },
+        {
+            "id": "5",
+            "type": "square",
+            "color": "blank",
+            "difficultyLevel": 1
+        },
+        {
+            "id": "6",
+            "type": "square",
+            "color": "blue",
+            "difficultyLevel": 1
+        },
+        {
+            "id": "7",
+            "type": "square",
+            "color": "red",
+            "difficultyLevel": 1
+        },
+        {
+            "id": "8",
+            "type": "square",
+            "color": "yellow",
+            "difficultyLevel": 1
+        },
+        {
+            "id": "9",
+            "type": "circle",
+            "color": "blank",
+            "difficultyLevel": 1
+        }, 
+        {
+            "id": "10",
+            "type": "circle",
+            "color": "blue",
+            "difficultyLevel": 1
+        }, 
+        {
+            "id": "11",
+            "type": "circle",
+            "color": "red",
+            "difficultyLevel": 1
+        },     
+        {
+            "id": "12",
+            "type": "circle",
+            "color": "yellow",
+            "difficultyLevel": 1
+        },   
+        {
+            "id": "13",
+            "type": "triangle",
+            "color": "green",
+            "difficultyLevel": 2
+        },
+        {
+            "id": "14",
+            "type": "square",
+            "color": "green",
+            "difficultyLevel": 2
+        },
+        {
+            "id": "15",
+            "type": "circle",
+            "color": "green",
+            "difficultyLevel": 2
+        },
+        {
+            "id": "16",
+            "type": "star",
+            "color": "blank",
+            "difficultyLevel": 3
+        },
+        {
+            "id": "17",
+            "type": "star",
+            "color": "blue",
+            "difficultyLevel": 3
+        },  
+        {
+            "id": "18",
+            "type": "star",
+            "color": "red",
+            "difficultyLevel": 3
+        }, 
+        {
+            "id": "19",
+            "type": "star",
+            "color": "yellow",
+            "difficultyLevel": 3
+        }, 
+        {
+            "id": "20",
+            "type": "star",
+            "color": "green",
+            "difficultyLevel": 3
+        },      
+        {
+            "id": "21",
+            "type": "triangle",
+            "color": "orange",
+            "difficultyLevel": 4
+        },
+        {
+            "id": "22",
+            "type": "square",
+            "color": "orange",
+            "difficultyLevel": 4
+        },
+        {
+            "id": "23",
+            "type": "circle",
+            "color": "orange",
+            "difficultyLevel": 4
+        },
+        {
+            "id": "24",
+            "type": "star",
+            "color": "orange",
+            "difficultyLevel": 4
+        },
+        {
+            "id": "25",
+            "type": "triangle",
+            "color": "purple",
+            "difficultyLevel": 5
+        },
+        {
+            "id": "26",
+            "type": "square",
+            "color": "purple",
+            "difficultyLevel": 5
+        },
+        {
+            "id": "27",
+            "type": "circle",
+            "color": "purple",
+            "difficultyLevel": 5
+        },
+        {
+            "id": "28",
+            "type": "star",
+            "color": "purple",
+            "difficultyLevel": 5
+        }
+    ]
+
+}
