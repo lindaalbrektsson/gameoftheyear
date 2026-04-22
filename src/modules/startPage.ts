@@ -62,7 +62,14 @@ export function renderStartPage(): void {
 
   const startGameBtn = document.createElement("button");
   startGameBtn.classList.add("start-game-button");
+  startGameBtn.type = "button";
   startGameBtn.textContent = "Start Game";
+  startGameBtn.disabled = true;
+
+  function updateStartButtonState(): void {
+    const playerName = playerNameInput.value.trim();
+    startGameBtn.disabled = playerName === "";
+  }
 
   startGameBtn.addEventListener("click", () => {
     const playerName = playerNameInput.value.trim();
@@ -76,24 +83,27 @@ export function renderStartPage(): void {
     );
 
     if (existingPlayer) {
-      const continueAsExistingPlayer = window.confirm(
-        `The user already exists. Do you want to continue playing as ${existingPlayer.playerName}?`
+      showExistingPlayerPopup(
+        existingPlayer.playerName,
+        () => {
+          localStorage.setItem("activePlayer", existingPlayer.playerName);
+          renderInGame();
+        },
+        () => {
+          playerNameInput.value = "";
+          updateStartButtonState();
+          playerNameInput.focus();
+        }
       );
 
-      if (continueAsExistingPlayer) {
-        localStorage.setItem("activePlayer", existingPlayer.playerName);
-        renderInGame();
-        return;
-      }
-
-      playerNameInput.value = "";
-      playerNameInput.focus();
       return;
     }
 
     localStorage.setItem("activePlayer", playerName);
     renderInGame();
   });
+
+  playerNameInput.addEventListener("input", updateStartButtonState);
 
   playerNameInput.addEventListener("keydown", (event) => {
     if (event.key === "Enter") {
@@ -107,4 +117,53 @@ export function renderStartPage(): void {
   startPage.appendChild(playerForm);
 
   main.replaceChildren(startPage);
+}
+
+function showExistingPlayerPopup(
+  playerName: string,
+  onContinue: () => void,
+  onCancel: () => void
+): void {
+  const popupOverlay = document.createElement("div");
+  popupOverlay.classList.add("existing-player-popup-overlay");
+
+  const popup = document.createElement("div");
+  popup.classList.add("existing-player-popup");
+
+  const popupTitle = document.createElement("h2");
+  popupTitle.textContent = "Player Already Exists";
+
+  const popupText = document.createElement("p");
+  popupText.textContent = `The user "${playerName}" already exists. Do you want to continue playing as this user?`;
+
+  const btnWrapper = document.createElement("div");
+  btnWrapper.classList.add("existing-popup-btn-wrapper");
+
+  const continueBtn = document.createElement("button");
+  continueBtn.type = "button";
+  continueBtn.classList.add("existing-player-popup-btn");
+  continueBtn.textContent = "Yes";
+
+  const createNewBtn = document.createElement("button");
+  createNewBtn.type = "button";
+  createNewBtn.classList.add("existing-player-popup-btn");
+  createNewBtn.textContent = "No";
+
+  btnWrapper.appendChild(continueBtn);
+  btnWrapper.appendChild(createNewBtn);
+  popup.appendChild(popupTitle);
+  popup.appendChild(popupText);
+  popup.appendChild(btnWrapper);
+  popupOverlay.appendChild(popup);
+  document.body.appendChild(popupOverlay);
+
+  continueBtn.addEventListener("click", () => {
+    popupOverlay.remove();
+    onContinue();
+  });
+
+  createNewBtn.addEventListener("click", () => {
+    popupOverlay.remove();
+    onCancel();
+  });
 }
