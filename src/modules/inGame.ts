@@ -10,18 +10,10 @@ export function renderInGame (): void {
 
     const restartLevelScoreDiv = renderRestartLevelScore();
     const timerAndLivesDiv = renderTimerAndLives();
-
-    //Skapar bara tomma behållare för shape och instruction. I renderfunktion för shape och instruction skapar vi div för shape och typ p för instruction och lägger till i denna behållare
-    const shapeAndInstructionDiv = document.createElement("div");
-    shapeAndInstructionDiv.classList.add("shape-and-instruction-div");
+    const countdownDiv = renderCountdown();
     
-    //Shapes-diven är också bara tom, men vid rendering av shapes läggs de i denna
-    const shapesDiv = document.createElement("div");
-    shapesDiv.classList.add("shapes-div");
-    
-    gameboard.append(restartLevelScoreDiv, timerAndLivesDiv, shapeAndInstructionDiv, shapesDiv);
+    gameboard.append(restartLevelScoreDiv, timerAndLivesDiv, countdownDiv);
     main.appendChild(gameboard);
-
 }
 
 function renderHeaderMenu () {
@@ -49,7 +41,7 @@ function renderRestartLevelScore (): HTMLDivElement {
     restartLevelScoreDiv.classList.add("restart-level-score-div");
 
     const restartBtn = document.createElement("button");
-    restartBtn.classList.add("restartBtn");
+    restartBtn.classList.add("restart-btn");
     const restartIcon = document.createElement("i");
     restartIcon.classList.add("fa-solid", "fa-arrow-rotate-left");
     restartBtn.textContent = "Restart ";
@@ -89,4 +81,21 @@ function renderTimerAndLives (): HTMLDivElement {
     return timerAndLivesDiv;
 }
 
+function renderCountdown() {
+    const countdownDiv = document.createElement("div");
+    countdownDiv.classList.add("countdown-div");
+    const countdown = document.createElement("p");
+    countdown.classList.add("countdown");
+    countdownDiv.appendChild(countdown);
+    return countdownDiv;
+}
 
+
+//VÄNTAR MED DIVARNA TILL SHAPES OCH INSTRUCTIONS. DE FÅR LÄGGAS TILL NÄR COUNTDOWN ÄR KLAR 
+    // //Skapar bara tomma behållare för shape och instruction. I renderfunktion för shape och instruction skapar vi div för shape och typ p för instruction och lägger till i denna behållare
+    // const shapeAndInstructionDiv = document.createElement("div");
+    // shapeAndInstructionDiv.classList.add("shape-and-instruction-div");
+    
+    // //Shapes-diven är också bara tom, men vid rendering av shapes läggs de i denna
+    // const shapesDiv = document.createElement("div");
+    // shapesDiv.classList.add("shapes-div");
