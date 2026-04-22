@@ -1,17 +1,37 @@
 body {
-  background-color: #1e1e1e;
-  color: white;
+  background:
+    radial-gradient(
+      circle at top center,
+      rgba(255, 0, 140, 0.16),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at top right,
+      rgba(0, 204, 255, 0.1),
+      transparent 24%
+    ),
+    radial-gradient(
+      circle at bottom center,
+      rgba(255, 0, 140, 0.12),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at bottom right,
+      rgba(0, 204, 255, 0.08),
+      transparent 22%
+    ),
+    linear-gradient(180deg, #12061d 0%, #0a0f1f 45%, #05070f 100%);
+  color: #fdf6ff;
   font-family: Arial, Helvetica, sans-serif;
-  margin: 0;
-  padding: 50px;
+  min-height: 100vh;
 }
 
-.main {
+main {
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: flex-start;
-  gap: 500px;
+  gap: 600px;
 }
 
 .column {
@@ -21,7 +41,7 @@ body {
   gap: 20px;
 }
 
-.scoreContainer {
+.score-container {
   font-weight: 700;
   font-size: 0.9rem;
   display: flex;
@@ -35,7 +55,7 @@ body {
   margin-top: 250px;
 }
 
-.restartGameBtn {
+.restart-game-btn {
   font-family: monospace;
   font-weight: 700;
   display: flex;
@@ -51,14 +71,14 @@ body {
   transition: 0.3s ease;
 }
 
-.restartGameBtn:hover {
+.restart-game-btn:hover {
   transform: scale(1.05);
   background-color: rgb(255, 136, 0);
   color: black;
   border-color: rgb(255, 136, 0);
 }
 
-.recentGamesScoreboard {
+.recent-games-scoreboard {
   font-weight: 700;
   font-size: 1.1rem;
   display: flex;
@@ -71,7 +91,7 @@ body {
   background-color: transparent;
 }
 
-.highScoreNotice {
+.highscore-notice {
   font-weight: 700;
   font-size: 0.9rem;
   display: flex;
@@ -87,7 +107,7 @@ body {
   margin-top: 280px;
 }
 
-.globalHighScoreList {
+.global-highscore-list {
   font-weight: 700;
   font-size: 1.1rem;
   display: flex;
@@ -100,4 +120,73 @@ body {
   height: 600px;
   background-color: transparent;
   margin-top: 0px;
+}
+
+main,
+.score-container,
+.restart-game-btn,
+.recent-games-scoreboard,
+.highscore-notice,
+.global-highscore-list {
+  backdrop-filter: blur(6px);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+    0 0 12px rgba(255, 0, 153, 0.18),
+    0 0 24px rgba(0, 195, 255, 0.12),
+    0 10px 30px rgba(0, 0, 0, 0.45);
+}
+
+.recent-games-scoreboard {
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 0;
+  overflow: hidden;
+}
+
+.scoreboard-header,
+.recent-game-item {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  text-align: center;
+}
+
+.scoreboard-header {
+  padding: 15px 0;
+  background: rgba(255, 255, 255, 0.08);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+  color: #00ccff;
+  font-size: 0.7rem;
+}
+
+#recent-games-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  overflow-y: auto;
+}
+
+.recent-game-item {
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.col-player {
+  flex: 2;
+  padding-left: 15px;
+  text-align: left;
+}
+.col-lvl {
+  flex: 1;
+  color: #ff8800;
+}
+.col-score {
+  flex: 1.2;
+  font-weight: bold;
+}
+.col-id {
+  flex: 1;
+  font-size: 0.65rem;
+  opacity: 0.4;
 }
