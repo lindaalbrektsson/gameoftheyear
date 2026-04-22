@@ -5,15 +5,19 @@ export function renderInGame (): void {
         throw new Error("Can't find main element")
     }
     main.innerHTML = "";
-    const gameboard = document.createElement("div");
-    gameboard.classList.add("gameboard");
+    const inGameContainer = document.createElement("div");
+    inGameContainer.classList.add("in-game-container");
 
     const restartLevelScoreDiv = renderRestartLevelScore();
     const timerAndLivesDiv = renderTimerAndLives();
-    const countdownDiv = renderCountdown();
+    const gameboard = document.createElement("div");
+    gameboard.classList.add("gameboard");
+    const countdown = document.createElement("p");
+    countdown.classList.add("countdown");
+    gameboard.appendChild(countdown);
     
-    gameboard.append(restartLevelScoreDiv, timerAndLivesDiv, countdownDiv);
-    main.appendChild(gameboard);
+    inGameContainer.append(restartLevelScoreDiv, timerAndLivesDiv, gameboard);
+    main.appendChild(inGameContainer);
 }
 
 function renderHeaderMenu () {
@@ -81,14 +85,6 @@ function renderTimerAndLives (): HTMLDivElement {
     return timerAndLivesDiv;
 }
 
-function renderCountdown() {
-    const countdownDiv = document.createElement("div");
-    countdownDiv.classList.add("countdown-div");
-    const countdown = document.createElement("p");
-    countdown.classList.add("countdown");
-    countdownDiv.appendChild(countdown);
-    return countdownDiv;
-}
 
 
 //VÄNTAR MED DIVARNA TILL SHAPES OCH INSTRUCTIONS. DE FÅR LÄGGAS TILL NÄR COUNTDOWN ÄR KLAR 
