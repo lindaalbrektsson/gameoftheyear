@@ -1,0 +1,46 @@
+@use "../abstracts/variables" as *;
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background:
+        radial-gradient(circle at top center, rgba(255, 0, 140, 0.16), transparent 32%),
+        radial-gradient(circle at top right, rgba(0, 204, 255, 0.10), transparent 24%),
+        radial-gradient(circle at bottom center, rgba(255, 0, 140, 0.12), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(0, 204, 255, 0.08), transparent 22%),
+        linear-gradient(180deg, $color-bg-top 0%, $color-bg-mid 45%, $color-bg-bottom 100%);
+    color: $color-text;
+    font-family: $font-body;
+    min-height: 100vh;
+}
+
+h1,
+h2,
+h3,
+.welcome-text,
+.panel-title,
+.how-to-play-title {
+    font-family: $font-heading;
+}
+
+button,
+input,
+textarea,
+select {
+    font: inherit;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+}

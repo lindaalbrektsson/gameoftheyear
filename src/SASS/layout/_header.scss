@@ -1,16 +1,60 @@
-body {
-  margin: 0;
-  padding: 0;
-}
-.headerContainer {
-  margin: 0px;
-  padding: 0px;
-  width: 100vw;
-  height: 80px;
+@use "../abstracts/variables" as *;
+@use "../abstracts/mixins" as *;
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+  width: 100%;
+  padding: 1rem 1.5rem 0;
 }
 
-.headerLogo {
-  padding: 15px;
-  width: 200px;
-  height: 50px;
+.header-logo {
+  display: block;
+  width: clamp(320px, 42vw, 700px);
+  height: auto;
+}
+
+.header-menu {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin: 0 0 0 auto;
+  padding: 0;
+  list-style: none;
+
+  li {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+}
+
+@include responsive($tablet-width) {
+  .header-container {
+    padding: 0.75rem 1rem 0;
+  }
+
+  .header-logo {
+    width: clamp(240px, 36vw, 460px);
+  }
+}
+
+@include responsive($mobile-width) {
+  .header-container {
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .header-logo {
+    width: clamp(190px, 48vw, 300px);
+  }
+
+  .header-menu {
+    gap: 0.5rem;
+    font-size: 0.95rem;
+  }
 }
