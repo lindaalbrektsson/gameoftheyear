@@ -1,19 +1,4 @@
 import "./styles.scss";
-<<<<<<< HEAD
-// import { renderStartPage } from "./modules/startPage";
-// import { renderActivePlayerStartPage } from "./modules/activePlayerStartPage";
-import { initGameFlow } from "./modules/inGame";
-
-// const activePlayer = localStorage.getItem("activePlayer");
-
-// if (activePlayer) {
-//   renderActivePlayerStartPage();
-// } else {
-//   renderStartPage();
-// }
-
-initGameFlow();
-=======
 import { renderStartPage } from "./modules/startPage";
 import { renderActivePlayerStartPage } from "./modules/activePlayerStartPage";
 import { initGameFlow } from "./modules/inGame";
@@ -126,4 +111,3 @@ export function clearHeaderMenu(): void {
 
   headerMenu.replaceChildren();
 }
->>>>>>> origin/dev

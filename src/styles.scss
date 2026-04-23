@@ -3,16 +3,6 @@
 
 @use "./SASS/base/base" as *;
 
-<<<<<<< HEAD
-@use "./SASS/components/buttons" as *;
-@use "./SASS/components/highscore" as *;
-@use "./SASS/components/shapes" as *;
-
-@use "./SASS/layout/header" as *;
-@use "./SASS/layout/footer" as *;
-
-=======
->>>>>>> origin/dev
 @use "./SASS/pages/activePlayerStart" as *;
 @use "./SASS/pages/startPage" as *;
 @use "./SASS/pages/inGame" as *;
@@ -20,6 +10,7 @@
 
 @use "./SASS/components/buttons" as *;
 @use "./SASS/components/highscore" as *;
+@use "./SASS/components/shapes" as *;
 
 @use "./SASS/layout/header" as *;
 @use "./SASS/layout/footer" as *;

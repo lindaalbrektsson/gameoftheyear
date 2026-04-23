@@ -2,65 +2,23 @@
 @use "../abstracts/variables" as *;
 
 .in-game-container {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
     width: 100%;
-    padding: 2rem 1.5rem 3rem;
-    align-self: flex-start;
+    padding: 1rem;
+    @include stack($gap: 0, $align: center);
 }
 
-.game-top-bar {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items: start;
-    position: relative;
+.restart-level-score-div {
     width: 100%;
-}
-
-.restart-level-score {
-    grid-column: 1 / 4;
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    width: 100%;
 }
-
-.restart-btn,
-.end-game-btn {
-    min-width: 10rem;
-}
-
-.level-and-score {
+.level-and-score-div {
     display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-left: auto;
-}
-
-.level-and-score p,
-.timer,
-.lives {
-    margin: 0;
-}
-
-.timer-and-lives {
-    grid-column: 2;
-    grid-row: 1;
-    display: flex;
-    align-items: center;
-    justify-self: center;
-    align-self: start;
     gap: 1rem;
 }
 
-.active-player-info {
-    color: $color-text;
-}
-
-.gameboard {
+.timer-and-lives-div {
     display: flex;
-<<<<<<< HEAD
     gap: 1rem;
     justify-content: center;
     align-items: flex-end;
@@ -87,65 +45,3 @@
     gap: 1rem;
     width: calc((50px + 0.5rem)*9)
 }
-=======
-    justify-content: center;
-    align-items: center;
-    min-height: 300px;
-    width: 100%;
-}
-
-.countdown {
-    margin: 0;
-    color: $color-heading;
-    font-family: $font-heading;
-    font-size: clamp(5rem, 12vw, 9.5rem);
-    line-height: 1;
-}
-
-@include responsive($tablet-width) {
-    .game-top-bar {
-        grid-template-columns: 1fr;
-        gap: $space-md;
-    }
-
-    .restart-level-score {
-        grid-column: 1;
-        flex-direction: column;
-        gap: $space-md;
-        align-items: stretch;
-    }
-
-    .level-and-score {
-        margin-left: 0;
-        justify-content: space-between;
-    }
-
-    .timer-and-lives {
-        grid-column: 1;
-        grid-row: auto;
-        justify-self: stretch;
-        justify-content: space-between;
-    }
-}
-
-@include responsive($mobile-width) {
-    .in-game-container {
-        padding: 1.5rem 1rem 2rem;
-    }
-
-    .level-and-score {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: $space-sm;
-    }
-
-    .restart-btn,
-    .end-game-btn {
-        min-width: 100%;
-    }
-
-    .countdown {
-        font-size: clamp(4rem, 20vw, 7rem);
-    }
-}
->>>>>>> origin/dev
