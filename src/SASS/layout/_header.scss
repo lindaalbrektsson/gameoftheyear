@@ -1,7 +1,7 @@
 @use "../abstracts/variables" as *;
 @use "../abstracts/mixins" as *;
 
-.headerContainer {
+.header-container {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
@@ -10,9 +10,9 @@
   padding: 1rem 1.5rem 0;
 }
 
-.headerLogo {
+.header-logo {
   display: block;
-  width: clamp(220px, 28vw, 420px);
+  width: clamp(320px, 42vw, 700px);
   height: auto;
 }
 
@@ -21,10 +21,10 @@
   align-items: center;
   justify-content: flex-end;
   gap: 0.75rem;
+  flex-wrap: wrap;
   margin: 0 0 0 auto;
   padding: 0;
   list-style: none;
-  flex-wrap: wrap;
 
   li {
     margin: 0;
@@ -34,23 +34,23 @@
 }
 
 @include responsive($tablet-width) {
-  .headerContainer {
+  .header-container {
     padding: 0.75rem 1rem 0;
   }
 
-  .headerLogo {
-    width: clamp(180px, 30vw, 320px);
+  .header-logo {
+    width: clamp(240px, 36vw, 460px);
   }
 }
 
 @include responsive($mobile-width) {
-  .headerContainer {
+  .header-container {
     align-items: flex-start;
     gap: 0.75rem;
   }
 
-  .headerLogo {
-    width: clamp(160px, 40vw, 240px);
+  .header-logo {
+    width: clamp(190px, 48vw, 300px);
   }
 
   .header-menu {

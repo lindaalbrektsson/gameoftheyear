@@ -1,8 +1,8 @@
 @use "./variables" as *;
 
 @mixin panel {
-    border-radius: $radius-lg;
     border: 2px solid $color-panel-border;
+    border-radius: $radius-lg;
     background: $color-panel;
     backdrop-filter: blur(6px);
     box-shadow: $shadow-panel;
@@ -19,8 +19,8 @@
 
 @mixin panel-content {
     @include panel;
-    padding: $space-md $space-md 1.2rem;
     height: 100%;
+    padding: $space-md $space-md 1.2rem;
 }
 
 @mixin title-style($size) {
@@ -42,28 +42,49 @@
 }
 
 @mixin button-base {
-    @include panel;
-    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+    padding: 0.75rem 1.25rem;
+    border: 2px solid $color-panel-border;
+    border-radius: $radius-md;
+
+    background: linear-gradient(135deg,
+            rgba(255, 76, 145, 0.22),
+            rgba(0, 195, 255, 0.18));
+
+    color: $color-heading;
+
     font: inherit;
     font-weight: 700;
-    color: $color-white;
+    line-height: 1;
     cursor: pointer;
+
+    box-shadow:
+        0 0 12px rgba(255, 76, 145, 0.25),
+        0 0 20px rgba(0, 195, 255, 0.18),
+        $shadow-button;
+
+    backdrop-filter: blur(4px);
+
     transition:
+        background $transition-normal,
+        border-color $transition-normal,
         transform $transition-normal,
         box-shadow $transition-normal,
-        border-color $transition-normal,
-        background $transition-normal,
         filter $transition-normal;
 }
 
 @mixin neon-button($bg1, $bg2, $glow1, $glow2, $border) {
     @include button-base;
     background: linear-gradient(135deg, $bg1, $bg2);
+    border-color: $border;
+    color: $color-white;
     box-shadow:
         0 0 14px $glow1,
         0 0 28px $glow2,
         $shadow-button;
-    border-color: $border;
 }
 
 @mixin hover-lift {
@@ -79,14 +100,14 @@
 
 @mixin flex-center {
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
 }
 
 @mixin flex-between($align: center) {
     display: flex;
-    justify-content: space-between;
     align-items: $align;
+    justify-content: space-between;
 }
 
 @mixin stack($gap: 1rem, $align: stretch) {

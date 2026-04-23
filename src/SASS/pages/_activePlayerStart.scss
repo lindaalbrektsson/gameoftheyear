@@ -10,6 +10,8 @@
   min-height: 70vh;
   max-width: $container-width;
   margin: $space-md auto 0;
+  padding: $space-2xl $space-xl;
+  box-sizing: border-box;
 }
 
 .left-section,
@@ -32,14 +34,22 @@
   height: 100%;
 }
 
+.welcome-player {
+  @include panel-centered;
+}
+
 .button-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: $space-md;
 }
 
-.welcome-player {
-  @include panel-centered;
+.active-player-start-page .game-btn {
+  font-size: 1.15rem;
+}
+
+.how-to-play-panel .how-to-play-list {
+  margin-top: $space-sm;
 }
 
 @include responsive($tablet-width) {
@@ -63,6 +73,13 @@
     grid-template-columns: 1fr;
   }
 
+  .active-player-start-page .button-row .start-game-btn,
+  .active-player-start-page .button-row .change-player-btn,
+  .active-player-start-page .how-to-play-btn {
+    width: 100%;
+    min-width: 0;
+  }
+
   .how-to-play-btn {
     order: 3;
   }
@@ -82,7 +99,7 @@
 
   .player-score-row,
   .player-score-row.score-header {
-    grid-template-columns: 1.05fr 0.6fr 0.6fr 0.55fr;
+    grid-template-columns: minmax(0, 1fr) 4.6rem 4.6rem 2rem;
     gap: 0.55rem;
   }
 }
@@ -97,7 +114,7 @@
     gap: $space-md;
   }
 
-  .active-player-start-page .game-button {
+  .active-player-start-page .game-btn {
     min-height: 4rem;
     padding: 0.9rem 1rem;
     font-size: 1.05rem;
@@ -105,7 +122,7 @@
 
   .player-score-row,
   .player-score-row.score-header {
-    grid-template-columns: 0.9fr 0.55fr 0.55fr 0.55fr;
+    grid-template-columns: 0.9fr 0.55fr 0.55fr 0.34fr;
     gap: 0.4rem;
     font-size: 0.92rem;
   }
