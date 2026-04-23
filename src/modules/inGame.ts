@@ -9,7 +9,7 @@ export function initGameFlow () {
 }
 
 //Deklarerar dessa variabler för att kunna använda dem i funktioner 
-let activePlayerInfo: HTMLLIElement;
+// let activePlayerInfo: HTMLLIElement;
 let gameboard: HTMLDivElement;
 let shapesDiv: HTMLDivElement;
 let levelCounter: HTMLSpanElement;
