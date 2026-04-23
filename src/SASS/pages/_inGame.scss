@@ -9,7 +9,9 @@ header {
         list-style: none;
     }
 }
-.gameboard {
+.in-game-container {
+    width: 100%;
+    align-self: flex-start;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -30,4 +32,8 @@ header {
     display: flex;
     gap: 1rem;
     align-items: flex-end;
+}
+
+.countdown {
+    font-size: 150px;
 }
