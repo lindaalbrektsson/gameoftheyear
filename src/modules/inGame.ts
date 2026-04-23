@@ -102,7 +102,6 @@ function renderRestartLevelScore (): HTMLDivElement {
 function renderTimerAndLives (): HTMLDivElement {
     const timerAndLivesDiv = document.createElement("div");
     timerAndLivesDiv.classList.add("timer-and-lives-div")
-    
     timer = document.createElement("p");
     timer.classList.add("timer");
     lives = document.createElement("p");
@@ -141,7 +140,7 @@ export function updateUI () {
     // activePlayerInfo.textContent = state.activePlayer;
     levelCounter.textContent = state.level.toString();
     scoreCounter.textContent = state.score.toString();
-    // timer.textContent = Skriv kod för timer
+    timer.textContent = "00:00"
     lives.textContent = "❤️".repeat(state.lives);
 }
 
@@ -165,5 +164,9 @@ shapes.forEach(shape => {
     const shapeItem = document.createElement("div");
     shapeItem.classList.add(`${shape.type}`, "shape-item")
     shapesDiv.appendChild(shapeItem);
+
+    shapeItem.addEventListener("click", () => {
+        shapeItem.classList.add("correct");
+    })
 });
 }

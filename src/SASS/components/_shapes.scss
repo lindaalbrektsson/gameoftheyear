@@ -3,27 +3,42 @@
     height: 0;
     border-left: 25px solid transparent;
     border-right: 25px solid transparent;
-    border-bottom: 50px solid red;
+    border-bottom: 50px solid rgb(196, 100, 100);
 }
 
 .square {
     width: 50px;
     height: 50px;
-    background-color: blue;
+    background-color: rgb(77, 77, 182);
 }
 
 .circle {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background-color: green;
+    background-color: rgb(88, 160, 88);
 }
 .star {
-  --star-color: gold;
   clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-  background-color: var(--star-color);
+  background-color: rgb(211, 179, 92);
   width: 50px;
   height: 50px;
 }
 
+.shape-item:hover {
+    cursor: pointer;
+    transform: translateY(-2px);
+    filter: brightness(1.3);
+}
+
+.correct {
+  animation: correct 0.6s ease forwards;
+  filter: brightness(0.4); 
+}
+
+@keyframes correct {
+  0% { transform: scale(1.4); brightness:(1.4); }
+  100% { transform: scale(1); }
+}
+/*Ta bort färger, lägg in de i variabler och importera till ts och sätt shapeItem.background-color där*/
 
