@@ -1,20 +1,20 @@
 .triangle {
     width: 0;
     height: 0;
-    border-left: 20px solid transparent;
-    border-right: 20px solid transparent;
-    border-bottom: 40px solid red;
+    border-left: 25px solid transparent;
+    border-right: 25px solid transparent;
+    border-bottom: 50px solid red;
 }
 
 .square {
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
     background-color: blue;
 }
 
 .circle {
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     background-color: green;
 }
@@ -22,8 +22,8 @@
   --star-color: gold;
   clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
   background-color: var(--star-color);
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
 }
 
 

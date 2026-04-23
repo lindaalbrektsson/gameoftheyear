@@ -125,7 +125,7 @@ export function startCountdown() {
 
         if (counter === 0){
             clearInterval(countdownIntervalId);
-            startGame();
+            setTimeout(() => startGame(), 1000);
         }
     }, 1000)
 }
@@ -145,9 +145,7 @@ export function updateUI () {
     lives.textContent = "❤️".repeat(state.lives);
 }
 
-
-    
-export function startGame() {
+function startGame() {
     changeGameboard();
     renderShapes();
 }
@@ -165,7 +163,7 @@ async function renderShapes () {
 
 shapes.forEach(shape => {
     const shapeItem = document.createElement("div");
-    shapeItem.classList.add(`${shape.type}`, `${shape.color}`)
+    shapeItem.classList.add(`${shape.type}`, "shape-item")
     shapesDiv.appendChild(shapeItem);
 });
 }

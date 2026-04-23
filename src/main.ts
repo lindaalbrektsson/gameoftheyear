@@ -1,11 +1,14 @@
 import "./styles.scss";
 // import { renderStartPage } from "./modules/startPage";
 // import { renderActivePlayerStartPage } from "./modules/activePlayerStartPage";
+import { initGameFlow } from "./modules/inGame";
 
 // const activePlayer = localStorage.getItem("activePlayer");
 
-if (activePlayer) {
-  renderActivePlayerStartPage();
-} else {
-  renderStartPage();
-}
+// if (activePlayer) {
+//   renderActivePlayerStartPage();
+// } else {
+//   renderStartPage();
+// }
+
+initGameFlow();
