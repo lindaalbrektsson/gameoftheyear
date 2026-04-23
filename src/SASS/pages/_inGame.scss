@@ -1,7 +1,24 @@
+<<<<<<< HEAD
 @use "../abstracts/mixins" as *;
 @use "../abstracts/variables" as *;
 
 .gameboard {
+=======
+header {
+    display: flex;
+    justify-content: space-between;
+}
+.header-menu {
+    display: flex;
+    gap: 1rem;
+    li {
+        list-style: none;
+    }
+}
+.in-game-container {
+    width: 100%;
+    align-self: flex-start;
+>>>>>>> dev
     display: flex;
     flex-direction: column;
     gap: 2rem;
@@ -63,6 +80,7 @@
     justify-content: center;
     align-items: center;
     gap: 1rem;
+<<<<<<< HEAD
     width: 100%;
 }
 
@@ -72,4 +90,11 @@
     align-items: center;
     min-height: 300px;
     width: 100%;
+=======
+    align-items: flex-end;
+}
+
+.countdown {
+    font-size: 150px;
+>>>>>>> dev
 }
