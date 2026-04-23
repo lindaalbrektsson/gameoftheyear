@@ -1,192 +1,167 @@
-body {
-  background:
-    radial-gradient(
-      circle at top center,
-      rgba(255, 0, 140, 0.16),
-      transparent 32%
-    ),
-    radial-gradient(
-      circle at top right,
-      rgba(0, 204, 255, 0.1),
-      transparent 24%
-    ),
-    radial-gradient(
-      circle at bottom center,
-      rgba(255, 0, 140, 0.12),
-      transparent 28%
-    ),
-    radial-gradient(
-      circle at bottom right,
-      rgba(0, 204, 255, 0.08),
-      transparent 22%
-    ),
-    linear-gradient(180deg, #12061d 0%, #0a0f1f 45%, #05070f 100%);
-  color: #fdf6ff;
-  font-family: Arial, Helvetica, sans-serif;
-  min-height: 100vh;
-}
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
 
 main {
   display: flex;
-  flex-direction: row;
   justify-content: center;
   align-items: flex-start;
-  gap: 600px;
+  gap: 6rem;
+  flex-wrap: wrap;
+  padding: $space-2xl $space-xl;
 }
 
 .column {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
+  gap: $space-lg;
+}
+
+.score-container,
+.recent-games-scoreboard,
+.global-high-score-list {
+  @include panel-content;
+  width: min(100%, 28rem);
 }
 
 .score-container {
-  font-weight: 700;
-  font-size: 0.9rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 2px solid white;
-  border-radius: 15px;
-  width: 300px;
-  height: 70px;
-  background-color: transparent;
-  margin-top: 250px;
+  min-height: 8rem;
+  display: grid;
+  place-items: center;
+  text-align: center;
+}
+
+.recent-games-scoreboard,
+.global-high-score-list {
+  text-align: left;
 }
 
 .restart-game-btn {
-  font-family: monospace;
-  font-weight: 700;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 150px;
-  height: 35px;
-  border-radius: 5px;
-  border: 2px solid white;
-  background-color: transparent;
-  color: white;
-  cursor: pointer;
-  transition: 0.3s ease;
+  min-width: 16rem;
 }
 
-.restart-game-btn:hover {
-  transform: scale(1.05);
-  background-color: rgb(255, 136, 0);
-  color: black;
-  border-color: rgb(255, 136, 0);
-}
-
-.recent-games-scoreboard {
-  font-weight: 700;
-  font-size: 1.1rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 2px solid white;
-  border-radius: 35px;
-  width: 300px;
-  height: 500px;
-  background-color: transparent;
-}
-
-.highscore-notice {
-  font-weight: 700;
-  font-size: 0.9rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 2px solid rgb(255, 136, 0);
-  background-color: rgb(255, 136, 0);
-  color: black;
-  border-radius: 10px;
-  padding: 10px 20px;
-  margin-bottom: -75px;
+.high-score-notice {
+  @include flex-center;
   z-index: 1;
-  margin-top: 280px;
-}
-
-.global-highscore-list {
+  margin-top: 1rem;
+  margin-bottom: -0.5rem;
+  padding: 0.65rem 1.25rem;
+  border: 2px solid $color-yellow;
+  border-radius: $radius-md;
+  background: linear-gradient(135deg, $color-yellow, $color-yellow-soft);
+  color: $color-black;
+  font-size: 0.9rem;
   font-weight: 700;
-  font-size: 1.1rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   text-align: center;
-  border: 2px solid white;
-  border-radius: 40px;
-  width: 400px;
-  height: 600px;
-  background-color: transparent;
-  margin-top: 0px;
+  box-shadow:
+    0 0 12px rgba(255, 230, 109, 0.24),
+    0 10px 24px rgba(0, 0, 0, 0.28);
 }
 
-main,
-.score-container,
-.restart-game-btn,
-.recent-games-scoreboard,
-.highscore-notice,
-.global-highscore-list {
-  backdrop-filter: blur(6px);
+.panel-title {
+  @include section-title(1.15rem);
+  margin: 0;
+}
+
+.panel-subtitle {
+  margin: 0.35rem 0 0;
+  color: $color-text-soft;
+}
+
+.highscore-value {
+  margin: $space-sm 0 0;
+  color: $color-heading;
+  font-family: $font-heading;
+  font-size: 2rem;
+  line-height: 1.1;
+}
+
+.score-table {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: $space-md;
+}
+
+.score-row {
+  display: grid;
+  grid-template-columns: 1fr 0.7fr 0.7fr;
+  gap: 0.65rem;
+  align-items: center;
+}
+
+.score-header {
+  color: $color-text-soft;
+  font-weight: 700;
+}
+
+.score-cell {
+  min-width: 0;
+}
+
+.score-name {
+  color: $color-text;
+}
+
+.score-level,
+.score-points {
+  color: $color-text-soft;
+  text-align: right;
+}
+
+.gold-rank {
   box-shadow:
     0 0 0 1px rgba(255, 255, 255, 0.06) inset,
-    0 0 12px rgba(255, 0, 153, 0.18),
-    0 0 24px rgba(0, 195, 255, 0.12),
-    0 10px 30px rgba(0, 0, 0, 0.45);
+    0 0 12px rgba(255, 230, 109, 0.18);
 }
 
-.recent-games-scoreboard {
-  flex-direction: column;
-  justify-content: flex-start;
-  padding: 0;
-  overflow: hidden;
+.silver-rank {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+    0 0 12px rgba(223, 232, 255, 0.16);
 }
 
-.scoreboard-header,
-.recent-game-item {
-  display: flex;
-  width: 100%;
-  align-items: center;
-  text-align: center;
+.bronze-rank {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+    0 0 12px rgba(255, 76, 145, 0.14);
 }
 
-.scoreboard-header {
-  padding: 15px 0;
-  background: rgba(255, 255, 255, 0.08);
-  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
-  color: #00ccff;
-  font-size: 0.7rem;
+@include responsive($tablet-width) {
+  .main {
+    gap: $space-2xl;
+    padding: $space-xl $space-md;
+  }
+
+  .high-score-notice {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
 }
 
-#recent-games-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  width: 100%;
-  overflow-y: auto;
-}
+@include responsive($mobile-width) {
+  .main {
+    gap: $space-xl;
+    padding: $space-lg $space-md;
+  }
 
-.recent-game-item {
-  padding: 12px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
+  .column {
+    width: 100%;
+  }
 
-.col-player {
-  flex: 2;
-  padding-left: 15px;
-  text-align: left;
-}
-.col-lvl {
-  flex: 1;
-  color: #ff8800;
-}
-.col-score {
-  flex: 1.2;
-  font-weight: bold;
-}
-.col-id {
-  flex: 1;
-  font-size: 0.65rem;
-  opacity: 0.4;
+  .score-container,
+  .recent-games-scoreboard,
+  .global-high-score-list {
+    width: 100%;
+  }
+
+  .restart-game-btn {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .score-row {
+    grid-template-columns: 1fr 0.6fr 0.6fr;
+    gap: 0.45rem;
+    font-size: 0.92rem;
+  }
 }

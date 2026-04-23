@@ -1,24 +1,32 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script type="module" src="/src/main.ts"></script>
-    <script src="https://kit.fontawesome.com/ef6a8a4dba.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="/dist/styles.css" />
-    <script type="module" src="./src/main.ts"></script>
-    <title>TileTracker</title>
-  </head>
-  <body>
-    <header class="headerContainer">
-      <img
-        src="./src/assets/logocropped.png"
-        alt="Tile Tracker"
-        class="headerLogo"
-      />
-      <ul class="header-menu"></ul>
-    </header>
-    <main></main>
-    <footer></footer>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script type="module" src="/src/main.ts"></script>
+  <script src="https://kit.fontawesome.com/ef6a8a4dba.js" crossorigin="anonymous"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&display=swap" rel="stylesheet">
+  <title>TileTracker</title>
+</head>
+
+<body>
+  <header class="header-container">
+    <img src="./src/assets/logocropped.png" alt="Tile Tracker" class="header-logo" />
+    <ul class="header-menu"></ul>
+  </header>
+
+  <nav class="dev-view-nav" aria-label="Temporary page preview">
+    <button class="dev-view-btn" data-view="start" type="button">Start page</button>
+    <button class="dev-view-btn" data-view="active-player" type="button">Active player</button>
+    <button class="dev-view-btn" data-view="in-game" type="button">In game</button>
+    <button class="dev-view-btn" data-view="game-over" type="button">Game over</button>
+  </nav>
+
+  <main></main>
+  <footer></footer>
+</body>
+
 </html>

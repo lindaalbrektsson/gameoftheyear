@@ -1,151 +1,210 @@
 const mainContainer = document.querySelector("main");
-let currentScore: string | number = "#####";
-const activePlayer: string = "PlayerOne";
+let currentScore = "#####";
+// temporär currentscore bara för att visa något, vi får hämta in från data när den väl finns
 
-interface IRecentGame {
-  gameId: string;
+type RecentGame = {
   playerName: string;
-  score: number;
-  gameDate: string;
   level: number;
-}
+  score: number;
+};
 
-// temporary array to display recent players games
-const recentGames: IRecentGame[] = [
-  {
-    gameId: "G-101",
-    playerName: activePlayer,
-    score: 2500,
-    gameDate: "2026-04-20",
-    level: 10,
-  },
-  {
-    gameId: "G-102",
-    playerName: activePlayer,
-    score: 3100,
-    gameDate: "2026-04-21",
-    level: 12,
-  },
-  {
-    gameId: "G-103",
-    playerName: activePlayer,
-    score: 1800,
-    gameDate: "2026-04-22",
-    level: 8,
-  },
-  {
-    gameId: "G-104",
-    playerName: activePlayer,
-    score: 1850,
-    gameDate: "2026-04-23",
-    level: 8,
-  },
-  {
-    gameId: "G-105",
-    playerName: activePlayer,
-    score: 1770,
-    gameDate: "2026-04-23",
-    level: 7,
-  },
-  {
-    gameId: "G-106",
-    playerName: activePlayer,
-    score: 1560,
-    gameDate: "2026-04-23",
-    level: 6,
-  },
-];
+type GlobalHighscoreEntry = {
+  playerName: string;
+  level: number;
+  score: number;
+};
 
-export async function renderGameOver() {
-  if (!mainContainer) return;
+export async function renderGameOver(): Promise<void> {
+  if (!mainContainer) {
+    return;
+  }
 
-  // empty
-  mainContainer.innerHTML = "";
+  const headerMenu = document.querySelector(".header-menu");
+  headerMenu?.replaceChildren();
 
-  // left and right columns
+  mainContainer.replaceChildren();
+  mainContainer.className = "main";
+
+  const recentGames: RecentGame[] = [
+    { playerName: "PlayerOne", level: 5, score: 80 },
+    { playerName: "PlayerOne", level: 4, score: 70 },
+    { playerName: "PlayerOne", level: 3, score: 60 },
+    { playerName: "PlayerOne", level: 2, score: 50 },
+  ];
+
+  const globalHighscoreEntries: GlobalHighscoreEntry[] = [
+    { playerName: "Player1", level: 10, score: 1000 },
+    { playerName: "Player2", level: 9, score: 900 },
+    { playerName: "Player3", level: 8, score: 800 },
+    { playerName: "Player4", level: 7, score: 700 },
+    { playerName: "Player5", level: 6, score: 600 },
+  ];
+
   const leftColumn = document.createElement("div");
   leftColumn.className = "column";
 
   const rightColumn = document.createElement("div");
   rightColumn.className = "column";
 
-  // left column elements
-
-  // Score container
-  const scoreContainer = document.createElement("div");
+  const scoreContainer = document.createElement("section");
   scoreContainer.className = "score-container";
-  scoreContainer.textContent = "YOUR SCORE THIS ROUND: " + currentScore;
 
-  // Restart game button
+  const scoreTitle = document.createElement("h2");
+  scoreTitle.className = "panel-title";
+  scoreTitle.textContent = "Your Score This Round";
+
+  const scoreValue = document.createElement("p");
+  scoreValue.className = "highscore-value";
+  scoreValue.textContent = `${currentScore} points`;
+
+  scoreContainer.append(scoreTitle, scoreValue);
+
   const restartGameBtn = document.createElement("button");
-  restartGameBtn.className = "restart-game-btn";
-  restartGameBtn.textContent = "RESTART GAME";
+  restartGameBtn.className = "game-btn restart-game-btn";
+  restartGameBtn.type = "button";
+  restartGameBtn.textContent = "Restart Game";
 
-  restartGameBtn.addEventListener("click", function (evt) {
-    evt.preventDefault();
-    console.log("restart game button pressed");
-    // här kallar vi på countdown när den finns
-    // här kallar vi på initGame funktion när countdown slår 0
-  });
-
-  // Your recent games/history
-  const recentGamesScoreboard = document.createElement("div");
+  const recentGamesScoreboard = document.createElement("section");
   recentGamesScoreboard.className = "recent-games-scoreboard";
 
-  // mini-header inside recentgamesscoreboard for categories player, lvl, score & game-id
-  const tableHeader = document.createElement("div");
-  tableHeader.className = "scoreboard-header";
-  tableHeader.innerHTML = `
-    <span class="col-player"><i class="fa-solid fa-user"></i> PLAYER</span>
-    <span class="col-lvl"><i class="fa-solid fa-layer-group"></i> LVL</span>
-    <span class="col-score"><i class="fa-solid fa-star"></i> SCORE</span>
-    <span class="col-id"><i class="fa-solid fa-hashtag"></i> ID</span>
-  `;
-  recentGamesScoreboard.appendChild(tableHeader);
+  const recentGamesTitle = document.createElement("h2");
+  recentGamesTitle.className = "panel-title";
+  recentGamesTitle.textContent = "Your Recent Games";
 
-  // ul for history of played games
-  const gameListContainer = document.createElement("ul");
-  gameListContainer.id = "recent-games-list";
+  const recentGamesSubtitle = document.createElement("p");
+  recentGamesSubtitle.className = "panel-subtitle";
+  recentGamesSubtitle.textContent = "Latest scores";
 
-  // loop through each recentgame and create li
-  recentGames.forEach((game) => {
-    const li = document.createElement("li");
-    li.className = "recent-game-item";
+  const recentGamesTable = createRecentGamesTable(recentGames);
 
-    li.innerHTML = `
-      <span class="col-player">${game.playerName}</span>
-      <span class="col-lvl">${game.level}</span>
-      <span class="col-score">${game.score}</span>
-      <span class="col-id">${game.gameId}</span>
-    `;
+  recentGamesScoreboard.append(
+    recentGamesTitle,
+    recentGamesSubtitle,
+    recentGamesTable,
+  );
 
-    gameListContainer.appendChild(li);
+  leftColumn.append(scoreContainer, restartGameBtn, recentGamesScoreboard);
+
+  const highScoreNotice = document.createElement("div");
+  highScoreNotice.className = "high-score-notice";
+  highScoreNotice.textContent = "You made it to the highscore list!";
+
+  const globalHighScoreList = document.createElement("section");
+  globalHighScoreList.className = "global-high-score-list";
+
+  const globalHighScoreTitle = document.createElement("h2");
+  globalHighScoreTitle.className = "panel-title";
+  globalHighScoreTitle.textContent = "Global Highscore";
+
+  const globalHighScoreTable = createGlobalHighscoreTable(
+    globalHighscoreEntries,
+  );
+
+  globalHighScoreList.append(globalHighScoreTitle, globalHighScoreTable);
+
+  rightColumn.append(highScoreNotice, globalHighScoreList);
+
+  mainContainer.append(leftColumn, rightColumn);
+}
+
+function createRecentGamesTable(rows: RecentGame[]): HTMLElement {
+  const scoreTable = document.createElement("div");
+  scoreTable.className = "score-table";
+
+  const headerRow = document.createElement("div");
+  headerRow.className = "score-row score-header";
+
+  const nameHeader = document.createElement("span");
+  nameHeader.className = "score-cell score-name";
+  nameHeader.textContent = "Name";
+
+  const levelHeader = document.createElement("span");
+  levelHeader.className = "score-cell score-level";
+  levelHeader.textContent = "Level";
+
+  const scoreHeader = document.createElement("span");
+  scoreHeader.className = "score-cell score-points";
+  scoreHeader.textContent = "Points";
+
+  headerRow.append(nameHeader, levelHeader, scoreHeader);
+  scoreTable.append(headerRow);
+
+  rows.forEach((row) => {
+    const scoreRow = document.createElement("div");
+    scoreRow.className = "score-row";
+
+    const name = document.createElement("span");
+    name.className = "score-cell score-name";
+    name.textContent = row.playerName;
+
+    const level = document.createElement("span");
+    level.className = "score-cell score-level";
+    level.textContent = String(row.level);
+
+    const score = document.createElement("span");
+    score.className = "score-cell score-points";
+    score.textContent = String(row.score);
+
+    scoreRow.append(name, level, score);
+    scoreTable.append(scoreRow);
   });
 
-  recentGamesScoreboard.appendChild(gameListContainer);
+  return scoreTable;
+}
 
-  // Appendchild to the left column
-  leftColumn.appendChild(scoreContainer);
-  leftColumn.appendChild(restartGameBtn);
-  leftColumn.appendChild(recentGamesScoreboard);
+function createGlobalHighscoreTable(rows: GlobalHighscoreEntry[]): HTMLElement {
+  const scoreTable = document.createElement("div");
+  scoreTable.className = "score-table";
 
-  // right column elements
+  const headerRow = document.createElement("div");
+  headerRow.className = "score-row score-header";
 
-  // highscore
-  const highScoreNotice = document.createElement("div");
-  highScoreNotice.className = "highscore-notice";
-  highScoreNotice.textContent = "YOU MADE IT TO THE HIGHSCORE LIST!";
+  const nameHeader = document.createElement("span");
+  nameHeader.className = "score-cell score-name";
+  nameHeader.textContent = "Name";
 
-  // Global HighScore list top 10
-  const globalHighScoreList = document.createElement("div");
-  globalHighScoreList.className = "global-highscore-list";
-  globalHighScoreList.textContent = "HIGHSCORE LIST: TOP 10";
+  const levelHeader = document.createElement("span");
+  levelHeader.className = "score-cell score-level";
+  levelHeader.textContent = "Level";
 
-  // Append items to the right column
-  rightColumn.appendChild(highScoreNotice);
-  rightColumn.appendChild(globalHighScoreList);
+  const scoreHeader = document.createElement("span");
+  scoreHeader.className = "score-cell score-points";
+  scoreHeader.textContent = "Points";
 
-  // Append both colummns to main
-  mainContainer.appendChild(leftColumn);
-  mainContainer.appendChild(rightColumn);
+  headerRow.append(nameHeader, levelHeader, scoreHeader);
+  scoreTable.append(headerRow);
+
+  rows.forEach((row, index) => {
+    const scoreRow = document.createElement("div");
+    scoreRow.className = "score-row";
+
+    const name = document.createElement("span");
+    name.className = "score-cell score-name";
+
+    if (index === 0) {
+      name.textContent = `🥇 ${row.playerName}`;
+      scoreRow.classList.add("gold-rank");
+    } else if (index === 1) {
+      name.textContent = `🥈 ${row.playerName}`;
+      scoreRow.classList.add("silver-rank");
+    } else if (index === 2) {
+      name.textContent = `🥉 ${row.playerName}`;
+      scoreRow.classList.add("bronze-rank");
+    } else {
+      name.textContent = row.playerName;
+    }
+
+    const level = document.createElement("span");
+    level.className = "score-cell score-level";
+    level.textContent = String(row.level);
+
+    const score = document.createElement("span");
+    score.className = "score-cell score-points";
+    score.textContent = String(row.score);
+
+    scoreRow.append(name, level, score);
+    scoreTable.append(scoreRow);
+  });
+
+  return scoreTable;
 }
