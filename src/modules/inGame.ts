@@ -1,27 +1,49 @@
-export function renderInGame (): void {
+import { getShapes } from "./API/shapes";
+
+//Denna kan köras från startsidorna och endgame
+export function initGameFlow () {
+    resetGame();
+    renderInGame();
+    updateUI();
+    startCountdown();
+}
+
+//Deklarerar dessa variabler för att kunna använda dem i funktioner 
+let activePlayerInfo: HTMLLIElement;
+let gameboard: HTMLDivElement;
+let shapesDiv: HTMLDivElement;
+let levelCounter: HTMLSpanElement;
+let scoreCounter: HTMLSpanElement;
+let timer: HTMLParagraphElement;
+let lives: HTMLParagraphElement;
+
+//Denna bör ligga i en egen modul (som hanterar data) och importeras dit man behöver dem. 
+// Vi kan fylla på med fler variabler om vi behöver. detta hänger med och uppdateras under spelet.
+//Vi får fundera på vad "spelomgångstimern" ska stå på när countdown körs. 00:00 eller rätt antal sekunder.
+export const state = {
+    // activePlayer: kanske kan vara en funktion som hämtar namnet från localstorage? eller sätts det på något annat sätt
+    level: 1,
+    score: 0,
+    timeLeft: 0,
+    lives: 3
+};
+
+export function renderInGame () {
     renderHeaderMenu();
     const main = document.querySelector("main");
     if (!main) {
         throw new Error("Can't find main element")
     }
     main.innerHTML = "";
-    const gameboard = document.createElement("div");
-    gameboard.classList.add("gameboard");
+    const inGameContainer = document.createElement("div");
+    inGameContainer.classList.add("in-game-container");
 
     const restartLevelScoreDiv = renderRestartLevelScore();
     const timerAndLivesDiv = renderTimerAndLives();
-
-    //Skapar bara tomma behållare för shape och instruction. I renderfunktion för shape och instruction skapar vi div för shape och typ p för instruction och lägger till i denna behållare
-    const shapeAndInstructionDiv = document.createElement("div");
-    shapeAndInstructionDiv.classList.add("shape-and-instruction-div");
-    
-    //Shapes-diven är också bara tom, men vid rendering av shapes läggs de i denna
-    const shapesDiv = document.createElement("div");
-    shapesDiv.classList.add("shapes-div");
-    
-    gameboard.append(restartLevelScoreDiv, timerAndLivesDiv, shapeAndInstructionDiv, shapesDiv);
-    main.appendChild(gameboard);
-
+    gameboard = document.createElement("div");
+    gameboard.classList.add("gameboard");
+    inGameContainer.append(restartLevelScoreDiv, timerAndLivesDiv, gameboard);
+    main.appendChild(inGameContainer);
 }
 
 function renderHeaderMenu () {
@@ -41,34 +63,35 @@ function renderHeaderMenu () {
     
     endGameLi.appendChild(endGameBtn);
     headerMenu.append(activePlayerInfo, endGameLi);
-
 }
 
 function renderRestartLevelScore (): HTMLDivElement {
     const restartLevelScoreDiv = document.createElement("div");
     restartLevelScoreDiv.classList.add("restart-level-score-div");
-
     const restartBtn = document.createElement("button");
-    restartBtn.classList.add("restartBtn");
+    restartBtn.classList.add("restart-btn");
     const restartIcon = document.createElement("i");
     restartIcon.classList.add("fa-solid", "fa-arrow-rotate-left");
     restartBtn.textContent = "Restart ";
     restartBtn.appendChild(restartIcon);
+    restartBtn.addEventListener("click", () => {
+        resetGame();
+        updateUI();
+        startCountdown();
+    })
 
     const levelAndScoreDiv = document.createElement("div");
     levelAndScoreDiv.classList.add("level-and-score-div")
     const level = document.createElement("p");
     level.textContent = "Level: "
-    const levelCounter = document.createElement("span");
+    levelCounter = document.createElement("span");
     levelCounter.classList.add("level-counter");
-    levelCounter.textContent = "1";
     level.appendChild(levelCounter);
 
     const score = document.createElement("p");
     score.textContent = "Score: ";
-    const scoreCounter = document.createElement("span");
+    scoreCounter = document.createElement("span");
     scoreCounter.classList.add("score-counter");
-    scoreCounter.textContent = "0";
     score.appendChild(scoreCounter);
 
     levelAndScoreDiv.append(level, score);
@@ -79,14 +102,70 @@ function renderRestartLevelScore (): HTMLDivElement {
 function renderTimerAndLives (): HTMLDivElement {
     const timerAndLivesDiv = document.createElement("div");
     timerAndLivesDiv.classList.add("timer-and-lives-div")
-    const timer = document.createElement("p");
+    
+    timer = document.createElement("p");
     timer.classList.add("timer");
-    timer.textContent = "00:00"; // Vi kommer behöva lägga in någon funktion här för nedräkningen som uppdaterar denna text
-    const lives = document.createElement("p");
+    lives = document.createElement("p");
     lives.classList.add("lives");
-    lives.textContent = "❤️❤️❤️";
     timerAndLivesDiv.append(timer, lives);
     return timerAndLivesDiv;
 }
 
+export function startCountdown() {
+    const countdown = document.createElement("p");
+    countdown.classList.add("countdown");
+    gameboard.innerHTML = "";
+    gameboard.appendChild(countdown);
 
+    let counter = 5;
+
+    const countdownIntervalId = setInterval(() => {
+        countdown.textContent = counter.toString();
+        counter--;
+
+        if (counter === 0){
+            clearInterval(countdownIntervalId);
+            startGame();
+        }
+    }, 1000)
+}
+
+function resetGame() {
+    state.level = 1;
+    state.score = 0;
+    state.timeLeft = 0;
+    state.lives = 3;
+}
+
+export function updateUI () {
+    // activePlayerInfo.textContent = state.activePlayer;
+    levelCounter.textContent = state.level.toString();
+    scoreCounter.textContent = state.score.toString();
+    // timer.textContent = Skriv kod för timer
+    lives.textContent = "❤️".repeat(state.lives);
+}
+
+
+    
+export function startGame() {
+    changeGameboard();
+    renderShapes();
+}
+
+function changeGameboard () {
+      gameboard.innerHTML ="";
+      const shapeAndInstructionDiv = document.createElement("div");
+    shapeAndInstructionDiv.classList.add("shape-and-instruction-div");
+        shapesDiv = document.createElement("div");
+    shapesDiv.classList.add("shapes-div");
+    gameboard.append(shapeAndInstructionDiv, shapesDiv)
+}
+async function renderShapes () {
+    const shapes = await getShapes();
+
+shapes.forEach(shape => {
+    const shapeItem = document.createElement("div");
+    shapeItem.classList.add(`${shape.type}`, `${shape.color}`)
+    shapesDiv.appendChild(shapeItem);
+});
+}
