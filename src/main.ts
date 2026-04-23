@@ -4,14 +4,8 @@ import "./styles.scss";
 
 // const activePlayer = localStorage.getItem("activePlayer");
 
-// if (activePlayer) {
-//   renderActivePlayerStartPage();
-// } else {
-//   renderStartPage();
-// }
-
-import { renderInGame, updateUI, startGame } from "./modules/inGame";
-
-renderInGame();
-updateUI();
-startGame();
+if (activePlayer) {
+  renderActivePlayerStartPage();
+} else {
+  renderStartPage();
+}
