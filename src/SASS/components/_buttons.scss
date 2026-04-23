@@ -1,0 +1,67 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+
+.game-button {
+    @include button-base;
+    @include hover-lift;
+    height: 100%;
+}
+
+.start-game-btn {
+    @include neon-button(rgba(0, 220, 140, 0.95),
+        rgba(90, 255, 180, 0.88),
+        rgba(0, 255, 163, 0.35),
+        rgba(0, 255, 163, 0.18),
+        rgba(180, 255, 220, 0.7));
+}
+
+.change-player-btn {
+    @include neon-button(rgba(255, 76, 145, 0.95),
+        rgba(255, 145, 194, 0.88),
+        rgba(255, 76, 145, 0.35),
+        rgba(255, 76, 145, 0.2),
+        rgba(255, 191, 220, 0.7));
+}
+
+.how-to-play-btn,
+.restart-game-btn {
+    @include neon-button(rgba(132, 79, 255, 0.95),
+        rgba(196, 123, 255, 0.85),
+        rgba(170, 114, 255, 0.34),
+        rgba(170, 114, 255, 0.18),
+        rgba(222, 194, 255, 0.65));
+}
+
+.start-game-btn {
+    width: 80%;
+    padding: 1rem;
+    border-radius: $radius-lg;
+    font-size: 1.2rem;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+
+    &:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+        filter: grayscale(0.4);
+        box-shadow:
+            0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+            0 8px 18px rgba(0, 0, 0, 0.3);
+    }
+
+    &:not(:disabled):hover {
+        transform: translateY(-3px) scale(1.01);
+        filter: brightness(1.06);
+    }
+
+    &:not(:disabled):active {
+        transform: translateY(0) scale(0.99);
+    }
+}
+
+.restart-game-btn {
+    width: 150px;
+    min-height: 35px;
+    border-radius: $radius-md;
+    font-family: $font-mono;
+}

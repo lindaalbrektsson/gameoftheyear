@@ -61,7 +61,7 @@ export function renderStartPage(): void {
   playerForm.appendChild(playerNameInput);
 
   const startGameBtn = document.createElement("button");
-  startGameBtn.classList.add("start-game-button");
+  startGameBtn.classList.add("start-game-btn");
   startGameBtn.textContent = "Start Game";
 
   startGameBtn.addEventListener("click", () => {

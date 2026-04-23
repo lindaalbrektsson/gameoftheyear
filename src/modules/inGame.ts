@@ -1,47 +1,53 @@
 export function renderInGame (): void {
     renderHeaderMenu();
+
     const main = document.querySelector("main");
     if (!main) {
-        throw new Error("Can't find main element")
+        throw new Error("Can't find main element");
     }
+
     main.innerHTML = "";
+
     const gameboard = document.createElement("div");
     gameboard.classList.add("gameboard");
+
+    const gameTopBar = document.createElement("div");
+    gameTopBar.classList.add("game-top-bar");
 
     const restartLevelScoreDiv = renderRestartLevelScore();
     const timerAndLivesDiv = renderTimerAndLives();
 
-    //Skapar bara tomma behållare för shape och instruction. I renderfunktion för shape och instruction skapar vi div för shape och typ p för instruction och lägger till i denna behållare
     const shapeAndInstructionDiv = document.createElement("div");
     shapeAndInstructionDiv.classList.add("shape-and-instruction-div");
-    
-    //Shapes-diven är också bara tom, men vid rendering av shapes läggs de i denna
+
     const shapesDiv = document.createElement("div");
     shapesDiv.classList.add("shapes-div");
-    
-    gameboard.append(restartLevelScoreDiv, timerAndLivesDiv, shapeAndInstructionDiv, shapesDiv);
+
+    gameTopBar.append(restartLevelScoreDiv, timerAndLivesDiv);
+    gameboard.append(gameTopBar, shapeAndInstructionDiv, shapesDiv);
     main.appendChild(gameboard);
-
 }
-
-function renderHeaderMenu () {
+function renderHeaderMenu() {
     const headerMenu = document.querySelector(".header-menu");
-    headerMenu?.classList.add("header-menu");
     if (!headerMenu) {
-        throw new Error("Can't find UL in header")
+        throw new Error("Can't find UL in header");
     }
+
+    headerMenu.innerHTML = "";
+
     const activePlayerInfo = document.createElement("li");
-    activePlayerInfo.textContent = `Playing as: ` //Lägg till spelarens namn, hämta från local storage? db?
+    activePlayerInfo.textContent = `Playing as: `;
+
     const endGameLi = document.createElement("li");
     const endGameBtn = document.createElement("button");
     const homepageIcon = document.createElement("i");
+
     homepageIcon.classList.add("fa-regular", "fa-house");
-    endGameBtn.textContent = "End Game "
+    endGameBtn.textContent = "End Game ";
     endGameBtn.appendChild(homepageIcon);
-    
+
     endGameLi.appendChild(endGameBtn);
     headerMenu.append(activePlayerInfo, endGameLi);
-
 }
 
 function renderRestartLevelScore (): HTMLDivElement {

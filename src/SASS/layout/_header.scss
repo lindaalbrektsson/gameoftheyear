@@ -1,16 +1,60 @@
-body {
-  margin: 0;
-  padding: 0;
-}
+@use "../abstracts/variables" as *;
+@use "../abstracts/mixins" as *;
+
 .headerContainer {
-  margin: 0px;
-  padding: 0px;
-  width: 100vw;
-  height: 80px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+  width: 100%;
+  padding: 1rem 1.5rem 0;
 }
 
 .headerLogo {
-  padding: 15px;
-  width: 200px;
-  height: 50px;
+  display: block;
+  width: clamp(220px, 28vw, 420px);
+  height: auto;
+}
+
+.header-menu {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin: 0 0 0 auto;
+  padding: 0;
+  list-style: none;
+  flex-wrap: wrap;
+
+  li {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+}
+
+@include responsive($tablet-width) {
+  .headerContainer {
+    padding: 0.75rem 1rem 0;
+  }
+
+  .headerLogo {
+    width: clamp(180px, 30vw, 320px);
+  }
+}
+
+@include responsive($mobile-width) {
+  .headerContainer {
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .headerLogo {
+    width: clamp(160px, 40vw, 240px);
+  }
+
+  .header-menu {
+    gap: 0.5rem;
+    font-size: 0.95rem;
+  }
 }
