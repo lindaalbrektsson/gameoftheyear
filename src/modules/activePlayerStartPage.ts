@@ -1,4 +1,4 @@
-import { renderInGame } from "./inGame";
+import { initGameFlow } from "./inGame";
 import { renderStartPage } from "./startPage";
 
 type Player = {
@@ -22,6 +22,8 @@ type GlobalHighscoreEntry = {
 
 export function renderActivePlayerStartPage(): void {
   const main = document.querySelector("main");
+  const headerMenu = document.querySelector(".header-menu");
+  headerMenu?.replaceChildren();
 
   if (!main) {
     throw new Error("Could not find main element");
@@ -92,23 +94,19 @@ export function renderActivePlayerStartPage(): void {
       gameDate: "2026-04-19",
       score: 60,
       level: 3,
-      playerId: activePlayer.id
+      playerId: activePlayer.id,
     },
     {
       id: "g7",
       gameDate: "2026-04-19",
       score: 60,
       level: 3,
-      playerId: activePlayer.id
-    }
+      playerId: activePlayer.id,
+    },
   ];
 
-  // Filtrerar fram aktiv spelares games
-  // TODO: Använd riktig data från json när games finns
   const playerGames = games.filter((game) => game.playerId === activePlayer.id);
 
-  // Räknar fram spelarens highscore från games
-  // TODO: Behåll denna logik när riktig data används
   const playerHighscoreValue =
     playerGames.length > 0
       ? Math.max(...playerGames.map((game) => game.score))
@@ -133,13 +131,13 @@ export function renderActivePlayerStartPage(): void {
   const leftSection = document.createElement("section");
   leftSection.classList.add("left-section");
 
-  const playerHighscore = createPlayerHighscore(playerHighscoreValue);
+  const playerHighscoreSection = createPlayerHighscore(playerHighscoreValue);
 
   const bottomPanelContainer = document.createElement("div");
   bottomPanelContainer.classList.add("bottom-panel-container");
 
   const howToPlayBtn = document.createElement("button");
-  howToPlayBtn.classList.add("game-button", "how-to-play-btn");
+  howToPlayBtn.classList.add("game-btn", "how-to-play-btn");
   howToPlayBtn.type = "button";
   howToPlayBtn.textContent = "How to play";
 
@@ -170,7 +168,7 @@ export function renderActivePlayerStartPage(): void {
 
   showPlayerGameHistory();
 
-  leftSection.append(playerHighscore, bottomPanelContainer);
+  leftSection.append(playerHighscoreSection, bottomPanelContainer);
 
   const rightSection = createRightSection(
     activePlayer.playerName,
@@ -183,8 +181,8 @@ export function renderActivePlayerStartPage(): void {
 }
 
 function createPlayerHighscore(highscoreValue: number): HTMLElement {
-  const playerHighscore = document.createElement("section");
-  playerHighscore.classList.add("player-highscore");
+  const playerHighscoreSection = document.createElement("section");
+  playerHighscoreSection.classList.add("player-highscore");
 
   const highscoreTitle = document.createElement("h2");
   highscoreTitle.classList.add("panel-title");
@@ -194,9 +192,9 @@ function createPlayerHighscore(highscoreValue: number): HTMLElement {
   highscoreText.classList.add("highscore-value");
   highscoreText.textContent = `${highscoreValue} points`;
 
-  playerHighscore.append(highscoreTitle, highscoreText);
+  playerHighscoreSection.append(highscoreTitle, highscoreText);
 
-  return playerHighscore;
+  return playerHighscoreSection;
 }
 
 function createPlayerGameHistorySection(playerGames: Game[]): HTMLElement {
@@ -323,12 +321,12 @@ function createDeleteConfirmation(
   buttonsWrapper.classList.add("delete-confirmation-buttons");
 
   const confirmBtn = document.createElement("button");
-  confirmBtn.classList.add("confirm-delete-btn");
+  confirmBtn.classList.add("game-btn", "confirm-delete-btn");
   confirmBtn.type = "button";
   confirmBtn.textContent = "Yes";
 
   const cancelBtn = document.createElement("button");
-  cancelBtn.classList.add("cancel-delete-btn");
+  cancelBtn.classList.add("game-btn", "cancel-delete-btn");
   cancelBtn.type = "button";
   cancelBtn.textContent = "No";
 
@@ -390,15 +388,15 @@ function createRightSection(
   const rightSection = document.createElement("section");
   rightSection.classList.add("right-section");
 
-  const welcomePlayer = createWelcomePlayer(activePlayerName);
+  const welcomePlayerSection = createWelcomePlayer(activePlayerName);
   const buttonRow = createButtonRow(activePlayerName);
-  const globalHighscore = createGlobalHighscore(globalHighscoreEntries);
+  const globalHighscoreSection = createGlobalHighscore(globalHighscoreEntries);
 
   rightSection.append(
-    welcomePlayer,
+    welcomePlayerSection,
     buttonRow,
     howToPlayBtn,
-    globalHighscore
+    globalHighscoreSection
   );
 
   return rightSection;
@@ -422,16 +420,16 @@ function createButtonRow(activePlayerName: string): HTMLElement {
   buttonRow.classList.add("button-row");
 
   const startGameBtn = document.createElement("button");
-  startGameBtn.classList.add("game-button", "start-game-btn");
+  startGameBtn.classList.add("game-btn", "start-game-btn");
   startGameBtn.type = "button";
   startGameBtn.textContent = "Start Game";
   startGameBtn.addEventListener("click", () => {
     localStorage.setItem("activePlayer", activePlayerName);
-    renderInGame();
+    initGameFlow();
   });
 
   const changePlayerBtn = document.createElement("button");
-  changePlayerBtn.classList.add("game-button", "change-player-btn");
+  changePlayerBtn.classList.add("game-btn", "change-player-btn");
   changePlayerBtn.type = "button";
   changePlayerBtn.textContent = "Change Player";
   changePlayerBtn.addEventListener("click", () => {
@@ -447,8 +445,8 @@ function createButtonRow(activePlayerName: string): HTMLElement {
 function createGlobalHighscore(
   globalHighscoreEntries: GlobalHighscoreEntry[]
 ): HTMLElement {
-  const globalHighscore = document.createElement("section");
-  globalHighscore.classList.add("global-highscore");
+  const globalHighscoreSection = document.createElement("section");
+  globalHighscoreSection.classList.add("global-highscore");
 
   const sectionTitle = document.createElement("h2");
   sectionTitle.classList.add("panel-title");
@@ -457,9 +455,9 @@ function createGlobalHighscore(
   const topFive = globalHighscoreEntries.slice(0, 5);
   const globalHighscoreTable = createGlobalHighscoreTable(topFive);
 
-  globalHighscore.append(sectionTitle, globalHighscoreTable);
+  globalHighscoreSection.append(sectionTitle, globalHighscoreTable);
 
-  return globalHighscore;
+  return globalHighscoreSection;
 }
 
 function createGlobalHighscoreTable(

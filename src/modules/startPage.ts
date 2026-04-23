@@ -1,4 +1,4 @@
-import { renderInGame } from "./inGame";
+import { initGameFlow } from "./inGame";
 
 type Player = {
   id: string;
@@ -7,6 +7,8 @@ type Player = {
 
 export function renderStartPage(): void {
   const main = document.querySelector("main");
+  const headerMenu = document.querySelector(".header-menu");
+  headerMenu?.replaceChildren();
 
   if (!main) {
     throw new Error("Could not find main element");
@@ -23,8 +25,8 @@ export function renderStartPage(): void {
   const startPage = document.createElement("div");
   startPage.classList.add("start-page");
 
-  const howToPlay = document.createElement("section");
-  howToPlay.classList.add("how-to-play");
+  const howToPlaySection = document.createElement("section");
+  howToPlaySection.classList.add("how-to-play");
 
   const howToPlayTitle = document.createElement("h2");
   howToPlayTitle.classList.add("how-to-play-title");
@@ -35,10 +37,12 @@ export function renderStartPage(): void {
 
   const steps = [
     "Enter your name and start a new game",
-    "Match the correct tiles based on the given rule",
-    "Each correct move gives you points",
+    "Click on the correct tiles based on the given rule",
+    "Complete the round before the timer runs out",
+    "You have three lives, so avoid mistakes to keep playing",
+    "Each succesful round gives you score",
+    "A failed round costs you a life and decreases your score",
     "Advance through levels as difficulty increases",
-    "Avoid mistakes to keep your score high",
     "Try to beat your previous highscore",
     "Compete for a spot on the global leaderboard",
   ];
@@ -49,20 +53,19 @@ export function renderStartPage(): void {
     howToPlayList.appendChild(listItem);
   });
 
-  howToPlay.appendChild(howToPlayTitle);
-  howToPlay.appendChild(howToPlayList);
+  howToPlaySection.appendChild(howToPlayTitle);
+  howToPlaySection.appendChild(howToPlayList);
 
-  const playerForm = document.createElement("section");
-  playerForm.classList.add("player-form");
+  const playerFormSection = document.createElement("section");
+  playerFormSection.classList.add("player-form");
 
   const playerNameInput = document.createElement("input");
   playerNameInput.type = "text";
   playerNameInput.classList.add("player-name-input");
   playerNameInput.placeholder = "Enter your name";
-  playerForm.appendChild(playerNameInput);
 
   const startGameBtn = document.createElement("button");
-  startGameBtn.classList.add("start-game-button");
+  startGameBtn.classList.add("game-btn", "start-game-btn");
   startGameBtn.type = "button";
   startGameBtn.textContent = "Start Game";
   startGameBtn.disabled = true;
@@ -88,7 +91,7 @@ export function renderStartPage(): void {
         existingPlayer.playerName,
         () => {
           localStorage.setItem("activePlayer", existingPlayer.playerName);
-          renderInGame();
+          initGameFlow();
         },
         () => {
           playerNameInput.value = "";
@@ -106,6 +109,8 @@ export function renderStartPage(): void {
     console.log("Created player from API", createdPlayer);
 
     localStorage.setItem("activePlayer", createdPlayer.playerName);
+    localStorage.setItem("activePlayer", playerName);
+    initGameFlow();
   });
 
   playerNameInput.addEventListener("input", updateStartButtonState);
@@ -116,10 +121,11 @@ export function renderStartPage(): void {
     }
   });
 
-  playerForm.appendChild(startGameBtn);
+  playerFormSection.appendChild(playerNameInput);
+  playerFormSection.appendChild(startGameBtn);
 
-  startPage.appendChild(howToPlay);
-  startPage.appendChild(playerForm);
+  startPage.appendChild(howToPlaySection);
+  startPage.appendChild(playerFormSection);
 
   main.replaceChildren(startPage);
 }
@@ -136,9 +142,11 @@ function showExistingPlayerPopup(
   popup.classList.add("existing-player-popup");
 
   const popupTitle = document.createElement("h2");
+  popupTitle.classList.add("existing-player-popup-title");
   popupTitle.textContent = "Player Already Exists";
 
   const popupText = document.createElement("p");
+  popupText.classList.add("existing-player-popup-text");
   popupText.textContent = `The user "${playerName}" already exists. Do you want to continue playing as this user?`;
 
   const btnWrapper = document.createElement("div");
@@ -146,12 +154,12 @@ function showExistingPlayerPopup(
 
   const continueBtn = document.createElement("button");
   continueBtn.type = "button";
-  continueBtn.classList.add("existing-player-popup-btn");
+  continueBtn.classList.add("game-btn", "existing-player-popup-btn");
   continueBtn.textContent = "Yes";
 
   const createNewBtn = document.createElement("button");
   createNewBtn.type = "button";
-  createNewBtn.classList.add("existing-player-popup-btn");
+  createNewBtn.classList.add("game-btn", "existing-player-popup-btn");
   createNewBtn.textContent = "No";
 
   btnWrapper.appendChild(continueBtn);
