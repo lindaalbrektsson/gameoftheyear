@@ -1,28 +1,30 @@
+/*Ta bort färger, lägg in de i variabler och importera till ts och sätt shapeItem.background-color där (borderbottomcolor för triangel*/
+
 .triangle {
     width: 0;
     height: 0;
-    border-left: 25px solid transparent;
-    border-right: 25px solid transparent;
-    border-bottom: 50px solid rgb(196, 100, 100);
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-bottom: 40px solid rgb(196, 100, 100);
 }
 
 .square {
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
     background-color: rgb(77, 77, 182);
 }
 
 .circle {
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     background-color: rgb(88, 160, 88);
 }
 .star {
   clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
   background-color: rgb(211, 179, 92);
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
 }
 
 .shape-item:hover {
@@ -57,5 +59,23 @@
   50% { transform: translateX(-3px); } 
   100% { transform: translateX(0); }
 }
-/*Ta bort färger, lägg in de i variabler och importera till ts och sätt shapeItem.background-color där*/
 
+@media (max-width: 470px) {
+  .triangle {
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-bottom: 30px solid rgb(196, 100, 100);
+  }
+  .square {
+    width: 30px;
+    height: 30px;
+  }
+  .circle {
+    width: 30px;
+    height: 30px;
+  }
+  .star {
+    width: 30px;
+    height: 30px;
+  }
+}

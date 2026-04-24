@@ -40,8 +40,10 @@ export function renderInGame () {
 
     const restartLevelScoreDiv = renderRestartLevelScore();
     const timerAndLivesDiv = renderTimerAndLives();
+    
     gameboard = document.createElement("div");
     gameboard.classList.add("gameboard");
+    
     inGameContainer.append(restartLevelScoreDiv, timerAndLivesDiv, gameboard);
     main.appendChild(inGameContainer);
 }
@@ -54,8 +56,10 @@ function renderHeaderMenu () {
     }
     const activePlayerInfo = document.createElement("li");
     activePlayerInfo.textContent = `Playing as: ` //Lägg till spelarens namn, hämta från local storage? db?
+    
     const endGameLi = document.createElement("li");
     const endGameBtn = document.createElement("button");
+    endGameBtn.classList.add("end-game-btn");
     const homepageIcon = document.createElement("i");
     homepageIcon.classList.add("fa-regular", "fa-house");
     endGameBtn.textContent = "End Game "
@@ -124,7 +128,10 @@ export function startCountdown() {
 
         if (counter === 0){
             clearInterval(countdownIntervalId);
-            setTimeout(() => startGame(), 1000);
+            setTimeout(() => {
+                changeGameboard();
+                startNewRound()}
+                , 1000);
         }
     }, 1000)
 }
@@ -144,18 +151,18 @@ export function updateUI () {
     lives.textContent = "❤️".repeat(state.lives);
 }
 
-function startGame() {
-    changeGameboard();
+function startNewRound() {
+    renderInstruction();
     renderShapes();
 }
 
 function changeGameboard () {
-      gameboard.innerHTML ="";
-      const shapeAndInstructionDiv = document.createElement("div");
+    gameboard.innerHTML ="";
+    const shapeAndInstructionDiv = document.createElement("div");
     shapeAndInstructionDiv.classList.add("shape-and-instruction-div");
-        shapesDiv = document.createElement("div");
+    shapesDiv = document.createElement("div");
     shapesDiv.classList.add("shapes-div");
-    gameboard.append(shapeAndInstructionDiv, shapesDiv)
+    gameboard.append(shapeAndInstructionDiv, shapesDiv);
 }
 async function renderShapes () {
     const shapes = await getShapes();
@@ -170,3 +177,14 @@ shapes.forEach(shape => {
     })
 });
 }
+
+function renderInstruction () {
+const shapeAndInstructionDiv = document.querySelector(".shape-and-instruction-div") as HTMLDivElement;
+
+const instruction = document.createElement("p");
+instruction.classList.add("instruction");
+instruction.textContent = "Blå";
+const shape = document.createElement("div");
+shape.classList.add("triangle");
+shapeAndInstructionDiv.append(shape, instruction);
+};
