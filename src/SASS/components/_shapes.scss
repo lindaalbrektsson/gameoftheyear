@@ -46,5 +46,16 @@
     filter: brightness(0.3); 
   }
 }
+
+.incorrect {
+  animation: incorrect 0.3s;
+}
+
+@keyframes incorrect {
+  0% { transform: translateX(-3px); }
+  25% { transform: translateX(3px); }
+  50% { transform: translateX(-3px); } 
+  100% { transform: translateX(0); }
+}
 /*Ta bort färger, lägg in de i variabler och importera till ts och sätt shapeItem.background-color där*/
 

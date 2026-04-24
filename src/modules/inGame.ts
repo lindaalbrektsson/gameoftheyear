@@ -166,7 +166,7 @@ shapes.forEach(shape => {
     shapesDiv.appendChild(shapeItem);
 
     shapeItem.addEventListener("click", () => {
-        shapeItem.classList.add("correct");
+        shapeItem.classList.add("incorrect");
     })
 });
 }
