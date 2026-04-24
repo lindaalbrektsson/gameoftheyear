@@ -14,7 +14,7 @@ let gameboard: HTMLDivElement;
 let shapesDiv: HTMLDivElement;
 let levelCounter: HTMLSpanElement;
 let scoreCounter: HTMLSpanElement;
-let timer: HTMLParagraphElement;
+let timer: HTMLSpanElement;
 let lives: HTMLParagraphElement;
 
 //Denna bör ligga i en egen modul (som hanterar data) och importeras dit man behöver dem. 
@@ -55,6 +55,7 @@ function renderHeaderMenu () {
         throw new Error("Can't find UL in header")
     }
     const activePlayerInfo = document.createElement("li");
+    activePlayerInfo.classList.add("active-player-info");
     activePlayerInfo.textContent = `Playing as: ` //Lägg till spelarens namn, hämta från local storage? db?
     
     const endGameLi = document.createElement("li");
@@ -62,7 +63,7 @@ function renderHeaderMenu () {
     endGameBtn.classList.add("end-game-btn");
     const homepageIcon = document.createElement("i");
     homepageIcon.classList.add("fa-regular", "fa-house");
-    endGameBtn.textContent = "End Game "
+    endGameBtn.textContent = "End Game";
     endGameBtn.appendChild(homepageIcon);
     
     endGameLi.appendChild(endGameBtn);
@@ -106,16 +107,20 @@ function renderRestartLevelScore (): HTMLDivElement {
 function renderTimerAndLives (): HTMLDivElement {
     const timerAndLivesDiv = document.createElement("div");
     timerAndLivesDiv.classList.add("timer-and-lives-div")
-    timer = document.createElement("p");
+    const timeLeft = document.createElement("p");
+    timer = document.createElement("span");
     timer.classList.add("timer");
+    timeLeft.textContent = "Time left: "
+    timeLeft.appendChild(timer)
     lives = document.createElement("p");
     lives.classList.add("lives");
-    timerAndLivesDiv.append(timer, lives);
+    timerAndLivesDiv.append(timeLeft, lives);
     return timerAndLivesDiv;
 }
 
 export function startCountdown() {
     const countdown = document.createElement("p");
+    countdown.classList.add("pulse");
     countdown.classList.add("countdown");
     gameboard.innerHTML = "";
     gameboard.appendChild(countdown);
@@ -139,7 +144,7 @@ export function startCountdown() {
 function resetGame() {
     state.level = 1;
     state.score = 0;
-    state.timeLeft = 0;
+    state.timeLeft = 30;
     state.lives = 3;
 }
 
@@ -147,13 +152,17 @@ export function updateUI () {
     // activePlayerInfo.textContent = state.activePlayer;
     levelCounter.textContent = state.level.toString();
     scoreCounter.textContent = state.score.toString();
-    timer.textContent = "00:00"
+    timer.textContent = state.timeLeft.toString();
     lives.textContent = "❤️".repeat(state.lives);
 }
 
 function startNewRound() {
+    resetAnimationClasses();
+    //Funktioner för att hämta instruktioner och shapes
+    gameboard.classList.add("fade-in");
     renderInstruction();
     renderShapes();
+    //Kolla var och när man ska ta bort fade-in klassen?
 }
 
 function changeGameboard () {
@@ -163,6 +172,7 @@ function changeGameboard () {
     shapesDiv = document.createElement("div");
     shapesDiv.classList.add("shapes-div");
     gameboard.append(shapeAndInstructionDiv, shapesDiv);
+    
 }
 async function renderShapes () {
     const shapes = await getShapes();
@@ -174,6 +184,9 @@ shapes.forEach(shape => {
 
     shapeItem.addEventListener("click", () => {
         shapeItem.classList.add("incorrect");
+        state.level++;
+        
+        updateLevelUI();
     })
 });
 }
@@ -188,3 +201,13 @@ const shape = document.createElement("div");
 shape.classList.add("triangle");
 shapeAndInstructionDiv.append(shape, instruction);
 };
+
+function updateLevelUI () {
+    levelCounter.textContent = state.level.toString();
+    levelCounter.classList.add("jump");
+}
+
+function resetAnimationClasses() {
+    levelCounter.classList.remove("jump");
+    scoreCounter.classList.remove("jump");
+}
