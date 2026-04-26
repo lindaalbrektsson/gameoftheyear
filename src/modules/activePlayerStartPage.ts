@@ -24,6 +24,8 @@ type GlobalHighscoreEntry = {
   score: number;
 };
 
+const ACTIVE_PLAYER_NOT_FOUND_ERROR = "ACTIVE_PLAYER_NOT_FOUND";
+
 export async function renderActivePlayerStartPage(): Promise<void> {
   const main = document.querySelector("main");
   const headerMenu = document.querySelector(".header-menu");
@@ -36,7 +38,12 @@ export async function renderActivePlayerStartPage(): Promise<void> {
   const activePlayerName = localStorage.getItem("activePlayer");
 
   if (!activePlayerName) {
-    throw new Error("No active player found");
+    renderMissingPlayerState(
+      main,
+      "No active player selected",
+      "Choose a player from the start page to view the dashboard."
+    );
+    return;
   }
 
   main.replaceChildren(
@@ -55,6 +62,19 @@ export async function renderActivePlayerStartPage(): Promise<void> {
     );
   } catch (error) {
     console.error("Failed to load active player start page", error);
+
+    if (
+      error instanceof Error &&
+      error.message === ACTIVE_PLAYER_NOT_FOUND_ERROR
+    ) {
+      renderMissingPlayerState(
+        main,
+        `Could not find "${activePlayerName}"`,
+        "Go back to the start page and choose or create a player there."
+      );
+      return;
+    }
+
     renderLoadError(main);
   }
 }
@@ -65,21 +85,13 @@ async function loadDashboardData(activePlayerName: string): Promise<{
   globalHighscoreEntries: GlobalHighscoreEntry[];
 }> {
   const [players, games] = await Promise.all([fetchPlayers(), fetchGames()]);
-  const activePlayer = await ensureActivePlayer(players, activePlayerName);
-  const playersWithActivePlayer = players.some(
-    (player) => String(player.id) === String(activePlayer.id)
-  )
-    ? players
-    : [...players, activePlayer];
+  const activePlayer = getActivePlayer(players, activePlayerName);
 
   const playerGames = sortGamesByNewest(
     games.filter((game) => String(game.playerId) === String(activePlayer.id))
   );
 
-  const globalHighscoreEntries = buildGlobalHighscoreEntries(
-    playersWithActivePlayer,
-    games
-  );
+  const globalHighscoreEntries = buildGlobalHighscoreEntries(players, games);
 
   return {
     activePlayer,
@@ -96,10 +108,10 @@ async function fetchGames(): Promise<Game[]> {
   return fetchJson<Game[]>("/games");
 }
 
-async function ensureActivePlayer(
+function getActivePlayer(
   players: Player[],
   activePlayerName: string
-): Promise<Player> {
+): Player {
   const existingPlayer = players.find(
     (player) =>
       player.playerName.toLowerCase() === activePlayerName.toLowerCase()
@@ -110,21 +122,7 @@ async function ensureActivePlayer(
     return existingPlayer;
   }
 
-  try {
-    const createdPlayer = await fetchJson<Player>("/players", {
-      method: "POST",
-      body: JSON.stringify({ playerName: activePlayerName }),
-    });
-
-    localStorage.setItem("activePlayer", createdPlayer.playerName);
-    return createdPlayer;
-  } catch (error) {
-    console.warn("Could not persist active player, using local fallback.", error);
-    return {
-      id: `local-${activePlayerName.toLowerCase()}`,
-      playerName: activePlayerName,
-    };
-  }
+  throw new Error(ACTIVE_PLAYER_NOT_FOUND_ERROR);
 }
 
 async function deleteGame(gameId: EntityId): Promise<void> {
@@ -262,6 +260,36 @@ function renderLoadError(main: Element): void {
   main.replaceChildren(errorPanel);
 }
 
+function renderMissingPlayerState(
+  main: Element,
+  titleText: string,
+  bodyText: string
+): void {
+  const statePanel = createStatusPanel(titleText, bodyText);
+  const actions = document.createElement("div");
+
+  const goToStartPageBtn = document.createElement("button");
+  goToStartPageBtn.classList.add("game-btn");
+  goToStartPageBtn.type = "button";
+  goToStartPageBtn.textContent = "Go to Start Page";
+  goToStartPageBtn.addEventListener("click", () => {
+    localStorage.removeItem("activePlayer");
+    renderStartPage();
+  });
+
+  const retryBtn = document.createElement("button");
+  retryBtn.classList.add("game-btn");
+  retryBtn.type = "button";
+  retryBtn.textContent = "Retry";
+  retryBtn.addEventListener("click", () => {
+    void renderActivePlayerStartPage();
+  });
+
+  actions.append(goToStartPageBtn, retryBtn);
+  statePanel.append(actions);
+  main.replaceChildren(statePanel);
+}
+
 function createStatusPanel(titleText: string, bodyText: string): HTMLElement {
   const panel = document.createElement("section");
   panel.classList.add("active-player-start-page");
@@ -316,7 +344,8 @@ function createPlayerGameHistorySection(
   if (playerGames.length === 0) {
     const emptyState = document.createElement("p");
     emptyState.classList.add("panel-subtitle");
-    emptyState.textContent = "No games saved yet.";
+    emptyState.textContent =
+      "No saved games yet. Finished games will appear here once the game flow stores them.";
     playerGameHistorySection.append(emptyState);
     return playerGameHistorySection;
   }
@@ -587,7 +616,8 @@ function createGlobalHighscore(
   if (topFive.length === 0) {
     const emptyState = document.createElement("p");
     emptyState.classList.add("panel-subtitle");
-    emptyState.textContent = "No highscores yet.";
+    emptyState.textContent =
+      "No highscores yet. Saved games from all players will appear here.";
     globalHighscoreSection.append(sectionTitle, emptyState);
     return globalHighscoreSection;
   }
