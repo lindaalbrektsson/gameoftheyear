@@ -14,22 +14,18 @@
 
 .restart-level-score-div {
     width: 100%;
-    @include flex-between($align: flex-end);
+    @include flex-between($align: center);
 }
 .level-and-score-div {
     display: flex;
     gap: 2rem;
     font-size: 1.5rem;
     font-family: $font-heading;
-    // p {
-    //     margin: 0;
-    // }
 }
 
 .timer-and-lives-div {
     display: flex;
     gap: 1rem;
-    justify-content: center;
     align-items: flex-end;
     height: 81px;
     font-size: 1.5rem;
@@ -37,15 +33,15 @@
         font-family: $font-heading;
         width: 120px;
     }
-}
-
-.lives {
+    .lives {
     width: 100px;
+    text-align: right;
+}
 }
 
 .gameboard {
     @include stack($gap: $space-md, $align: center);
-    justify-content: flex-start;
+    // justify-content: flex-start;
 }
 
 .countdown {
@@ -77,14 +73,32 @@
     width: calc((40px + $space-md)*7);
 }
 
-.jump {
-    animation: jump 0.6s ease-out;
+.jump-score {
+    animation: jump-score 0.9s ease-out;
     display: inline-block;
 }
 
-@keyframes jump {
+@keyframes jump-score {
     0% { transform: scale(0.8); }
-    50%{transform: scale(1.3); color: $color-yellow-light; text-shadow: 1px 1px 3px white;}
+    50% { 
+        transform: scale(1.4); 
+        color: $color-yellow; 
+        text-shadow: 1px 1px 3px white; 
+    }
+    100% { transform: scale(1); }
+}
+
+.jump-level {
+    animation: jump-level 0.6s ease-out;
+    display: inline-block;
+}
+
+@keyframes jump-level {
+    0% { transform: scale(0.7); }
+    50% {
+        transform: scale(1.1); 
+        color: $color-green; 
+    }
     100% { transform: scale(1); }
 }
 
@@ -95,17 +109,15 @@
 
 @keyframes pulse {
     0% { transform: scale(1.2); }
-    // 50%{transform: scale(1.2); }
     100% { transform: scale(1); }
 }
 
 .fade-in {
-    animation: fade-in 0.4s ease;
+    animation: fade-in 0.7s ease-in;
 }
 
 @keyframes fade-in {
     0% { filter: brightness(0);}
-    50% { filter: brightness(0.7); }
     100% { filter: brightness(1); }
 }
 @media (max-width: 470px) {

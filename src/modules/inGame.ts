@@ -2,7 +2,7 @@ import { getShapes } from "./API/shapes";
 
 //Denna kan köras från startsidorna och endgame
 export function initGameFlow () {
-    resetGame();
+    resetState();
     renderInGame();
     updateUI();
     startCountdown();
@@ -11,6 +11,7 @@ export function initGameFlow () {
 //Deklarerar dessa variabler för att kunna använda dem i funktioner 
 // let activePlayerInfo: HTMLLIElement;
 let gameboard: HTMLDivElement;
+let shapeAndInstructionDiv: HTMLDivElement;
 let shapesDiv: HTMLDivElement;
 let levelCounter: HTMLSpanElement;
 let scoreCounter: HTMLSpanElement;
@@ -19,10 +20,8 @@ let lives: HTMLParagraphElement;
 
 //Denna bör ligga i en egen modul (som hanterar data) och importeras dit man behöver dem. 
 // Vi kan fylla på med fler variabler om vi behöver. detta hänger med och uppdateras under spelet.
-//Vi får fundera på vad "spelomgångstimern" ska stå på när countdown körs. 00:00 eller rätt antal sekunder.
 export const state = {
-    // activePlayer: kanske kan vara en funktion som hämtar namnet från localstorage? eller sätts det på något annat sätt
-    //activePlayerId? 
+    //Vi får fundera på om activeplayer ska ligga här eller om vi sätter en global funktion för hämtning av spelare+id
     level: 1,
     score: 0,
     timeLeft: 0,
@@ -82,7 +81,7 @@ function renderRestartLevelScore (): HTMLDivElement {
     restartBtn.textContent = "Restart";
     restartBtn.appendChild(restartIcon);
     restartBtn.addEventListener("click", () => {
-        resetGame();
+        resetState();
         updateUI();
         startCountdown();
     })
@@ -137,13 +136,13 @@ export function startCountdown() {
             clearInterval(countdownIntervalId);
             setTimeout(() => {
                 changeGameboard();
-                startNewRound()}
-                , 1000);
+                startNewRound();
+            }, 1000);
         }
     }, 1000)
 }
 
-function resetGame() {
+function resetState() {
     state.level = 1;
     state.score = 0;
     state.timeLeft = 30;
@@ -151,66 +150,83 @@ function resetGame() {
     state.difficultyLevel = 1;
 }
 
-export function updateUI () {
+function startNewRound() {
+    resetForNextRound();
+    //Funktioner för att hämta instruktioner och shapes
+    renderInstruction();
+    renderShapes();
+    requestAnimationFrame(() => {
+        gameboard.classList.add("fade-in");
+    });
+    setTimeout(()=> updateLevelUI(), 400);
+    //Kolla var och när man ska ta bort fade-in klassen?
+}
+
+function changeGameboard() {
+    gameboard.innerHTML ="";
+    shapeAndInstructionDiv = document.createElement("div");
+    shapeAndInstructionDiv.classList.add("shape-and-instruction-div");
+    shapesDiv = document.createElement("div");
+    shapesDiv.classList.add("shapes-div");
+    gameboard.append(shapeAndInstructionDiv, shapesDiv);
+}
+
+async function renderShapes() {
+const shapes = await getShapes();
+const colorShapes = shapes.filter((shape)=> shape.color !="blank");
+    colorShapes.forEach(shape => {
+        const shapeItem = document.createElement("div");
+        shapeItem.classList.add(`${shape.type}`, "shape-item")
+        shapesDiv.appendChild(shapeItem);
+
+        shapeItem.addEventListener("click", () => {
+            shapeItem.classList.add("correct");
+            state.level++;
+            state.score =+ 100;
+            updateScoreUI();
+            setTimeout (()=> {
+                startNewRound();
+            }, 600);
+        });
+    });
+};
+
+async function renderInstruction() {
+//const newInstruction = await getRandomInstruction(); Går att filtrera med <= difficultylevel, fixa så det returnerar en random
+const instruction = document.createElement("p");
+instruction.classList.add("instruction");
+// instruction.textContent = newInstruction.info;
+//gör en switch beroende på vilken ruleType instruktionen har
+instruction.textContent = "Blue";
+const shape = document.createElement("div");
+shape.classList.add("triangle");
+shapeAndInstructionDiv.append(shape, instruction);
+};
+
+//Funktioner som uppdaterar UI utifrån state
+export function updateUI() {
     // activePlayerInfo.textContent = state.activePlayer;
     levelCounter.textContent = state.level.toString();
     scoreCounter.textContent = state.score.toString();
     timer.textContent = state.timeLeft.toString();
     lives.textContent = "❤️".repeat(state.lives);
 }
-
-function startNewRound() {
-    resetAnimationClasses();
-    //Funktioner för att hämta instruktioner och shapes
-    gameboard.classList.add("fade-in");
-    renderInstruction();
-    renderShapes();
-    //Kolla var och när man ska ta bort fade-in klassen?
+function updateLevelUI() {
+    levelCounter.textContent = state.level.toString();
+    levelCounter.classList.add("jump-level");
 }
 
-function changeGameboard () {
-    gameboard.innerHTML ="";
-    const shapeAndInstructionDiv = document.createElement("div");
-    shapeAndInstructionDiv.classList.add("shape-and-instruction-div");
-    shapesDiv = document.createElement("div");
-    shapesDiv.classList.add("shapes-div");
-    gameboard.append(shapeAndInstructionDiv, shapesDiv);
-    
-}
-async function renderShapes () {
-    const shapes = await getShapes();
-
-shapes.forEach(shape => {
-    const shapeItem = document.createElement("div");
-    shapeItem.classList.add(`${shape.type}`, "shape-item")
-    shapesDiv.appendChild(shapeItem);
-
-    shapeItem.addEventListener("click", () => {
-        shapeItem.classList.add("incorrect");
-        state.level++;
-        
-        updateLevelUI();
-    })
-});
-}
-
-function renderInstruction () {
-const shapeAndInstructionDiv = document.querySelector(".shape-and-instruction-div") as HTMLDivElement;
-
-const instruction = document.createElement("p");
-instruction.classList.add("instruction");
-instruction.textContent = "Blå";
-const shape = document.createElement("div");
-shape.classList.add("triangle");
-shapeAndInstructionDiv.append(shape, instruction);
+function updateScoreUI() {
+    scoreCounter.textContent = state.score.toString();
+    scoreCounter.classList.add("jump-score");
 };
 
-function updateLevelUI () {
-    levelCounter.textContent = state.level.toString();
-    levelCounter.classList.add("jump");
-}
-
-function resetAnimationClasses() {
-    levelCounter.classList.remove("jump");
-    scoreCounter.classList.remove("jump");
+function resetForNextRound() {
+    gameboard.classList.remove("fade-in");
+    levelCounter.classList.remove("jump-level");
+    shapeAndInstructionDiv.innerHTML= "";
+    shapesDiv.innerHTML = "";
+    setTimeout(() => {
+        scoreCounter.classList.remove("jump-score");
+    }, 1000);
 }

@@ -1,4 +1,4 @@
-export async function getShapes (): Promise<any[]> {
+export async function getShapes(): Promise<any[]> {
    
     const response = await fetch("http://localhost:3000/shapes");
 
