@@ -1,122 +1,127 @@
 @use "../abstracts/mixins" as *;
 @use "../abstracts/variables" as *;
 
-.in-game-container {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-    width: 100%;
-    padding: 2rem 1.5rem 3rem;
-    align-self: flex-start;
-}
-
-.game-top-bar {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items: start;
-    position: relative;
-    width: 100%;
-}
-
-.restart-level-score {
-    grid-column: 1 / 4;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    width: 100%;
-}
-
-.restart-btn,
-.end-game-btn {
-    min-width: 10rem;
-}
-
-.level-and-score {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-left: auto;
-}
-
-.level-and-score p,
-.timer,
-.lives {
-    margin: 0;
-}
-
-.timer-and-lives {
-    grid-column: 2;
-    grid-row: 1;
-    display: flex;
-    align-items: center;
-    justify-self: center;
-    align-self: start;
-    gap: 1rem;
-}
-
 .active-player-info {
-    color: $color-text;
+    font-family: $font-heading;
+    font-size: 20px;
+}
+
+.in-game-container {
+    width: 100%;
+    padding: 1rem;
+    @include stack($gap: 0, $align: center);
+}
+
+.restart-level-score-div {
+    width: 100%;
+    @include flex-between($align: center);
+}
+.level-and-score-div {
+    display: flex;
+    gap: 2rem;
+    font-size: 1.5rem;
+    font-family: $font-heading;
+}
+
+.timer-and-lives-div {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-end;
+    height: 81px;
+    font-size: 1.5rem;
+    p {
+        font-family: $font-heading;
+        width: 120px;
+    }
+    .lives {
+    width: 100px;
+    text-align: right;
+}
 }
 
 .gameboard {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 300px;
-    width: 100%;
+    @include stack($gap: $space-md, $align: center);
+    // justify-content: flex-start;
 }
 
 .countdown {
-    margin: 0;
-    color: $color-heading;
+    font-size: 150px;
     font-family: $font-heading;
-    font-size: clamp(5rem, 12vw, 9.5rem);
-    line-height: 1;
+    margin: 0;
+}
+.shape-and-instruction-div {
+    @include panel;
+    display: flex;
+    gap: $space-xl;
+    align-items: center;
+    padding: $space-md;
+
+    .instruction {
+        font-weight: 600;
+        font-size: 20px;
+        margin: 0;
+    }
+
+}
+.shapes-div {
+    @include panel;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: $space-md;
+    padding: $space-md;
+    width: calc((40px + $space-md)*7);
 }
 
-@include responsive($tablet-width) {
-    .game-top-bar {
-        grid-template-columns: 1fr;
-        gap: $space-md;
-    }
-
-    .restart-level-score {
-        grid-column: 1;
-        flex-direction: column;
-        gap: $space-md;
-        align-items: stretch;
-    }
-
-    .level-and-score {
-        margin-left: 0;
-        justify-content: space-between;
-    }
-
-    .timer-and-lives {
-        grid-column: 1;
-        grid-row: auto;
-        justify-self: stretch;
-        justify-content: space-between;
-    }
+.jump-score {
+    animation: jump-score 0.9s ease-out;
+    display: inline-block;
 }
 
-@include responsive($mobile-width) {
-    .in-game-container {
-        padding: 1.5rem 1rem 2rem;
+@keyframes jump-score {
+    0% { transform: scale(0.8); }
+    50% { 
+        transform: scale(1.4); 
+        color: $color-yellow; 
+        text-shadow: 1px 1px 3px white; 
     }
+    100% { transform: scale(1); }
+}
 
-    .level-and-score {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: $space-sm;
+.jump-level {
+    animation: jump-level 0.6s ease-out;
+    display: inline-block;
+}
+
+@keyframes jump-level {
+    0% { transform: scale(0.7); }
+    50% {
+        transform: scale(1.1); 
+        color: $color-green; 
     }
+    100% { transform: scale(1); }
+}
 
-    .restart-btn,
-    .end-game-btn {
-        min-width: 100%;
-    }
+.pulse {
+    animation: pulse 1s ease infinite;
+    display: inline-block;
+}
 
-    .countdown {
-        font-size: clamp(4rem, 20vw, 7rem);
+@keyframes pulse {
+    0% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+.fade-in {
+    animation: fade-in 0.7s ease-in;
+}
+
+@keyframes fade-in {
+    0% { filter: brightness(0);}
+    100% { filter: brightness(1); }
+}
+@media (max-width: 470px) {
+    .shapes-div {
+        width: calc((30px + $space-md)*7);
     }
 }
