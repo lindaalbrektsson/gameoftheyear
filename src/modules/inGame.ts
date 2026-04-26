@@ -61,7 +61,7 @@ function renderHeaderMenu () {
     
     const endGameLi = document.createElement("li");
     const endGameBtn = document.createElement("button");
-    endGameBtn.classList.add("end-game-btn");
+    endGameBtn.classList.add("game-btn", "end-game-btn");
     const homepageIcon = document.createElement("i");
     homepageIcon.classList.add("fa-regular", "fa-house");
     endGameBtn.textContent = "End Game";
@@ -75,7 +75,7 @@ function renderRestartLevelScore (): HTMLDivElement {
     const restartLevelScoreDiv = document.createElement("div");
     restartLevelScoreDiv.classList.add("restart-level-score-div");
     const restartBtn = document.createElement("button");
-    restartBtn.classList.add("restart-btn");
+    restartBtn.classList.add("game-btn", "restart-btn");
     const restartIcon = document.createElement("i");
     restartIcon.classList.add("fa-solid", "fa-arrow-rotate-left");
     restartBtn.textContent = "Restart";
