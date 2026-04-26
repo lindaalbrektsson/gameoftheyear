@@ -22,10 +22,12 @@ let lives: HTMLParagraphElement;
 //Vi får fundera på vad "spelomgångstimern" ska stå på när countdown körs. 00:00 eller rätt antal sekunder.
 export const state = {
     // activePlayer: kanske kan vara en funktion som hämtar namnet från localstorage? eller sätts det på något annat sätt
+    //activePlayerId? 
     level: 1,
     score: 0,
     timeLeft: 0,
-    lives: 3
+    lives: 3,
+    difficultyLevel: 1
 };
 
 export function renderInGame () {
@@ -146,6 +148,7 @@ function resetGame() {
     state.score = 0;
     state.timeLeft = 30;
     state.lives = 3;
+    state.difficultyLevel = 1;
 }
 
 export function updateUI () {
