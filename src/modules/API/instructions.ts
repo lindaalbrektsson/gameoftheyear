@@ -1,8 +1,8 @@
-export interface Instruction {
+interface Instruction {
     id: string,
     info: string,
     ruleType: RuleType,
-    targetColor?: TargetColorType,
+    targetColor?: ColorType,
     difficultyLevel: number
 }
 
@@ -12,7 +12,7 @@ export type RuleType =
     | "matchShapeAndColor"
     | "matchShape";
 
-export type TargetColorType = 
+export type ColorType = 
     | "blue"
     | "red"
     | "yellow"
