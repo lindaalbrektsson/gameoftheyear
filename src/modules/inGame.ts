@@ -1,4 +1,4 @@
-import { getBlankShape, getCurrentShapes, type Shape } from "./API/shapes";
+import { getBlankShape, getCurrentShapes, getShuffledShapes, type Shape } from "./API/shapes";
 import { renderActivePlayerStartPage } from "./activePlayerStartPage";
 import { getRandomInstruction, type Instruction } from "./API/instructions";
 
@@ -161,7 +161,7 @@ async function startNewRound() {
     resetForNextRound();
     const newInstruction = await getRandomInstruction(state.difficultyLevel);
     const newInstructionShape = await getInstructionShape(newInstruction);
-    const shapes = await getCurrentShapes(state.difficultyLevel);
+    const shapes = await getShuffledShapes(state.difficultyLevel);
 
     renderInstruction(newInstruction, newInstructionShape);
     renderShapes(shapes);
@@ -179,12 +179,9 @@ function changeGameboard() {
     shapeAndInstructionDiv.classList.add("shape-and-instruction-div");
     shapesDiv = document.createElement("div");
     shapesDiv.classList.add("shapes-div");
-    
 }
 
 async function renderShapes(shapes: Shape[]) {
-    
-    
         shapes.forEach(shape => {
             const shapeItem = document.createElement("div");
             shapeItem.classList.add(`${shape.type}`, "shape-item")
@@ -202,6 +199,7 @@ async function renderShapes(shapes: Shape[]) {
         });
 };
 
+//Hämtar instructionShape utifrån instruktionens ruletype
 async function getInstructionShape(instruction: Instruction): Promise<Shape> {
     
     if (instruction.ruleType === "colorFillBlankShape") {

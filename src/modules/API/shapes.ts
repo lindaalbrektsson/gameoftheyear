@@ -23,6 +23,7 @@ async function getAllShapes(): Promise<Shape[]> {
     return data;
 };
 
+//Returnerar endast en random färglös shape utifrån svårighetsgrad
 export async function getBlankShape(difficultyLevel: number): Promise<Shape> {
     const allShapes = await getAllShapes();
     const currentBlankShapes = allShapes.filter(
@@ -32,6 +33,7 @@ export async function getBlankShape(difficultyLevel: number): Promise<Shape> {
     return currentBlankShapes[randomIndex];
 }
 
+//Alla färgade shapes utifrån svårighetsgrad
 export async function getCurrentShapes(difficultyLevel: number): Promise<Shape[]> {
     const allShapes = await getAllShapes();
     const currentShapes = allShapes.filter(
@@ -40,4 +42,10 @@ export async function getCurrentShapes(difficultyLevel: number): Promise<Shape[]
     return currentShapes;
 }
 
-//Måste skriva interface för shapes och typa upp funktionen
+//Shapes som användaren kan trycka på - i mixad ordning och utifrån svårighetsgrad
+export async function getShuffledShapes(difficultyLevel: number): Promise<Shape[]> {
+    const shapes = await getCurrentShapes(difficultyLevel);
+    shapes.sort(() => Math.random() - 0.5);
+    console.log(shapes);
+    return shapes;
+}
