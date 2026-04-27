@@ -170,6 +170,68 @@
             "color": "purple",
             "difficultyLevel": 5
         }
-    ]
+    ],
 
+    "instructions": [
+        {
+            "id": "1",
+            "info": "Blue",
+            "ruleType": "colorFillBlankShape",
+            "targetColor": "blue",
+            "difficultyLevel": 1
+        },
+        {
+            "id": "2",
+            "info": "Red",
+            "ruleType": "colorFillBlankShape",
+            "targetColor": "red",
+            "difficultyLevel": 1
+        }, 
+        {
+            "id": "3",
+            "info": "Yellow",
+            "ruleType": "colorFillBlankShape",
+            "targetColor": "yellow",
+            "difficultyLevel": 1
+        },
+        {
+            "id": "4",
+            "info": "Click all tiles with matching color",
+            "ruleType": "matchColor",
+            "difficultyLevel": 1
+        },
+        {
+            "id": "5",
+            "info": "Match shape and color",
+            "ruleType": "matchShapeAndColor",
+            "difficultyLevel": 1
+        },
+        {
+            "id": "6",
+            "info": "Click all tiles with matching shape",
+            "ruleType": "matchShape",
+            "difficultyLevel": 1
+        }, 
+        {
+            "id": "7",
+            "info": "Green",
+            "ruleType": "colorFillBlankShape",
+            "targetColor": "green",
+            "difficultyLevel": 2
+        },
+        {
+            "id": "8",
+            "info": "Orange",
+            "ruleType": "colorFillBlankShape",
+            "targetColor": "orange",
+            "difficultyLevel": 4
+        },
+        {
+            "id": "9",
+            "info": "Purple",
+            "ruleType": "colorFillBlankShape",
+            "targetColor": "purple",
+            "difficultyLevel": 5
+        }
+    ]
 }
