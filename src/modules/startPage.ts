@@ -1,7 +1,9 @@
 import { initGameFlow } from "./inGame";
 
 type Player = {
+  id?: string;
   playerName: string;
+  bestScore: number;
 };
 
 export function renderStartPage(): void {
@@ -16,9 +18,9 @@ export function renderStartPage(): void {
   // Tillfällig mockdata för befintliga användare
   // TODO: Byt till fetch från json-server när players finns där
   const existingPlayers: Player[] = [
-    { playerName: "PlayerOne" },
-    { playerName: "Linda" },
-    { playerName: "Alex" },
+    { id: "p1", playerName: "PlayerOne", bestScore: 0 },
+    { id: "p2", playerName: "Linda", bestScore: 0 },
+    { id: "p3", playerName: "Alex", bestScore: 0 },
   ];
 
   const startPage = document.createElement("div");
@@ -74,7 +76,7 @@ export function renderStartPage(): void {
     startGameBtn.disabled = playerName === "";
   }
 
-  startGameBtn.addEventListener("click", () => {
+  startGameBtn.addEventListener("click", async () => {
     const playerName = playerNameInput.value.trim();
 
     if (!playerName) {
@@ -102,6 +104,12 @@ export function renderStartPage(): void {
       return;
     }
 
+    const newPlayer = createPlayer(playerName);
+    const createdPlayer = await savePlayer(newPlayer);
+
+    console.log("Created player from API", createdPlayer);
+
+    localStorage.setItem("activePlayer", createdPlayer.playerName);
     localStorage.setItem("activePlayer", playerName);
     initGameFlow();
   });
@@ -172,4 +180,27 @@ function showExistingPlayerPopup(
     popupOverlay.remove();
     onCancel();
   });
+}
+
+function createPlayer(playerName: string): Player {
+  return {
+    playerName,
+    bestScore: 0,
+  };
+}
+
+async function savePlayer(player: Player): Promise<Player> {
+  const response = await fetch("http://localhost:3000/players", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(player),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to save player");
+  }
+
+  return response.json();
 }

@@ -2,7 +2,7 @@
 @use "../abstracts/variables" as *;
 
 .player-highscore {
-    @include panel-centered;
+  @include panel-centered;
 }
 
 .player-recent-games,
@@ -13,210 +13,210 @@
 .score-container,
 .recent-games-scoreboard,
 .global-high-score-list {
-    @include panel-content;
+  @include panel-content;
 }
 
 .player-recent-games,
 .global-highscore,
 .recent-games-scoreboard,
 .global-high-score-list {
-    display: flex;
-    flex-direction: column;
-    min-height: 380px;
+  display: flex;
+  flex-direction: column;
+  min-height: 380px;
 }
 
 .player-score-table,
 .global-highscore .score-table {
-    flex-grow: 1;
+  flex-grow: 1;
 }
 
 .welcome-text,
 .panel-title,
 .how-to-play-title {
-    margin: 0;
+  margin: 0;
 }
 
 .welcome-text {
-    @include heading-style(2rem);
+  @include heading-style(2rem);
 }
 
 .panel-title,
 .how-to-play-title {
-    @include section-title(1.35rem);
-    margin-bottom: 0.35rem;
+  @include section-title(1.35rem);
+  margin-bottom: 0.35rem;
 }
 
 .panel-subtitle {
-    margin: 0 0 $space-md;
-    color: $color-text-muted;
-    font-size: 0.95rem;
+  margin: 0 0 $space-md;
+  color: $color-text-muted;
+  font-size: 0.95rem;
 }
 
 .highscore-value {
-    margin: $space-sm 0 0;
-    color: $color-yellow;
-    font-family: $font-heading;
-    font-size: 2rem;
-    line-height: 1.1;
-    text-shadow:
-        0 0 8px rgba(255, 230, 109, 0.28),
-        0 0 18px rgba(255, 230, 109, 0.16);
+  margin: $space-sm 0 0;
+  color: $color-yellow;
+  font-family: $font-heading;
+  font-size: 2rem;
+  line-height: 1.1;
+  text-shadow:
+    0 0 8px rgba(255, 230, 109, 0.28),
+    0 0 18px rgba(255, 230, 109, 0.16);
 }
 
 .score-table,
 .player-score-table {
-    display: grid;
-    gap: 0.45rem;
-    margin-top: 0.6rem;
+  display: grid;
+  gap: 0.45rem;
+  margin-top: 0.6rem;
 }
 
 .score-row {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
-    gap: $space-md;
-    align-items: center;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: $space-md;
+  align-items: center;
 }
 
 .player-score-row,
 .player-score-row.score-header {
-    display: grid;
-    grid-template-columns: 1fr 0.55fr 0.55fr 0.34fr;
-    gap: 0.65rem;
-    align-items: center;
+  display: grid;
+  grid-template-columns: 1fr 0.55fr 0.55fr 0.34fr;
+  gap: 0.65rem;
+  align-items: center;
 }
 
 .score-header {
-    margin-bottom: 0.1rem;
-    padding-bottom: 0.45rem;
-    border-bottom: 2px solid rgba(255, 255, 255, 0.22);
-    color: $color-yellow-light;
-    font-weight: 800;
-    text-shadow: 0 0 10px rgba(255, 242, 166, 0.12);
+  margin-bottom: 0.1rem;
+  padding-bottom: 0.45rem;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.22);
+  color: $color-yellow-light;
+  font-weight: 800;
+  text-shadow: 0 0 10px rgba(255, 242, 166, 0.12);
 }
 
 .score-name,
 .score-date {
-    color: $color-white;
-    text-align: left;
+  color: $color-white;
+  text-align: left;
 }
 
 .score-level,
 .score-points {
-    color: $color-text-soft;
-    text-align: center;
+  color: $color-text-soft;
+  text-align: center;
 }
 
 .player-recent-games .score-row:not(.score-header),
 .global-highscore .score-row:not(.score-header),
 .recent-games-scoreboard .score-row:not(.score-header),
 .global-high-score-list .score-row:not(.score-header) {
-    padding: 0.18rem 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  padding: 0.18rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .gold-rank .score-name {
-    color: #ffd95e;
-    text-shadow:
-        0 0 8px rgba(255, 217, 94, 0.35),
-        0 0 16px rgba(255, 217, 94, 0.2);
+  color: #ffd95e;
+  text-shadow:
+    0 0 8px rgba(255, 217, 94, 0.35),
+    0 0 16px rgba(255, 217, 94, 0.2);
 }
 
 .silver-rank .score-name {
-    color: #d9e4f2;
-    text-shadow:
-        0 0 8px rgba(217, 228, 242, 0.25),
-        0 0 14px rgba(217, 228, 242, 0.12);
+  color: #d9e4f2;
+  text-shadow:
+    0 0 8px rgba(217, 228, 242, 0.25),
+    0 0 14px rgba(217, 228, 242, 0.12);
 }
 
 .bronze-rank .score-name {
-    color: #d49a6a;
-    text-shadow:
-        0 0 8px rgba(212, 154, 106, 0.25),
-        0 0 14px rgba(212, 154, 106, 0.12);
+  color: #d49a6a;
+  text-shadow:
+    0 0 8px rgba(212, 154, 106, 0.25),
+    0 0 14px rgba(212, 154, 106, 0.12);
 }
 
 .score-delete {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    padding-left: 0;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-left: 0;
 }
 
 .delete-game-btn {
-    @include flex-center;
-    width: 1.55rem;
-    height: 1.55rem;
-    padding: 0;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    border-radius: $radius-md;
-    background: $color-neutral-bg;
-    color: #ff9bbb;
-    cursor: pointer;
-    font-size: 0.8rem;
-    transition:
-        transform $transition-fast,
-        filter $transition-fast,
-        border-color $transition-fast,
-        background $transition-fast;
+  @include flex-center;
+  width: 1.55rem;
+  height: 1.55rem;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: $radius-md;
+  background: $color-neutral-bg;
+  color: #ff9bbb;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition:
+    transform $transition-fast,
+    filter $transition-fast,
+    border-color $transition-fast,
+    background $transition-fast;
 
-    &:hover {
-        transform: scale(1.08);
-        filter: brightness(1.1);
-        border-color: $color-pink-light;
-        background: rgba(255, 76, 145, 0.08);
-    }
+  &:hover {
+    transform: scale(1.08);
+    filter: brightness(1.1);
+    border-color: $color-pink-light;
+    background: rgba(255, 76, 145, 0.08);
+  }
 
-    &:active {
-        transform: scale(0.95);
-    }
+  &:active {
+    transform: scale(0.95);
+  }
 }
 
 .delete-confirmation {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 0.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
 }
 
 .delete-confirmation-text {
-    color: #ffb3cb;
-    font-size: 0.9rem;
-    font-weight: 700;
-    white-space: nowrap;
-    text-align: right;
+  color: #ffb3cb;
+  font-size: 0.9rem;
+  font-weight: 700;
+  white-space: nowrap;
+  text-align: right;
 }
 
 .delete-confirmation-buttons {
-    display: flex;
-    gap: 0.25rem;
+  display: flex;
+  gap: 0.25rem;
 }
 
 .confirm-delete-btn,
 .cancel-delete-btn {
-    min-width: 2.2rem;
-    min-height: 1.55rem;
-    padding: 0.1rem 0.35rem;
-    border: 1px solid $color-neutral-border;
-    border-radius: $radius-sm;
-    background: $color-neutral-bg;
-    color: $color-white;
-    cursor: pointer;
-    font: inherit;
-    font-size: 0.68rem;
-    transition:
-        background $transition-fast,
-        border-color $transition-fast,
-        transform $transition-fast;
+  min-width: 2.2rem;
+  min-height: 1.55rem;
+  padding: 0.1rem 0.35rem;
+  border: 1px solid $color-neutral-border;
+  border-radius: $radius-sm;
+  background: $color-neutral-bg;
+  color: $color-white;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.68rem;
+  transition:
+    background $transition-fast,
+    border-color $transition-fast,
+    transform $transition-fast;
 }
 
 .confirm-delete-btn:hover {
-    background: $color-danger-bg;
-    border-color: $color-danger-border;
-    transform: scale(1.04);
+  background: $color-danger-bg;
+  border-color: $color-danger-border;
+  transform: scale(1.04);
 }
 
 .cancel-delete-btn:hover {
-    background: rgba(255, 255, 255, 0.12);
-    border-color: rgba(255, 255, 255, 0.35);
-    transform: scale(1.04);
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: scale(1.04);
 }
