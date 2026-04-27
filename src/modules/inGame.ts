@@ -57,6 +57,7 @@ function renderHeaderMenu () {
     if (!headerMenu) {
         throw new Error("Can't find UL in header")
     }
+    headerMenu.innerHTML ="";
     const activePlayerInfo = document.createElement("li");
     activePlayerInfo.classList.add("active-player-info");
     activePlayerInfo.textContent = `Playing as: ` //Lägg till spelarens namn, hämta från local storage? db?
