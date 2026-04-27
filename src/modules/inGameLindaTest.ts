@@ -1,21 +1,13 @@
 /*
+/*
 LINDA:
-Det här är Lindas körbara testkopia av inGame.ts.
-Här är regel-logiken aktiv i koden så att den går att testa visuellt,
-medan vanliga inGame.ts får vara kvar som den vanliga versionen.
+Här är mina ändringar aktiva i koden så att den går att testa visuellt: http://localhost:5173/#in-game-linda-test
+Den vanliga inGame.ts är oförändrad så att det går att jämföra och så att mina ändringar inte påverkar något.
 */
 
 import { getShapes, type Shape } from "./API/shapes";
 import { renderActivePlayerStartPage } from "./activePlayerStartPage";
 import { getRandomInstruction } from "./API/instructions";
-
-/*
-LINDA:
-Jag har valt att lägga hela testlogiken i den här filen,
-så att Hanna och de andra kan läsa allt på ett ställe.
-Shape-typen återanvänder jag nu direkt från shapes.ts,
-så att testfilen bygger vidare på samma shape-struktur som API-filen.
-*/
 
 type BaseInstruction = Awaited<ReturnType<typeof getRandomInstruction>>;
 type RoundInstruction = BaseInstruction;
@@ -213,8 +205,8 @@ async function startNewRound() {
     // LINDA:
     // Jag har byggt om startNewRound så att hela rundan förbereds först.
     // Här väljs:
-    // - instruktionen från API:t
-    // - preview-shapen bredvid instruktionen
+    // - Instruktionen som ska gälla för rundan
+    // - Instruktions-shapen som ska visas bredvid texten i instruktionen
     // - vilka shapes på spelplanen som då ska räknas som rätta svar
     roundResolved = false;
     clickedCorrectIds.clear();
@@ -293,8 +285,8 @@ function renderInstruction() {
 // Här byggde jag vidare på Hannas påbörjade idé i renderInstruction:
 // - ruleType berättar HUR rundan ska rättas
 // - shape bredvid instruktionen hjälper till att visa VAD rundan ska rättas mot
-// För colorFillBlankShape visar shape:n formen,
-// medan texten / targetColor visar vilken färg som gäller.
+// För colorFillBlankShape visar shape formen,
+// medan texten / targetColor visar vilken färg som är rätt.
     shape.classList.add(currentInstructionShape.type, "shape-item");
     applyShapeColor(shape, currentInstructionShape);
 
@@ -302,8 +294,8 @@ function renderInstruction() {
 };
 
 // LINDA:
-// Följande hjälpfunktioner har jag lagt till för att rule flow ska kunna testas
-// direkt i UI:t i den här testversionen.
+// Den här funktionen väljer vilken shape som ska visas bredvid instruktionen i den aktuella rundan.
+// Jag använder sedan den som grund för rättningen.
 function getInstructionShape(
     instruction: RoundInstruction,
     shapes: Shape[]
@@ -316,8 +308,8 @@ function getInstructionShape(
 
     // LINDA:
     // Här byggde jag vidare på Hannas skiss:
-    // om instruktionen är colorFillBlankShape gör jag shape:n bredvid texten blank.
-    // Då kommer shape-typen från shape:n, medan färgen i stället kommer från texten / targetColor.
+    // om instruktionen är colorFillBlankShape gör jag shape bredvid texten blank.
+    // Då kommer shapeTypen från shape, medan färgen i stället kommer från texten / targetColor.
     if (instruction.ruleType === "colorFillBlankShape") {
         return {
             ...randomShape,
@@ -342,10 +334,9 @@ function shuffleShapes(shapes: Shape[]): Shape[] {
 }
 
 // LINDA:
-// Den här funktionen avgör om en enskild shape är ett korrekt svar.
 // Här utgår rättningen från:
-// - instruction.ruleType = hur vi ska jämföra
-// - instructionShape = vad spelaren ska jämföra mot
+// instruction.ruleType = hur vi ska jämföra
+// instructionShape = vad spelaren ska jämföra mot
 function isCorrectAnswer(
     instruction: RoundInstruction,
     instructionShape: Shape,
@@ -444,7 +435,7 @@ function evaluateTileClick(
 }
 
 // LINDA:
-// Den här funktionen kopplar ihop ett klick i UI:t med regel-logiken här i filen
+// Den här funktionen kopplar ihop ett klick i UI med regel-logiken här i filen
 // och avgör om klicket var fel, rätt eller om hela rundan nu är klar.
 function handleTileClick(shape: Shape, shapeItem: HTMLDivElement): void {
     if (roundResolved) {
