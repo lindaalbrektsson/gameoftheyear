@@ -1,5 +1,6 @@
 import { getShapes } from "./API/shapes";
 import { renderActivePlayerStartPage } from "./activePlayerStartPage";
+import { getRandomInstruction } from "./API/instructions";
 
 //Denna kan köras från startsidorna och endgame
 export function initGameFlow () {
@@ -56,6 +57,7 @@ function renderHeaderMenu () {
     if (!headerMenu) {
         throw new Error("Can't find UL in header")
     }
+    headerMenu.innerHTML ="";
     const activePlayerInfo = document.createElement("li");
     activePlayerInfo.classList.add("active-player-info");
     activePlayerInfo.textContent = `Playing as: ` //Lägg till spelarens namn, hämta från local storage? db?
@@ -197,14 +199,22 @@ async function renderShapes() {
 };
 
 async function renderInstruction() {
-    //const newInstruction = await getRandomInstruction(); Går att filtrera med <= difficultylevel, fixa så det returnerar en random
+    const newInstruction = await getRandomInstruction(state.difficultyLevel);
     const instruction = document.createElement("p");
     instruction.classList.add("instruction");
-    // instruction.textContent = newInstruction.info;
-    //gör en switch beroende på vilken ruleType instruktionen har
-    instruction.textContent = "Blue";
+    instruction.textContent = newInstruction.info;
     const shape = document.createElement("div");
-    shape.classList.add("triangle");
+    // let newInstructionShape: ShapeType;
+    // if (newInstruction.ruleType === "colorFillBlankShape") {
+    //     newInstructionShape = getBlankShape(state.difficultyLevel);
+    //     shape.style.borderBottomColor - fixa med variablerna
+    // }
+    // else {
+    //     newInstructionShape = getRandomShape(state.difficultyLevel);
+    //     shape.style.backgroundColor - variablerna
+    // }
+    
+    // shape.classList.add(`${newInstructionShape.type}`);
     shapeAndInstructionDiv.append(shape, instruction);
 };
 
