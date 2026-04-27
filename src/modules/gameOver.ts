@@ -1,11 +1,21 @@
-const mainContainer = document.querySelector("main");
-let currentScore = "#####";
-// temporär currentscore bara för att visa något, vi får hämta in från data när den väl finns
+import { renderActivePlayerStartPage } from "./activePlayerStartPage";
+import { renderStartPage } from "./startPage";
+import { initGameFlow } from "./inGame";
 
-type RecentGame = {
+const mainContainer = document.querySelector("main");
+let currentScore = "#####"; // TODO: hämta in currentscore från ingame när den finns?
+
+type Player = {
+  id: string;
   playerName: string;
-  level: number;
+};
+
+type Game = {
+  id: string;
+  gameDate: string;
   score: number;
+  level: number;
+  playerId: string;
 };
 
 type GlobalHighscoreEntry = {
@@ -13,6 +23,30 @@ type GlobalHighscoreEntry = {
   level: number;
   score: number;
 };
+
+const API_URL = "http://localhost:3000";
+
+async function fetchPlayers(): Promise<Player[]> {
+  try {
+    const res = await fetch(`${API_URL}/players`);
+    if (!res.ok) throw new Error("Failed to fetch players");
+    return await res.json();
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+}
+
+async function fetchGames(): Promise<Game[]> {
+  try {
+    const res = await fetch(`${API_URL}/games`);
+    if (!res.ok) throw new Error("Failed to fetch games");
+    return await res.json();
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+}
 
 export async function renderGameOver(): Promise<void> {
   if (!mainContainer) {
@@ -22,29 +56,78 @@ export async function renderGameOver(): Promise<void> {
   const headerMenu = document.querySelector(".header-menu");
   headerMenu?.replaceChildren();
 
+  // endGame "hem" knapp
+  const endGameLi = document.createElement("li");
+  const endGameBtn = document.createElement("button");
+  const homepageIcon = document.createElement("i");
+  headerMenu?.append(endGameLi);
+
+  endGameBtn.type = "button";
+  endGameBtn.classList.add("game-btn", "end-game-btn");
+
+  homepageIcon.classList.add("fa-regular", "fa-house");
+  endGameBtn.textContent = ""; // ingen text så bara hemikonen syns
+  endGameBtn.appendChild(homepageIcon);
+  endGameLi.appendChild(endGameBtn);
+
+  endGameBtn.addEventListener("click", function (evt) {
+    evt.preventDefault();
+    const activePlayerName = localStorage.getItem("activePlayer") ?? "";
+    if (activePlayerName) {
+      renderActivePlayerStartPage();
+    } else {
+      renderStartPage();
+    }
+  });
+
   mainContainer.replaceChildren();
-  mainContainer.className = "main";
 
-  const recentGames: RecentGame[] = [
-    { playerName: "PlayerOne", level: 5, score: 80 },
-    { playerName: "PlayerOne", level: 4, score: 70 },
-    { playerName: "PlayerOne", level: 3, score: 60 },
-    { playerName: "PlayerOne", level: 2, score: 50 },
-  ];
+  // gameovercontainer för att ha egen styling istället för "main" som påverkar alla
+  const gameOverContainer = document.createElement("div");
+  gameOverContainer.className = "game-over-container";
 
-  const globalHighscoreEntries: GlobalHighscoreEntry[] = [
-    { playerName: "Player1", level: 10, score: 1000 },
-    { playerName: "Player2", level: 9, score: 900 },
-    { playerName: "Player3", level: 8, score: 800 },
-    { playerName: "Player4", level: 7, score: 700 },
-    { playerName: "Player5", level: 6, score: 600 },
-  ];
+  // Fetch data  från json
+  const players = await fetchPlayers();
+  const games = await fetchGames();
+
+  const activePlayerName = localStorage.getItem("activePlayer") ?? "";
+  const activePlayer = players.find(
+    (player) => player.playerName === activePlayerName,
+  );
+
+  let recentGames: Game[] = [];
+  if (activePlayer) {
+    recentGames = games
+      .filter((game) => game.playerId === activePlayer.id)
+      .sort((a, b) => {
+        // sortera spelhistorik med level först
+        if (b.level !== a.level) {
+          return b.level - a.level;
+        }
+        // Sortera på score efter
+        return b.score - a.score;
+      })
+      .slice(0, 10); // hämta top 10 historik
+  }
+
+  // globala toopplistan och varje spelar-id mappas till rätt namn
+  const globalHighscoreEntries: GlobalHighscoreEntry[] = games
+    .map((game) => {
+      const player = players.find((p) => p.id === game.playerId);
+      return {
+        playerName: player ? player.playerName : "Unknown",
+        level: game.level,
+        score: game.score,
+      };
+    })
+    .sort((a, b) => b.score - a.score) // sortera från högst score till lägst
+    .slice(0, 5); // hämta top 5
 
   const leftColumn = document.createElement("div");
-  leftColumn.className = "column";
+  leftColumn.className = "column left-column";
 
   const rightColumn = document.createElement("div");
-  rightColumn.className = "column";
+  rightColumn.className = "column right-column";
 
   const scoreContainer = document.createElement("section");
   scoreContainer.className = "score-container";
@@ -62,10 +145,16 @@ export async function renderGameOver(): Promise<void> {
   const restartGameBtn = document.createElement("button");
   restartGameBtn.className = "game-btn restart-game-btn";
   restartGameBtn.type = "button";
-  restartGameBtn.textContent = "Restart Game";
+  restartGameBtn.textContent = "Play Again!";
+
+  restartGameBtn.addEventListener("click", function (evt) {
+    evt.preventDefault();
+    initGameFlow();
+  });
 
   const recentGamesScoreboard = document.createElement("section");
-  recentGamesScoreboard.className = "recent-games-scoreboard";
+  recentGamesScoreboard.className =
+    "recent-games-scoreboard player-recent-games";
 
   const recentGamesTitle = document.createElement("h2");
   recentGamesTitle.className = "panel-title";
@@ -73,14 +162,14 @@ export async function renderGameOver(): Promise<void> {
 
   const recentGamesSubtitle = document.createElement("p");
   recentGamesSubtitle.className = "panel-subtitle";
-  recentGamesSubtitle.textContent = "Latest scores";
+  recentGamesSubtitle.textContent = "Manage your history";
 
   const recentGamesTable = createRecentGamesTable(recentGames);
 
   recentGamesScoreboard.append(
     recentGamesTitle,
     recentGamesSubtitle,
-    recentGamesTable
+    recentGamesTable,
   );
 
   leftColumn.append(scoreContainer, restartGameBtn, recentGamesScoreboard);
@@ -90,33 +179,34 @@ export async function renderGameOver(): Promise<void> {
   highScoreNotice.textContent = "You made it to the highscore list!";
 
   const globalHighScoreList = document.createElement("section");
-  globalHighScoreList.className = "global-high-score-list";
+  globalHighScoreList.className = "global-high-score-list global-highscore";
 
   const globalHighScoreTitle = document.createElement("h2");
   globalHighScoreTitle.className = "panel-title";
   globalHighScoreTitle.textContent = "Global Highscore";
 
   const globalHighScoreTable = createGlobalHighscoreTable(
-    globalHighscoreEntries
+    globalHighscoreEntries,
   );
 
   globalHighScoreList.append(globalHighScoreTitle, globalHighScoreTable);
 
   rightColumn.append(highScoreNotice, globalHighScoreList);
 
-  mainContainer.append(leftColumn, rightColumn);
+  gameOverContainer.append(leftColumn, rightColumn);
+  mainContainer.append(gameOverContainer);
 }
 
-function createRecentGamesTable(rows: RecentGame[]): HTMLElement {
+function createRecentGamesTable(rows: Game[]): HTMLElement {
   const scoreTable = document.createElement("div");
-  scoreTable.className = "score-table";
+  scoreTable.className = "score-table player-score-table";
 
   const headerRow = document.createElement("div");
-  headerRow.className = "score-row score-header";
+  headerRow.className = "score-row score-header player-score-row";
 
-  const nameHeader = document.createElement("span");
-  nameHeader.className = "score-cell score-name";
-  nameHeader.textContent = "Name";
+  const dateHeader = document.createElement("span");
+  dateHeader.className = "score-cell score-date";
+  dateHeader.textContent = "Date";
 
   const levelHeader = document.createElement("span");
   levelHeader.className = "score-cell score-level";
@@ -124,37 +214,123 @@ function createRecentGamesTable(rows: RecentGame[]): HTMLElement {
 
   const scoreHeader = document.createElement("span");
   scoreHeader.className = "score-cell score-points";
-  scoreHeader.textContent = "Points";
+  scoreHeader.textContent = "Score";
 
-  headerRow.append(nameHeader, levelHeader, scoreHeader);
+  const deleteHeader = document.createElement("span");
+  deleteHeader.classList.add("score-cell", "score-delete");
+  deleteHeader.textContent = "";
+
+  headerRow.append(dateHeader, levelHeader, scoreHeader, deleteHeader);
   scoreTable.append(headerRow);
 
-  rows.forEach((row) => {
+  rows.forEach((game) => {
     const scoreRow = document.createElement("div");
-    scoreRow.className = "score-row";
+    scoreRow.className = "score-row player-score-row";
 
-    const name = document.createElement("span");
-    name.className = "score-cell score-name";
-    name.textContent = row.playerName;
+    const gameDate = document.createElement("span");
+    gameDate.className = "score-cell score-date";
+    gameDate.textContent = game.gameDate;
 
-    const level = document.createElement("span");
-    level.className = "score-cell score-level";
-    level.textContent = String(row.level);
+    const gameLevel = document.createElement("span");
+    gameLevel.className = "score-cell score-level";
+    gameLevel.textContent = String(game.level);
 
-    const score = document.createElement("span");
-    score.className = "score-cell score-points";
-    score.textContent = String(row.score);
+    const gameScore = document.createElement("span");
+    gameScore.className = "score-cell score-points";
+    gameScore.textContent = String(game.score);
 
-    scoreRow.append(name, level, score);
+    const deleteCell = document.createElement("span");
+    deleteCell.classList.add("score-cell", "score-delete");
+
+    const deleteBtn = createDeleteButton(game, deleteCell, scoreRow);
+    deleteCell.append(deleteBtn);
+
+    scoreRow.append(gameDate, gameLevel, gameScore, deleteCell);
     scoreTable.append(scoreRow);
   });
 
   return scoreTable;
 }
+// ta bort från spelarhistorik
+function createDeleteButton(
+  game: Game,
+  deleteCell: HTMLElement,
+  scoreRow: HTMLElement,
+): HTMLButtonElement {
+  const deleteBtn = document.createElement("button");
+  deleteBtn.classList.add("delete-game-btn");
+  deleteBtn.type = "button";
+  deleteBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+  deleteBtn.setAttribute("aria-label", "Delete game");
 
-function createGlobalHighscoreTable(
-  rows: GlobalHighscoreEntry[]
+  deleteBtn.addEventListener("click", () => {
+    const deleteConfirmation = createDeleteConfirmation(
+      game,
+      deleteCell,
+      scoreRow,
+    );
+    deleteCell.replaceChildren(deleteConfirmation);
+  });
+
+  return deleteBtn;
+}
+// bekräfta borttagning av spelhistorik
+function createDeleteConfirmation(
+  game: Game,
+  deleteCell: HTMLElement,
+  scoreRow: HTMLElement,
 ): HTMLElement {
+  const confirmationWrapper = document.createElement("div");
+  confirmationWrapper.classList.add("delete-confirmation");
+
+  const confirmationText = document.createElement("span");
+  confirmationText.classList.add("delete-confirmation-text");
+  confirmationText.textContent = "Delete game?";
+
+  const buttonsWrapper = document.createElement("div");
+  buttonsWrapper.classList.add("delete-confirmation-buttons");
+
+  const confirmBtn = document.createElement("button");
+  confirmBtn.classList.add("game-btn", "confirm-delete-btn");
+  confirmBtn.type = "button";
+  confirmBtn.textContent = "Yes";
+
+  const cancelBtn = document.createElement("button");
+  cancelBtn.classList.add("game-btn", "cancel-delete-btn");
+  cancelBtn.type = "button";
+  cancelBtn.textContent = "No";
+
+  confirmBtn.addEventListener("click", async () => {
+    try {
+      // JSON Server DELETE
+      const response = await fetch(`${API_URL}/games/${game.id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) throw new Error("Failed to delete the game");
+
+      // om vi lyckas ta bort spelhistorik från db, ta bort visuellt också
+      scoreRow.remove();
+    } catch (error) {
+      console.error(`Failed to delete game with id: ${game.id}`, error);
+      // Om vi inte lyckas ta bort spelhistoriken från db, lägg tillbaka delete knapp
+      const deleteBtn = createDeleteButton(game, deleteCell, scoreRow);
+      deleteCell.replaceChildren(deleteBtn);
+    }
+  });
+
+  cancelBtn.addEventListener("click", () => {
+    const deleteBtn = createDeleteButton(game, deleteCell, scoreRow);
+    deleteCell.replaceChildren(deleteBtn);
+  });
+
+  buttonsWrapper.append(confirmBtn, cancelBtn);
+  confirmationWrapper.append(confirmationText, buttonsWrapper);
+
+  return confirmationWrapper;
+}
+
+function createGlobalHighscoreTable(rows: GlobalHighscoreEntry[]): HTMLElement {
   const scoreTable = document.createElement("div");
   scoreTable.className = "score-table";
 

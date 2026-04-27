@@ -1,34 +1,46 @@
 @use "../abstracts/mixins" as *;
 @use "../abstracts/variables" as *;
 
-.main {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 6rem;
-  flex-wrap: wrap;
+.game-over-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $space-xl;
+  align-items: stretch;
+  width: 100%;
+  min-height: 70vh;
+  max-width: $container-width;
+  margin: $space-md auto 0;
   padding: $space-2xl $space-xl;
+  box-sizing: border-box;
 }
 
 .column {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  display: grid;
+  align-content: start;
   gap: $space-lg;
+  height: 100%;
+}
+
+.left-column {
+  grid-template-rows: 140px auto 1fr;
+}
+
+.right-column {
+  grid-template-rows: auto 1fr;
 }
 
 .score-container,
 .recent-games-scoreboard,
 .global-high-score-list {
   @include panel-content;
-  width: min(100%, 28rem);
+  width: 100%;
 }
 
 .score-container {
-  min-height: 8rem;
   display: grid;
   place-items: center;
   text-align: center;
+  height: 100%;
 }
 
 .recent-games-scoreboard,
@@ -37,14 +49,13 @@
 }
 
 .restart-game-btn {
-  min-width: 16rem;
+  width: 100%;
 }
 
 .high-score-notice {
-  @include flex-center;
+  display: grid;
+  place-items: center;
   z-index: 1;
-  margin-top: 1rem;
-  margin-bottom: -0.5rem;
   padding: 0.65rem 1.25rem;
   border: 2px solid $color-yellow;
   border-radius: $radius-md;
@@ -58,110 +69,49 @@
     0 10px 24px rgba(0, 0, 0, 0.28);
 }
 
-.panel-title {
-  @include section-title(1.15rem);
-  margin: 0;
-}
-
-.panel-subtitle {
-  margin: 0.35rem 0 0;
-  color: $color-text-soft;
-}
-
-.highscore-value {
-  margin: $space-sm 0 0;
-  color: $color-heading;
-  font-family: $font-heading;
-  font-size: 2rem;
-  line-height: 1.1;
-}
-
-.score-table {
-  display: grid;
-  gap: 0.55rem;
-  margin-top: $space-md;
-}
-
-.score-row {
-  display: grid;
-  grid-template-columns: 1fr 0.7fr 0.7fr;
-  gap: 0.65rem;
-  align-items: center;
-}
-
-.score-header {
-  color: $color-text-soft;
-  font-weight: 700;
-}
-
-.score-cell {
-  min-width: 0;
-}
-
-.score-name {
-  color: $color-text;
-}
-
-.score-level,
-.score-points {
-  color: $color-text-soft;
-  text-align: right;
-}
-
-.gold-rank {
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.06) inset,
-    0 0 12px rgba(255, 230, 109, 0.18);
-}
-
-.silver-rank {
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.06) inset,
-    0 0 12px rgba(223, 232, 255, 0.16);
-}
-
-.bronze-rank {
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.06) inset,
-    0 0 12px rgba(255, 76, 145, 0.14);
-}
-
 @include responsive($tablet-width) {
-  .main {
+  .game-over-container {
+    grid-template-columns: 1fr;
+    min-height: auto;
+    max-width: 720px;
     gap: $space-2xl;
     padding: $space-xl $space-md;
   }
 
+  .left-column,
+  .right-column {
+    display: contents;
+  }
+
+  .score-container {
+    order: 1;
+    min-height: 140px;
+  }
+
+  .restart-game-btn {
+    order: 2;
+  }
+
+  .recent-games-scoreboard {
+    order: 3;
+  }
+
   .high-score-notice {
-    margin-top: 0;
-    margin-bottom: 0;
+    order: 4;
+  }
+
+  .global-high-score-list {
+    order: 5;
   }
 }
 
 @include responsive($mobile-width) {
-  .main {
-    gap: $space-xl;
+  .game-over-container {
+    gap: 1.25rem;
     padding: $space-lg $space-md;
   }
 
   .column {
-    width: 100%;
-  }
-
-  .score-container,
-  .recent-games-scoreboard,
-  .global-high-score-list {
-    width: 100%;
-  }
-
-  .restart-game-btn {
-    width: 100%;
-    min-width: 0;
-  }
-
-  .score-row {
-    grid-template-columns: 1fr 0.6fr 0.6fr;
-    gap: 0.45rem;
-    font-size: 0.92rem;
+    gap: $space-md;
   }
 }
