@@ -1,4 +1,5 @@
 import { getShapes } from "./API/shapes";
+import { renderActivePlayerStartPage } from "./activePlayerStartPage";
 
 //Denna kan köras från startsidorna och endgame
 export function initGameFlow () {
@@ -66,7 +67,11 @@ function renderHeaderMenu () {
     homepageIcon.classList.add("fa-regular", "fa-house");
     endGameBtn.textContent = "End Game";
     endGameBtn.appendChild(homepageIcon);
-    
+    endGameBtn.addEventListener("click", () => {
+        //Stoppa spel-timer?
+        resetState();
+        renderActivePlayerStartPage();
+    })
     endGameLi.appendChild(endGameBtn);
     headerMenu.append(activePlayerInfo, endGameLi);
 }
