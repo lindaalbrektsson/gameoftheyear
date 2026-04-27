@@ -1,8 +1,9 @@
 import { initGameFlow } from "./inGame";
 
 type Player = {
-  id: string;
+  id?: string;
   playerName: string;
+  bestScore: number;
 };
 
 export function renderStartPage(): void {
@@ -17,9 +18,9 @@ export function renderStartPage(): void {
   // Tillfällig mockdata för befintliga användare
   // TODO: Byt till fetch från json-server när players finns där
   const existingPlayers: Player[] = [
-    { id: "p1", playerName: "PlayerOne" },
-    { id: "p2", playerName: "Linda" },
-    { id: "p3", playerName: "Alex" },
+    { id: "p1", playerName: "PlayerOne", bestScore: 0 },
+    { id: "p2", playerName: "Linda", bestScore: 0 },
+    { id: "p3", playerName: "Alex", bestScore: 0 },
   ];
 
   const startPage = document.createElement("div");
@@ -183,8 +184,8 @@ function showExistingPlayerPopup(
 
 function createPlayer(playerName: string): Player {
   return {
-    id: crypto.randomUUID(),
     playerName,
+    bestScore: 0,
   };
 }
 
