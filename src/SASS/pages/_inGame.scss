@@ -74,7 +74,7 @@
 }
 
 .jump-score {
-    animation: jump-score 0.9s ease-out;
+    animation: jump-score 0.7s ease-out;
     display: inline-block;
 }
 
@@ -103,7 +103,7 @@
 }
 
 .pulse {
-    animation: pulse 1s ease infinite;
+    animation: pulse 1s ease-out infinite;
     display: inline-block;
 }
 
