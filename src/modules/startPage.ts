@@ -6,7 +6,7 @@ type Player = {
   bestScore: number;
 };
 
-export function renderStartPage(): void {
+export async function renderStartPage(): Promise<void> {
   const main = document.querySelector("main");
   const headerMenu = document.querySelector(".header-menu");
   headerMenu?.replaceChildren();
@@ -15,13 +15,16 @@ export function renderStartPage(): void {
     throw new Error("Could not find main element");
   }
 
-  // Tillfällig mockdata för befintliga användare
-  // TODO: Byt till fetch från json-server när players finns där
-  const existingPlayers: Player[] = [
-    { id: "p1", playerName: "PlayerOne", bestScore: 0 },
-    { id: "p2", playerName: "Linda", bestScore: 0 },
-    { id: "p3", playerName: "Alex", bestScore: 0 },
-  ];
+  let existingPlayers: Player[] = [];
+  let couldNotFetchPlayers = false;
+
+  try {
+    existingPlayers = await fetchPlayers();
+    console.log("Fetched players from API", existingPlayers);
+  } catch (error) {
+    couldNotFetchPlayers = true;
+    console.error("Error fetching players:", error);
+  }
 
   const startPage = document.createElement("div");
   startPage.classList.add("start-page");
@@ -79,7 +82,8 @@ export function renderStartPage(): void {
   startGameBtn.addEventListener("click", async () => {
     const playerName = playerNameInput.value.trim();
 
-    if (!playerName) {
+    if (couldNotFetchPlayers) {
+      alert("Could not load existing players. Please try again.");
       return;
     }
 
@@ -110,7 +114,6 @@ export function renderStartPage(): void {
     console.log("Created player from API", createdPlayer);
 
     localStorage.setItem("activePlayer", createdPlayer.playerName);
-    localStorage.setItem("activePlayer", playerName);
     initGameFlow();
   });
 
@@ -202,5 +205,15 @@ async function savePlayer(player: Player): Promise<Player> {
     throw new Error("Failed to save player");
   }
 
+  return response.json();
+}
+
+async function fetchPlayers(): Promise<Player[]> {
+  const response = await fetch("http://localhost:3000/players");
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch players");
+  }
+  
   return response.json();
 }

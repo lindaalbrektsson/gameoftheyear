@@ -24,7 +24,7 @@ function getViewFromHash(): ViewName | null {
 async function renderView(view: ViewName): Promise<void> {
   if (view === "start") {
     localStorage.removeItem("activePlayer");
-    renderStartPage();
+    await renderStartPage();
     return;
   }
 
