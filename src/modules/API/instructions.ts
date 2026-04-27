@@ -18,7 +18,8 @@ export type ColorType =
     | "yellow"
     | "green"
     | "orange"
-    | "purple";
+    | "purple"
+    | "blank";
 
 async function getInstructions(): Promise<Instruction[]> {
    
