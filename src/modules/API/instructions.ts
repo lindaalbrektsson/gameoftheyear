@@ -1,4 +1,4 @@
-interface Instruction {
+export interface Instruction {
     id: string,
     info: string,
     ruleType: RuleType,
@@ -32,7 +32,6 @@ async function getInstructions(): Promise<Instruction[]> {
     return data;
 };
 
-//Kalla på denna med state.difficultyLevel och få tillbaka en random
 export async function getRandomInstruction(difficultyLevel: number): Promise<Instruction> {
     const instructions = await getInstructions();
     const currentInstructions = instructions.filter(
@@ -40,6 +39,7 @@ export async function getRandomInstruction(difficultyLevel: number): Promise<Ins
     );
 
     const randomIndex = Math.floor(Math.random() * currentInstructions.length);
+    console.log(randomIndex);
     return currentInstructions[randomIndex];
 };
 

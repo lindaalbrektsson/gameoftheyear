@@ -1,6 +1,6 @@
-import { getShapes } from "./API/shapes";
+import { getBlankShape, getCurrentShapes, type Shape } from "./API/shapes";
 import { renderActivePlayerStartPage } from "./activePlayerStartPage";
-import { getRandomInstruction } from "./API/instructions";
+import { getRandomInstruction, type Instruction } from "./API/instructions";
 
 //Denna kan köras från startsidorna och endgame
 export function initGameFlow () {
@@ -157,11 +157,15 @@ function resetState() {
     state.difficultyLevel = 1;
 }
 
-function startNewRound() {
+async function startNewRound() {
     resetForNextRound();
-    //Funktioner för att hämta instruktioner och shapes
-    renderInstruction();
-    renderShapes();
+    const newInstruction = await getRandomInstruction(state.difficultyLevel);
+    const newInstructionShape = await getInstructionShape(newInstruction);
+    const shapes = await getCurrentShapes(state.difficultyLevel);
+
+    renderInstruction(newInstruction, newInstructionShape);
+    renderShapes(shapes);
+    gameboard.append(shapeAndInstructionDiv, shapesDiv);
     requestAnimationFrame(() => {
         gameboard.classList.add("fade-in");
     });
@@ -175,13 +179,13 @@ function changeGameboard() {
     shapeAndInstructionDiv.classList.add("shape-and-instruction-div");
     shapesDiv = document.createElement("div");
     shapesDiv.classList.add("shapes-div");
-    gameboard.append(shapeAndInstructionDiv, shapesDiv);
+    
 }
 
-async function renderShapes() {
-    const shapes = await getShapes();
-    const colorShapes = shapes.filter((shape)=> shape.color !="blank");
-        colorShapes.forEach(shape => {
+async function renderShapes(shapes: Shape[]) {
+    
+    
+        shapes.forEach(shape => {
             const shapeItem = document.createElement("div");
             shapeItem.classList.add(`${shape.type}`, "shape-item")
             shapesDiv.appendChild(shapeItem);
@@ -198,19 +202,28 @@ async function renderShapes() {
         });
 };
 
-async function renderInstruction() {
-    const newInstruction = await getRandomInstruction(state.difficultyLevel);
+async function getInstructionShape(instruction: Instruction): Promise<Shape> {
+    
+    if (instruction.ruleType === "colorFillBlankShape") {
+        const instructionShape = await getBlankShape(state.difficultyLevel);
+        return instructionShape;
+    }
+    const currentShapes = await getCurrentShapes(state.difficultyLevel);
+    const randomIndex = Math.floor(Math.random() * currentShapes.length);
+
+    return currentShapes[randomIndex];
+}
+
+async function renderInstruction(newInstruction: Instruction, newInstructionShape: Shape) {
+
     const instruction = document.createElement("p");
     instruction.classList.add("instruction");
     instruction.textContent = newInstruction.info;
     const shape = document.createElement("div");
-    // let newInstructionShape: ShapeType;
-    // if (newInstruction.ruleType === "colorFillBlankShape") {
-    //     newInstructionShape = getBlankShape(state.difficultyLevel);
-    //     shape.style.borderBottomColor - fixa med variablerna
+    // if (newInstructionShape.type === "triangle") {
+    //     shape.style.borderBottomColor - variablerna
     // }
     // else {
-    //     newInstructionShape = getRandomShape(state.difficultyLevel);
     //     shape.style.backgroundColor - variablerna
     // }
     
@@ -238,6 +251,7 @@ function updateScoreUI() {
 
 function resetForNextRound() {
     gameboard.classList.remove("fade-in");
+    gameboard.innerHTML = "";
     levelCounter.classList.remove("jump-level");
     shapeAndInstructionDiv.innerHTML= "";
     shapesDiv.innerHTML = "";
