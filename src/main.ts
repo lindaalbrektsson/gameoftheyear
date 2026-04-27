@@ -39,7 +39,10 @@ async function renderView(view: ViewName): Promise<void> {
 
   if (view === "in-game") {
     if (!localStorage.getItem("activePlayer")) {
-      localStorage.setItem("activePlayer", "Linda");
+      window.location.hash = "start";
+      updateActiveDevButton("start");
+      await renderStartPage();
+      return;
     }
 
     initGameFlow();
