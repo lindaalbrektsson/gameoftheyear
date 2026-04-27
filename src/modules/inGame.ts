@@ -177,35 +177,35 @@ function changeGameboard() {
 }
 
 async function renderShapes() {
-const shapes = await getShapes();
-const colorShapes = shapes.filter((shape)=> shape.color !="blank");
-    colorShapes.forEach(shape => {
-        const shapeItem = document.createElement("div");
-        shapeItem.classList.add(`${shape.type}`, "shape-item")
-        shapesDiv.appendChild(shapeItem);
+    const shapes = await getShapes();
+    const colorShapes = shapes.filter((shape)=> shape.color !="blank");
+        colorShapes.forEach(shape => {
+            const shapeItem = document.createElement("div");
+            shapeItem.classList.add(`${shape.type}`, "shape-item")
+            shapesDiv.appendChild(shapeItem);
 
-        shapeItem.addEventListener("click", () => {
-            shapeItem.classList.add("correct");
-            state.level++;
-            state.score =+ 100;
-            updateScoreUI();
-            setTimeout (()=> {
-                startNewRound();
-            }, 600);
+            shapeItem.addEventListener("click", () => {
+                shapeItem.classList.add("correct");
+                state.level++;
+                state.score =+ 100;
+                updateScoreUI();
+                setTimeout (()=> {
+                    startNewRound();
+                }, 600);
+            });
         });
-    });
 };
 
 async function renderInstruction() {
-//const newInstruction = await getRandomInstruction(); Går att filtrera med <= difficultylevel, fixa så det returnerar en random
-const instruction = document.createElement("p");
-instruction.classList.add("instruction");
-// instruction.textContent = newInstruction.info;
-//gör en switch beroende på vilken ruleType instruktionen har
-instruction.textContent = "Blue";
-const shape = document.createElement("div");
-shape.classList.add("triangle");
-shapeAndInstructionDiv.append(shape, instruction);
+    //const newInstruction = await getRandomInstruction(); Går att filtrera med <= difficultylevel, fixa så det returnerar en random
+    const instruction = document.createElement("p");
+    instruction.classList.add("instruction");
+    // instruction.textContent = newInstruction.info;
+    //gör en switch beroende på vilken ruleType instruktionen har
+    instruction.textContent = "Blue";
+    const shape = document.createElement("div");
+    shape.classList.add("triangle");
+    shapeAndInstructionDiv.append(shape, instruction);
 };
 
 //Funktioner som uppdaterar UI utifrån state
