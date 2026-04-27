@@ -1,17 +1,21 @@
 import { initGameFlow } from "./inGame";
 import { renderStartPage } from "./startPage";
 
+const API_BASE_URL = "http://localhost:3000";
+
+type EntityId = string | number;
+
 type Player = {
-  id: string;
+  id: EntityId;
   playerName: string;
 };
 
 type Game = {
-  id: string;
+  id: EntityId;
   gameDate: string;
   score: number;
   level: number;
-  playerId: string;
+  playerId: EntityId;
 };
 
 type GlobalHighscoreEntry = {
@@ -20,7 +24,9 @@ type GlobalHighscoreEntry = {
   score: number;
 };
 
-export function renderActivePlayerStartPage(): void {
+const ACTIVE_PLAYER_NOT_FOUND_ERROR = "ACTIVE_PLAYER_NOT_FOUND";
+
+export async function renderActivePlayerStartPage(): Promise<void> {
   const main = document.querySelector("main");
   const headerMenu = document.querySelector(".header-menu");
   headerMenu?.replaceChildren();
@@ -32,97 +38,133 @@ export function renderActivePlayerStartPage(): void {
   const activePlayerName = localStorage.getItem("activePlayer");
 
   if (!activePlayerName) {
-    throw new Error("No active player found");
+    renderMissingPlayerState(
+      main,
+      "No active player selected",
+      "Choose a player from the start page to view the dashboard."
+    );
+    return;
   }
 
-  // Tillfällig mockdata för players
-  // TODO: Byt till players från data.json / json-server
-  const players: Player[] = [
-    { id: "p1", playerName: activePlayerName },
-    { id: "p2", playerName: "Player2" },
-    { id: "p3", playerName: "Player3" },
-  ];
-
-  const activePlayer = players.find(
-    (player) => player.playerName === activePlayerName
+  main.replaceChildren(
+    createStatusPanel("Loading player data...", "Fetching your latest stats.")
   );
 
-  if (!activePlayer) {
-    throw new Error("Active player not found in players");
+  try {
+    const { activePlayer, playerGames, globalHighscoreEntries } =
+      await loadDashboardData(activePlayerName);
+
+    renderDashboard(
+      main,
+      activePlayer.playerName,
+      playerGames,
+      globalHighscoreEntries
+    );
+  } catch (error) {
+    console.error("Failed to load active player start page", error);
+
+    if (
+      error instanceof Error &&
+      error.message === ACTIVE_PLAYER_NOT_FOUND_ERROR
+    ) {
+      renderMissingPlayerState(
+        main,
+        `Could not find "${activePlayerName}"`,
+        "Go back to the start page and choose or create a player there."
+      );
+      return;
+    }
+
+    renderLoadError(main);
+  }
+}
+
+async function loadDashboardData(activePlayerName: string): Promise<{
+  activePlayer: Player;
+  playerGames: Game[];
+  globalHighscoreEntries: GlobalHighscoreEntry[];
+}> {
+  const [players, games] = await Promise.all([fetchPlayers(), fetchGames()]);
+  const activePlayer = getActivePlayer(players, activePlayerName);
+
+  const playerGames = sortGamesByNewest(
+    games.filter((game) => String(game.playerId) === String(activePlayer.id))
+  );
+
+  const globalHighscoreEntries = buildGlobalHighscoreEntries(players, games);
+
+  return {
+    activePlayer,
+    playerGames,
+    globalHighscoreEntries,
+  };
+}
+
+async function fetchPlayers(): Promise<Player[]> {
+  return fetchJson<Player[]>("/players");
+}
+
+async function fetchGames(): Promise<Game[]> {
+  return fetchJson<Game[]>("/games");
+}
+
+function getActivePlayer(
+  players: Player[],
+  activePlayerName: string
+): Player {
+  const existingPlayer = players.find(
+    (player) =>
+      player.playerName.toLowerCase() === activePlayerName.toLowerCase()
+  );
+
+  if (existingPlayer) {
+    localStorage.setItem("activePlayer", existingPlayer.playerName);
+    return existingPlayer;
   }
 
-  // Tillfällig mockdata för games
-  // TODO: Byt till games från data.json när spelet sparar riktiga game-objekt
-  const games: Game[] = [
-    {
-      id: "g1",
-      gameDate: "2026-04-21",
-      score: 80,
-      level: 5,
-      playerId: activePlayer.id,
-    },
-    {
-      id: "g2",
-      gameDate: "2026-04-20",
-      score: 70,
-      level: 4,
-      playerId: activePlayer.id,
-    },
-    {
-      id: "g3",
-      gameDate: "2026-04-19",
-      score: 60,
-      level: 3,
-      playerId: activePlayer.id,
-    },
-    {
-      id: "g4",
-      gameDate: "2026-04-19",
-      score: 60,
-      level: 3,
-      playerId: activePlayer.id,
-    },
-    {
-      id: "g5",
-      gameDate: "2026-04-19",
-      score: 60,
-      level: 3,
-      playerId: activePlayer.id,
-    },
-    {
-      id: "g6",
-      gameDate: "2026-04-19",
-      score: 60,
-      level: 3,
-      playerId: activePlayer.id,
-    },
-    {
-      id: "g7",
-      gameDate: "2026-04-19",
-      score: 60,
-      level: 3,
-      playerId: activePlayer.id,
-    },
-  ];
+  throw new Error(ACTIVE_PLAYER_NOT_FOUND_ERROR);
+}
 
-  const playerGames = games.filter((game) => game.playerId === activePlayer.id);
+async function deleteGame(gameId: EntityId): Promise<void> {
+  await fetchJson<void>(`/games/${gameId}`, {
+    method: "DELETE",
+  });
+}
 
-  const playerHighscoreValue =
-    playerGames.length > 0
-      ? Math.max(...playerGames.map((game) => game.score))
-      : 0;
+async function fetchJson<T>(
+  path: string,
+  init?: RequestInit
+): Promise<T> {
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    ...init,
+  });
 
-  // Tillfällig data för global highscore
-  // TODO: Byt till riktig sammanställning från players + games
-  const globalHighscoreEntries: GlobalHighscoreEntry[] = [
-    { playerName: "Player1", level: 10, score: 1000 },
-    { playerName: "Player2", level: 9, score: 900 },
-    { playerName: "Player3", level: 8, score: 800 },
-    { playerName: "Player4", level: 7, score: 700 },
-    { playerName: "Player5", level: 6, score: 600 },
-    { playerName: "Player6", level: 5, score: 500 },
-  ];
+  if (!response.ok) {
+    throw new Error(`Request failed for ${path} with status ${response.status}`);
+  }
 
+  if (response.status === 204) {
+    return undefined as T;
+  }
+
+  const responseText = await response.text();
+
+  if (!responseText) {
+    return undefined as T;
+  }
+
+  return JSON.parse(responseText) as T;
+}
+
+function renderDashboard(
+  main: Element,
+  activePlayerName: string,
+  playerGames: Game[],
+  globalHighscoreEntries: GlobalHighscoreEntry[]
+): void {
   let isShowingHowToPlay = false;
 
   const activePlayerStartPage = document.createElement("section");
@@ -130,6 +172,11 @@ export function renderActivePlayerStartPage(): void {
 
   const leftSection = document.createElement("section");
   leftSection.classList.add("left-section");
+
+  const playerHighscoreValue =
+    playerGames.length > 0
+      ? Math.max(...playerGames.map((game) => game.score))
+      : 0;
 
   const playerHighscoreSection = createPlayerHighscore(playerHighscoreValue);
 
@@ -143,7 +190,10 @@ export function renderActivePlayerStartPage(): void {
 
   function showPlayerGameHistory(): void {
     bottomPanelContainer.replaceChildren(
-      createPlayerGameHistorySection(playerGames)
+      createPlayerGameHistorySection(playerGames, async (gameId) => {
+        await deleteGame(gameId);
+        await renderActivePlayerStartPage();
+      })
     );
     howToPlayBtn.textContent = "How to play";
   }
@@ -171,13 +221,90 @@ export function renderActivePlayerStartPage(): void {
   leftSection.append(playerHighscoreSection, bottomPanelContainer);
 
   const rightSection = createRightSection(
-    activePlayer.playerName,
+    activePlayerName,
     globalHighscoreEntries,
     howToPlayBtn
   );
 
   activePlayerStartPage.append(leftSection, rightSection);
   main.replaceChildren(activePlayerStartPage);
+}
+
+function renderLoadError(main: Element): void {
+  const errorPanel = createStatusPanel(
+    "Could not load player data",
+    "Start json-server and try again."
+  );
+
+  const actions = document.createElement("div");
+
+  const retryBtn = document.createElement("button");
+  retryBtn.classList.add("game-btn");
+  retryBtn.type = "button";
+  retryBtn.textContent = "Retry";
+  retryBtn.addEventListener("click", () => {
+    void renderActivePlayerStartPage();
+  });
+
+  const changePlayerBtn = document.createElement("button");
+  changePlayerBtn.classList.add("game-btn");
+  changePlayerBtn.type = "button";
+  changePlayerBtn.textContent = "Change Player";
+  changePlayerBtn.addEventListener("click", () => {
+    localStorage.removeItem("activePlayer");
+    renderStartPage();
+  });
+
+  actions.append(retryBtn, changePlayerBtn);
+  errorPanel.append(actions);
+  main.replaceChildren(errorPanel);
+}
+
+function renderMissingPlayerState(
+  main: Element,
+  titleText: string,
+  bodyText: string
+): void {
+  const statePanel = createStatusPanel(titleText, bodyText);
+  const actions = document.createElement("div");
+
+  const goToStartPageBtn = document.createElement("button");
+  goToStartPageBtn.classList.add("game-btn");
+  goToStartPageBtn.type = "button";
+  goToStartPageBtn.textContent = "Go to Start Page";
+  goToStartPageBtn.addEventListener("click", () => {
+    localStorage.removeItem("activePlayer");
+    renderStartPage();
+  });
+
+  const retryBtn = document.createElement("button");
+  retryBtn.classList.add("game-btn");
+  retryBtn.type = "button";
+  retryBtn.textContent = "Retry";
+  retryBtn.addEventListener("click", () => {
+    void renderActivePlayerStartPage();
+  });
+
+  actions.append(goToStartPageBtn, retryBtn);
+  statePanel.append(actions);
+  main.replaceChildren(statePanel);
+}
+
+function createStatusPanel(titleText: string, bodyText: string): HTMLElement {
+  const panel = document.createElement("section");
+  panel.classList.add("active-player-start-page");
+
+  const title = document.createElement("h2");
+  title.classList.add("panel-title");
+  title.textContent = titleText;
+
+  const body = document.createElement("p");
+  body.classList.add("panel-subtitle");
+  body.textContent = bodyText;
+
+  panel.append(title, body);
+
+  return panel;
 }
 
 function createPlayerHighscore(highscoreValue: number): HTMLElement {
@@ -197,7 +324,10 @@ function createPlayerHighscore(highscoreValue: number): HTMLElement {
   return playerHighscoreSection;
 }
 
-function createPlayerGameHistorySection(playerGames: Game[]): HTMLElement {
+function createPlayerGameHistorySection(
+  playerGames: Game[],
+  onDeleteGame: (gameId: EntityId) => Promise<void>
+): HTMLElement {
   const playerGameHistorySection = document.createElement("section");
   playerGameHistorySection.classList.add("player-recent-games");
 
@@ -209,19 +339,29 @@ function createPlayerGameHistorySection(playerGames: Game[]): HTMLElement {
   sectionSubtitle.classList.add("panel-subtitle");
   sectionSubtitle.textContent = "Latest games";
 
-  const latestEightGames = playerGames.slice(0, 8);
-  const playerScoreTable = createPlayerScoreTable(latestEightGames);
+  playerGameHistorySection.append(sectionTitle, sectionSubtitle);
 
-  playerGameHistorySection.append(
-    sectionTitle,
-    sectionSubtitle,
-    playerScoreTable
-  );
+  if (playerGames.length === 0) {
+    const emptyState = document.createElement("p");
+    emptyState.classList.add("panel-subtitle");
+    emptyState.textContent =
+      "No saved games yet. Finished games will appear here once the game flow stores them.";
+    playerGameHistorySection.append(emptyState);
+    return playerGameHistorySection;
+  }
+
+  const latestEightGames = playerGames.slice(0, 8);
+  const playerScoreTable = createPlayerScoreTable(latestEightGames, onDeleteGame);
+
+  playerGameHistorySection.append(playerScoreTable);
 
   return playerGameHistorySection;
 }
 
-function createPlayerScoreTable(rows: Game[]): HTMLElement {
+function createPlayerScoreTable(
+  rows: Game[],
+  onDeleteGame: (gameId: EntityId) => Promise<void>
+): HTMLElement {
   const playerScoreTable = document.createElement("div");
   playerScoreTable.classList.add("score-table", "player-score-table");
 
@@ -229,7 +369,7 @@ function createPlayerScoreTable(rows: Game[]): HTMLElement {
   playerScoreTable.append(headerRow);
 
   rows.forEach((game) => {
-    const scoreRow = createPlayerScoreRow(game);
+    const scoreRow = createPlayerScoreRow(game, onDeleteGame);
     playerScoreTable.append(scoreRow);
   });
 
@@ -261,13 +401,16 @@ function createPlayerScoreHeaderRow(): HTMLElement {
   return headerRow;
 }
 
-function createPlayerScoreRow(game: Game): HTMLElement {
+function createPlayerScoreRow(
+  game: Game,
+  onDeleteGame: (gameId: EntityId) => Promise<void>
+): HTMLElement {
   const scoreRow = document.createElement("div");
   scoreRow.classList.add("score-row", "player-score-row");
 
   const gameDate = document.createElement("span");
   gameDate.classList.add("score-cell", "score-date");
-  gameDate.textContent = game.gameDate;
+  gameDate.textContent = formatGameDate(game.gameDate);
 
   const gameLevel = document.createElement("span");
   gameLevel.classList.add("score-cell", "score-level");
@@ -280,7 +423,7 @@ function createPlayerScoreRow(game: Game): HTMLElement {
   const deleteCell = document.createElement("span");
   deleteCell.classList.add("score-cell", "score-delete");
 
-  const deleteBtn = createDeleteButton(game, deleteCell);
+  const deleteBtn = createDeleteButton(game, deleteCell, onDeleteGame);
   deleteCell.append(deleteBtn);
 
   scoreRow.append(gameDate, gameLevel, gameScore, deleteCell);
@@ -290,16 +433,21 @@ function createPlayerScoreRow(game: Game): HTMLElement {
 
 function createDeleteButton(
   game: Game,
-  deleteCell: HTMLElement
+  deleteCell: HTMLElement,
+  onDeleteGame: (gameId: EntityId) => Promise<void>
 ): HTMLButtonElement {
   const deleteBtn = document.createElement("button");
   deleteBtn.classList.add("delete-game-btn");
   deleteBtn.type = "button";
-  deleteBtn.textContent = "🗑";
+  deleteBtn.textContent = "X";
   deleteBtn.setAttribute("aria-label", "Delete game");
 
   deleteBtn.addEventListener("click", () => {
-    const deleteConfirmation = createDeleteConfirmation(game, deleteCell);
+    const deleteConfirmation = createDeleteConfirmation(
+      game,
+      deleteCell,
+      onDeleteGame
+    );
     deleteCell.replaceChildren(deleteConfirmation);
   });
 
@@ -308,7 +456,8 @@ function createDeleteButton(
 
 function createDeleteConfirmation(
   game: Game,
-  deleteCell: HTMLElement
+  deleteCell: HTMLElement,
+  onDeleteGame: (gameId: EntityId) => Promise<void>
 ): HTMLElement {
   const confirmationWrapper = document.createElement("div");
   confirmationWrapper.classList.add("delete-confirmation");
@@ -330,13 +479,23 @@ function createDeleteConfirmation(
   cancelBtn.type = "button";
   cancelBtn.textContent = "No";
 
-  confirmBtn.addEventListener("click", () => {
-    // TODO: DELETE game from json-server using game.id
-    console.log(`Delete game with id: ${game.id}`);
+  confirmBtn.addEventListener("click", async () => {
+    confirmBtn.disabled = true;
+    cancelBtn.disabled = true;
+    confirmationText.textContent = "Deleting...";
+
+    try {
+      await onDeleteGame(game.id);
+    } catch (error) {
+      console.error("Failed to delete game", error);
+      confirmationText.textContent = "Delete failed";
+      confirmBtn.disabled = false;
+      cancelBtn.disabled = false;
+    }
   });
 
   cancelBtn.addEventListener("click", () => {
-    const deleteBtn = createDeleteButton(game, deleteCell);
+    const deleteBtn = createDeleteButton(game, deleteCell, onDeleteGame);
     deleteCell.replaceChildren(deleteBtn);
   });
 
@@ -362,7 +521,7 @@ function createHowToPlayPanel(): HTMLElement {
     "Click on the correct tiles based on the given rule",
     "Complete the round before the timer runs out",
     "You have three lives, so avoid mistakes to keep playing",
-    "Each succesful round gives you score",
+    "Each successful round gives you score",
     "A failed round costs you a life and decreases your score",
     "Advance through levels as difficulty increases",
     "Try to beat your previous highscore",
@@ -453,6 +612,16 @@ function createGlobalHighscore(
   sectionTitle.textContent = "Global Highscore";
 
   const topFive = globalHighscoreEntries.slice(0, 5);
+
+  if (topFive.length === 0) {
+    const emptyState = document.createElement("p");
+    emptyState.classList.add("panel-subtitle");
+    emptyState.textContent =
+      "No highscores yet. Saved games from all players will appear here.";
+    globalHighscoreSection.append(sectionTitle, emptyState);
+    return globalHighscoreSection;
+  }
+
   const globalHighscoreTable = createGlobalHighscoreTable(topFive);
 
   globalHighscoreSection.append(sectionTitle, globalHighscoreTable);
@@ -507,25 +676,21 @@ function createGlobalHighscoreRow(
   playerName: string,
   levelValue: number,
   scoreValue: number,
-  rank?: number
+  rank: number
 ): HTMLElement {
   const scoreRow = document.createElement("div");
   scoreRow.classList.add("score-row");
 
   const name = document.createElement("span");
   name.classList.add("score-cell", "score-name");
+  name.textContent = `${rank + 1}. ${playerName}`;
 
   if (rank === 0) {
-    name.textContent = `🥇 ${playerName}`;
     scoreRow.classList.add("gold-rank");
   } else if (rank === 1) {
-    name.textContent = `🥈 ${playerName}`;
     scoreRow.classList.add("silver-rank");
   } else if (rank === 2) {
-    name.textContent = `🥉 ${playerName}`;
     scoreRow.classList.add("bronze-rank");
-  } else {
-    name.textContent = playerName;
   }
 
   const level = document.createElement("span");
@@ -539,4 +704,76 @@ function createGlobalHighscoreRow(
   scoreRow.append(name, level, score);
 
   return scoreRow;
+}
+
+function buildGlobalHighscoreEntries(
+  players: Player[],
+  games: Game[]
+): GlobalHighscoreEntry[] {
+  const playerNamesById = new Map(
+    players.map((player) => [String(player.id), player.playerName])
+  );
+  const bestGameByPlayerId = new Map<string, GlobalHighscoreEntry>();
+
+  games.forEach((game) => {
+    const playerId = String(game.playerId);
+    const playerName = playerNamesById.get(playerId);
+
+    if (!playerName) {
+      return;
+    }
+
+    const existingBest = bestGameByPlayerId.get(playerId);
+    const isBetterScore =
+      !existingBest ||
+      game.score > existingBest.score ||
+      (game.score === existingBest.score && game.level > existingBest.level);
+
+    if (isBetterScore) {
+      bestGameByPlayerId.set(playerId, {
+        playerName,
+        level: game.level,
+        score: game.score,
+      });
+    }
+  });
+
+  return [...bestGameByPlayerId.values()].sort((left, right) => {
+    if (right.score !== left.score) {
+      return right.score - left.score;
+    }
+
+    if (right.level !== left.level) {
+      return right.level - left.level;
+    }
+
+    return left.playerName.localeCompare(right.playerName);
+  });
+}
+
+function sortGamesByNewest(games: Game[]): Game[] {
+  return [...games].sort((left, right) => {
+    const dateDifference =
+      new Date(right.gameDate).getTime() - new Date(left.gameDate).getTime();
+
+    if (dateDifference !== 0) {
+      return dateDifference;
+    }
+
+    if (right.score !== left.score) {
+      return right.score - left.score;
+    }
+
+    return right.level - left.level;
+  });
+}
+
+function formatGameDate(gameDate: string): string {
+  const parsedDate = new Date(gameDate);
+
+  if (Number.isNaN(parsedDate.getTime())) {
+    return gameDate;
+  }
+
+  return parsedDate.toLocaleDateString("sv-SE");
 }
