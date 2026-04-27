@@ -30,16 +30,18 @@ async function renderView(view: ViewName): Promise<void> {
 
   if (view === "active-player") {
     if (!localStorage.getItem("activePlayer")) {
-      localStorage.setItem("activePlayer", "Linda");
+      redirectToStartView();
+      return;
     }
 
-    renderActivePlayerStartPage();
+    await renderActivePlayerStartPage();
     return;
   }
 
   if (view === "in-game") {
     if (!localStorage.getItem("activePlayer")) {
-      localStorage.setItem("activePlayer", "Linda");
+      redirectToStartView();
+      return;
     }
 
     initGameFlow();
@@ -57,6 +59,12 @@ function updateActiveDevButton(view: ViewName): void {
     const isActive = button.dataset.view === view;
     button.classList.toggle("is-active", isActive);
   });
+}
+
+function redirectToStartView(): void {
+  window.location.hash = "start";
+  updateActiveDevButton("start");
+  renderStartPage();
 }
 
 function setupDevViewNav(): void {
