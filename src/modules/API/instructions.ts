@@ -1,0 +1,45 @@
+export interface Instruction {
+    id: string,
+    info: string,
+    ruleType: RuleType,
+    targetColor?: TargetColorType,
+    difficultyLevel: number
+}
+
+export type RuleType = 
+    | "colorFillBlankShape"
+    | "matchColor"
+    | "matchShapeAndColor"
+    | "matchShape";
+
+export type TargetColorType = 
+    | "blue"
+    | "red"
+    | "yellow"
+    | "green"
+    | "orange"
+    | "purple";
+
+async function getInstructions(): Promise<Instruction[]> {
+   
+    const response = await fetch("http://localhost:3000/instructions");
+
+    if (!response.ok) {
+        throw new Error ("Couldn't get instructions");
+    }
+    const data = await response.json();
+    return data;
+};
+
+//Kalla på denna med state.difficultyLevel och få tillbaka en random
+export async function getRandomInstruction(difficultyLevel: number): Promise<Instruction> {
+    const instructions = await getInstructions();
+    const currentInstructions = instructions.filter(
+        (instruction) => instruction.difficultyLevel <= difficultyLevel
+    );
+
+    const randomIndex = Math.floor(Math.random() * currentInstructions.length);
+    return currentInstructions[randomIndex];
+};
+
+//När man ska hämta en instruktion får den ligga i en "try catch"
