@@ -16,11 +16,13 @@ export async function renderStartPage(): Promise<void> {
   }
 
   let existingPlayers: Player[] = [];
+  let couldNotFetchPlayers = false;
 
   try {
     existingPlayers = await fetchPlayers();
     console.log("Fetched players from API", existingPlayers);
   } catch (error) {
+    couldNotFetchPlayers = true;
     console.error("Error fetching players:", error);
   }
 
@@ -80,7 +82,8 @@ export async function renderStartPage(): Promise<void> {
   startGameBtn.addEventListener("click", async () => {
     const playerName = playerNameInput.value.trim();
 
-    if (!playerName) {
+    if (couldNotFetchPlayers) {
+      alert("Could not load existing players. Please try again.");
       return;
     }
 
