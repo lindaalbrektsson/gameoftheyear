@@ -136,7 +136,6 @@ export function startCountdown() {
     }, 1000)
 }
 
-
 function changeGameboard() {
     gameboard.innerHTML ="";
     shapeAndInstructionDiv = document.createElement("div");
@@ -195,6 +194,14 @@ export function updateUI() {
     levelCounter.textContent = state.level.toString();
     scoreCounter.textContent = state.score.toString();
     timer.textContent = state.timeLeft.toString();
+    lives.textContent = "❤️".repeat(state.lives);
+}
+
+export function updateTimerUI() {
+    timer.textContent = state.timeLeft.toString();
+}
+
+export function updateLivesUI() {
     lives.textContent = "❤️".repeat(state.lives);
 }
 export function updateLevelUI() {
