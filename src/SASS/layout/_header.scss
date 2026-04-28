@@ -2,30 +2,24 @@
 @use "../abstracts/mixins" as *;
 
 .header-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 1rem;
-  width: 100%;
-  padding: 1rem 1.5rem 0;
+  @include flex-between($align: flex-end);
+  gap: $space-md;
+  padding: $space-md;
+  flex-wrap: wrap;
 }
 
 .header-logo {
   display: block;
-  width: clamp(320px, 42vw, 700px);
+  width: clamp(320px, 35vw, 500px);
   height: auto;
 }
 
 .header-menu {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-  margin: 0 0 0 auto;
-  padding: 0;
-  list-style: none;
-
+  justify-content: space-between;
+  gap: $space-md;
+  
   li {
     margin: 0;
     padding: 0;
@@ -33,27 +27,25 @@
   }
 }
 
-@include responsive($tablet-width) {
-  .header-container {
-    padding: 0.75rem 1rem 0;
-  }
+// @include responsive($tablet-width) {
+//   .header-container {
+//     padding: 0.75rem 1rem 0;
+//   }
 
-  .header-logo {
-    width: clamp(240px, 36vw, 460px);
-  }
-}
+//   .header-logo {
+//     width: clamp(240px, 36vw, 460px);
+//   }
+// }
 
-@include responsive($mobile-width) {
+@include responsive(800px) {
   .header-container {
+    flex-direction: column;
     align-items: flex-start;
-    gap: 0.75rem;
-  }
-
-  .header-logo {
-    width: clamp(190px, 48vw, 300px);
+    justify-content: flex-start;
   }
 
   .header-menu {
+    width: 100%;
     gap: 0.5rem;
     font-size: 0.95rem;
   }

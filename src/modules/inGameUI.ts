@@ -115,10 +115,9 @@ function renderTimerAndLives (): HTMLDivElement {
 
 export function startCountdown() {
     const countdown = document.createElement("p");
-    countdown.classList.add("pulse");
-    countdown.classList.add("countdown");
     gameboard.innerHTML = "";
     gameboard.appendChild(countdown);
+    countdown.classList.add("countdown");
 
     let counter = 5;
 
