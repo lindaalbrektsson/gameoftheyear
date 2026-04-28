@@ -21,6 +21,8 @@ $color-panel-border: rgba(255, 255, 255, 0.5);
 $color-panel-inner: rgba(255, 255, 255, 0.06);
 
 // Accent colors
+$color-blank:rgba(255, 255, 255, 0.12);
+
 $color-pink: #ff4c91;
 $color-pink-soft: rgba(255, 76, 145, 0.35);
 $color-pink-light: rgba(255, 155, 187, 0.7);
@@ -33,6 +35,9 @@ $color-green-light: rgba(90, 255, 180, 0.88);
 
 $color-yellow: #ffe66d;
 $color-yellow-light: #fff2a6;
+
+$color-red: #ff4c4c;
+$color-red-light: rgba(255, 76, 76, 0.85);
 
 $color-purple: #844fff;
 $color-purple-light: rgba(196, 123, 255, 0.85);
@@ -77,3 +82,13 @@ $container-width: 1150px;
 $content-width: 1100px;
 $tablet-width: 900px;
 $mobile-width: 600px;
+
+:root {
+    --blank: #{$color-blank};
+    --blue: #{$color-blue};
+    --red: #{$color-red};
+    --yellow: #{$color-yellow};
+    --green: #{$color-green};
+    --orange: #{$color-orange};
+    --purple: #{$color-purple};
+}

@@ -1,17 +1,12 @@
-import { getBlankShape, getCurrentShapes, getShuffledShapes, type Shape } from "./API/shapes";
+import { type Shape } from "./API/shapes";
 import { renderActivePlayerStartPage } from "./activePlayerStartPage";
-import { getRandomInstruction, type Instruction } from "./API/instructions";
-import { startRoundTimer, stopRoundTimer } from "./inGameTimer";
-
+import { type Instruction } from "./API/instructions";
+import { stopRoundTimer } from "./inGameTimer";
+import { startNewRound, resetState, state, handleTileClick } from "./inGameLogic";
 //Denna kan köras från startsidorna och endgame
-export function initGameFlow () {
-    resetState();
-    renderInGame();
-    updateUI();
-    startCountdown();
-}
 
-//Deklarerar dessa variabler för att kunna använda dem i funktioner 
+
+//Deklarerar dessa variabler för att kunna använda dem i funktioner
 // let activePlayerInfo: HTMLLIElement;
 let gameboard: HTMLDivElement;
 let shapeAndInstructionDiv: HTMLDivElement;
@@ -21,16 +16,6 @@ let scoreCounter: HTMLSpanElement;
 let timer: HTMLSpanElement;
 let lives: HTMLParagraphElement;
 
-//Denna bör ligga i en egen modul (som hanterar data) och importeras dit man behöver dem. 
-// Vi kan fylla på med fler variabler om vi behöver. detta hänger med och uppdateras under spelet.
-export const state = {
-    //Vi får fundera på om activeplayer ska ligga här eller om vi sätter en global funktion för hämtning av spelare+id
-    level: 1,
-    score: 0,
-    timeLeft: 0,
-    lives: 3,
-    difficultyLevel: 1
-};
 
 export function renderInGame () {
     renderHeaderMenu();
@@ -44,10 +29,10 @@ export function renderInGame () {
 
     const restartLevelScoreDiv = renderRestartLevelScore();
     const timerAndLivesDiv = renderTimerAndLives();
-    
+
     gameboard = document.createElement("div");
     gameboard.classList.add("gameboard");
-    
+
     inGameContainer.append(restartLevelScoreDiv, timerAndLivesDiv, gameboard);
     main.appendChild(inGameContainer);
 }
@@ -62,7 +47,7 @@ function renderHeaderMenu () {
     const activePlayerInfo = document.createElement("li");
     activePlayerInfo.classList.add("active-player-info");
     activePlayerInfo.textContent = `Playing as: ` //Lägg till spelarens namn, hämta från local storage? db?
-    
+
     const endGameLi = document.createElement("li");
     const endGameBtn = document.createElement("button");
     endGameBtn.classList.add("game-btn", "end-game-btn");
@@ -151,29 +136,6 @@ export function startCountdown() {
     }, 1000)
 }
 
-function resetState() {
-    state.level = 1;
-    state.score = 0;
-    state.timeLeft = 30;
-    state.lives = 3;
-    state.difficultyLevel = 1;
-}
-
-async function startNewRound() {
-    resetForNextRound();
-    const newInstruction = await getRandomInstruction(state.difficultyLevel);
-    const newInstructionShape = await getInstructionShape(newInstruction);
-    const shapes = await getShuffledShapes(state.difficultyLevel);
-
-    renderInstruction(newInstruction, newInstructionShape);
-    renderShapes(shapes);
-    startRoundTimer();
-    gameboard.append(shapeAndInstructionDiv, shapesDiv);
-      requestAnimationFrame(() => {
-        gameboard.classList.add("fade-in");
-    });
-    setTimeout(()=> updateLevelUI(), 400);
-}
 
 function changeGameboard() {
     gameboard.innerHTML ="";
@@ -183,53 +145,50 @@ function changeGameboard() {
     shapesDiv.classList.add("shapes-div");
 }
 
-async function renderShapes(shapes: Shape[]) {
-        shapes.forEach(shape => {
-            const shapeItem = document.createElement("div");
-            shapeItem.classList.add(`${shape.type}`, "shape-item")
-            shapesDiv.appendChild(shapeItem);
+export async function renderShapes(shapes: Shape[]) {
+    shapes.forEach(shape => {
+        const shapeItem = document.createElement("div");
+        shapeItem.classList.add(`${shape.type}`, "shape-item");
+        if (shape.type === "triangle") {
+            shapeItem.style.borderBottomColor = `var(--color-${shape.color})`;
+        }
+        else {
+            shapeItem.style.backgroundColor = `var(--color-${shape.color})`;
+        }
+        shapesDiv.appendChild(shapeItem);
 
-            shapeItem.addEventListener("click", () => {
-                stopRoundTimer();
-                shapeItem.classList.add("correct");
-                state.level++;
-                state.score =+ 100;
-                updateScoreUI();
-                setTimeout (()=> {
-                    startNewRound();
-                }, 600);
-            });
+        shapeItem.addEventListener("click", () => {
+            handleTileClick(shape, shapeItem)
         });
+    });
+    gameboard.appendChild(shapesDiv);
+        requestAnimationFrame(() => {
+        gameboard.classList.add("fade-in");
+    });
 };
 
 //Hämtar instructionShape utifrån instruktionens ruletype
-async function getInstructionShape(instruction: Instruction): Promise<Shape> {
-    
-    if (instruction.ruleType === "colorFillBlankShape") {
-        const instructionShape = await getBlankShape(state.difficultyLevel);
-        return instructionShape;
-    }
-    const currentShapes = await getCurrentShapes(state.difficultyLevel);
-    const randomIndex = Math.floor(Math.random() * currentShapes.length);
 
-    return currentShapes[randomIndex];
-}
-
-async function renderInstruction(newInstruction: Instruction, newInstructionShape: Shape) {
+export async function renderInstruction(newInstruction: Instruction, newInstructionShape: Shape) {
 
     const instruction = document.createElement("p");
     instruction.classList.add("instruction");
     instruction.textContent = newInstruction.info;
     const shape = document.createElement("div");
-    // if (newInstructionShape.type === "triangle") {
-    //     shape.style.borderBottomColor - variablerna
-    // }
-    // else {
-    //     shape.style.backgroundColor - variablerna
-    // }
-    
+
+    if (newInstructionShape.type === "triangle") {
+        shape.style.borderBottomColor = `var(--color-${newInstructionShape.color})`;
+    }
+    else {
+        shape.style.backgroundColor = `var(--color-${newInstructionShape.color})`;
+    }
+    if (newInstruction.ruleType === "colorFillBlankShape") {
+        shape.classList.add("blank-shape");
+    }
+
     // shape.classList.add(`${newInstructionShape.type}`);
     shapeAndInstructionDiv.append(shape, instruction);
+    gameboard.appendChild(shapeAndInstructionDiv);
 };
 
 //Funktioner som uppdaterar UI utifrån state
@@ -240,17 +199,17 @@ export function updateUI() {
     timer.textContent = state.timeLeft.toString();
     lives.textContent = "❤️".repeat(state.lives);
 }
-function updateLevelUI() {
+export function updateLevelUI() {
     levelCounter.textContent = state.level.toString();
     levelCounter.classList.add("jump-level");
 }
 
-function updateScoreUI() {
+export function updateScoreUI() {
     scoreCounter.textContent = state.score.toString();
     scoreCounter.classList.add("jump-score");
 };
 
-function resetForNextRound() {
+export function resetForNextRound() {
     gameboard.classList.remove("fade-in");
     gameboard.innerHTML = "";
     levelCounter.classList.remove("jump-level");

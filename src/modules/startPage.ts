@@ -1,4 +1,4 @@
-import { initGameFlow } from "./inGame";
+import { initGameFlow } from "./inGameLogic";
 
 type Player = {
   id?: string;
@@ -214,6 +214,6 @@ async function fetchPlayers(): Promise<Player[]> {
   if (!response.ok) {
     throw new Error("Failed to fetch players");
   }
-  
+
   return response.json();
 }
