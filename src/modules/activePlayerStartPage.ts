@@ -252,7 +252,7 @@ function renderLoadError(main: Element): void {
   changePlayerBtn.textContent = "Change Player";
   changePlayerBtn.addEventListener("click", () => {
     localStorage.removeItem("activePlayer");
-    renderStartPage();
+    void renderStartPage();
   });
 
   actions.append(retryBtn, changePlayerBtn);
@@ -274,7 +274,7 @@ function renderMissingPlayerState(
   goToStartPageBtn.textContent = "Go to Start Page";
   goToStartPageBtn.addEventListener("click", () => {
     localStorage.removeItem("activePlayer");
-    renderStartPage();
+    void renderStartPage();
   });
 
   const retryBtn = document.createElement("button");
@@ -593,7 +593,7 @@ function createButtonRow(activePlayerName: string): HTMLElement {
   changePlayerBtn.textContent = "Change Player";
   changePlayerBtn.addEventListener("click", () => {
     localStorage.removeItem("activePlayer");
-    renderStartPage();
+    void renderStartPage();
   });
 
   buttonRow.append(startGameBtn, changePlayerBtn);

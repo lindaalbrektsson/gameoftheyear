@@ -1,6 +1,7 @@
 import { getBlankShape, getCurrentShapes, getShuffledShapes, type Shape } from "./API/shapes";
 import { renderActivePlayerStartPage } from "./activePlayerStartPage";
 import { getRandomInstruction, type Instruction } from "./API/instructions";
+import { startRoundTimer, stopRoundTimer } from "./inGameTimer";
 
 //Denna kan köras från startsidorna och endgame
 export function initGameFlow () {
@@ -70,7 +71,7 @@ function renderHeaderMenu () {
     endGameBtn.textContent = "End Game";
     endGameBtn.appendChild(homepageIcon);
     endGameBtn.addEventListener("click", () => {
-        //Stoppa spel-timer?
+        stopRoundTimer();
         resetState();
         renderActivePlayerStartPage();
     })
@@ -88,6 +89,7 @@ function renderRestartLevelScore (): HTMLDivElement {
     restartBtn.textContent = "Restart";
     restartBtn.appendChild(restartIcon);
     restartBtn.addEventListener("click", () => {
+        stopRoundTimer();
         resetState();
         updateUI();
         startCountdown();
@@ -165,12 +167,12 @@ async function startNewRound() {
 
     renderInstruction(newInstruction, newInstructionShape);
     renderShapes(shapes);
+    startRoundTimer();
     gameboard.append(shapeAndInstructionDiv, shapesDiv);
-    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
         gameboard.classList.add("fade-in");
     });
     setTimeout(()=> updateLevelUI(), 400);
-    //Kolla var och när man ska ta bort fade-in klassen?
 }
 
 function changeGameboard() {
@@ -188,6 +190,7 @@ async function renderShapes(shapes: Shape[]) {
             shapesDiv.appendChild(shapeItem);
 
             shapeItem.addEventListener("click", () => {
+                stopRoundTimer();
                 shapeItem.classList.add("correct");
                 state.level++;
                 state.score =+ 100;
