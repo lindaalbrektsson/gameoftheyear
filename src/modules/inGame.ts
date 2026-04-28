@@ -1,6 +1,7 @@
 import { getShapes } from "./API/shapes";
 import { renderActivePlayerStartPage } from "./activePlayerStartPage";
 import { getRandomInstruction } from "./API/instructions";
+import { startRoundTimer, stopRoundTimer } from "./inGameTimer";
 
 //Denna kan köras från startsidorna och endgame
 export function initGameFlow () {
@@ -70,7 +71,7 @@ function renderHeaderMenu () {
     endGameBtn.textContent = "End Game";
     endGameBtn.appendChild(homepageIcon);
     endGameBtn.addEventListener("click", () => {
-        //Stoppa spel-timer?
+        stopRoundTimer();
         resetState();
         renderActivePlayerStartPage();
     })
@@ -88,6 +89,7 @@ function renderRestartLevelScore (): HTMLDivElement {
     restartBtn.textContent = "Restart";
     restartBtn.appendChild(restartIcon);
     restartBtn.addEventListener("click", () => {
+        stopRoundTimer();
         resetState();
         updateUI();
         startCountdown();
@@ -157,8 +159,10 @@ function resetState() {
     state.difficultyLevel = 1;
 }
 
-function startNewRound() {
+export function startNewRound() {
     resetForNextRound();
+    state.timeLeft = 10;
+    startRoundTimer();
     //Funktioner för att hämta instruktioner och shapes
     renderInstruction();
     renderShapes();
@@ -187,6 +191,7 @@ async function renderShapes() {
             shapesDiv.appendChild(shapeItem);
 
             shapeItem.addEventListener("click", () => {
+                stopRoundTimer();
                 shapeItem.classList.add("correct");
                 state.level++;
                 state.score =+ 100;
