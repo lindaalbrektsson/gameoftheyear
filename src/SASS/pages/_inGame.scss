@@ -125,4 +125,7 @@
     .shapes-div {
         width: calc((30px + $space-md)*7);
     }
+    .end-game-btn, .restart-btn {
+        font-family: 0;
+    }
 }
