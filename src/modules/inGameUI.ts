@@ -183,9 +183,6 @@ export async function renderInstruction(newInstruction: Instruction, newInstruct
     else {
         shape.style.backgroundColor = `var(--${newInstructionShape.color})`;
     }
-    if (newInstruction.ruleType === "colorFillBlankShape") {
-        shape.classList.add("blank-shape");
-    }
 
     // shape.classList.add(`${newInstructionShape.type}`);
     shapeAndInstructionDiv.append(shape, instruction);
