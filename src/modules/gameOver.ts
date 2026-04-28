@@ -1,5 +1,5 @@
 import { renderActivePlayerStartPage } from "./activePlayerStartPage";
-import { initGameFlow } from "./inGame";
+import { initGameFlow } from "./inGameLogic";
 
 const mainContainer = document.querySelector("main");
 

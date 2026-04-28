@@ -1,4 +1,5 @@
-import { state, updateUI, startNewRound } from "./inGame";
+import {updateUI} from "./inGameUI";
+import {state, startNewRound} from "./inGameLogic";
 
 let timerIntervalId: number | null = null;
 

@@ -1,4 +1,4 @@
-import type { ColorType } from "./instructions";
+import type { ColorType, Instruction } from "./instructions";
 
 export interface Shape {
     id: "string",
@@ -7,7 +7,7 @@ export interface Shape {
     difficultyLevel: number
 }
 
-type ShapeType = 
+type ShapeType =
 | "triangle"
 | "square"
 | "circle"
@@ -50,3 +50,15 @@ export async function getShuffledShapes(difficultyLevel: number): Promise<Shape[
     console.log(shapes);
     return shapes;
 }
+
+export async function getInstructionShape(instruction: Instruction, difficultyLevel: number): Promise<Shape> {
+
+    if (instruction.ruleType === "colorFillBlankShape") {
+        const instructionShape = await getBlankShape(difficultyLevel);
+        return instructionShape;
+    }
+    const currentShapes = await getCurrentShapes(difficultyLevel);
+    const randomIndex = Math.floor(Math.random() * currentShapes.length);
+
+    return currentShapes[randomIndex];
+};
