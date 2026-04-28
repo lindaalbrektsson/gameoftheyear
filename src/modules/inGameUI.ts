@@ -150,10 +150,10 @@ export async function renderShapes(shapes: Shape[]) {
         const shapeItem = document.createElement("div");
         shapeItem.classList.add(`${shape.type}`, "shape-item");
         if (shape.type === "triangle") {
-            shapeItem.style.borderBottomColor = `var(--color-${shape.color})`;
+            shapeItem.style.borderBottomColor = `var(--${shape.color})`;
         }
         else {
-            shapeItem.style.backgroundColor = `var(--color-${shape.color})`;
+            shapeItem.style.backgroundColor = `var(--${shape.color})`;
         }
         shapesDiv.appendChild(shapeItem);
 
@@ -175,12 +175,13 @@ export async function renderInstruction(newInstruction: Instruction, newInstruct
     instruction.classList.add("instruction");
     instruction.textContent = newInstruction.info;
     const shape = document.createElement("div");
+    shape.classList.add(`${newInstructionShape.type}`);
 
     if (newInstructionShape.type === "triangle") {
-        shape.style.borderBottomColor = `var(--color-${newInstructionShape.color})`;
+        shape.style.borderBottomColor = `var(--${newInstructionShape.color})`;
     }
     else {
-        shape.style.backgroundColor = `var(--color-${newInstructionShape.color})`;
+        shape.style.backgroundColor = `var(--${newInstructionShape.color})`;
     }
     if (newInstruction.ruleType === "colorFillBlankShape") {
         shape.classList.add("blank-shape");
