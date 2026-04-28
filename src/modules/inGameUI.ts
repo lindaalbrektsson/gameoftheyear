@@ -136,7 +136,6 @@ export function startCountdown() {
     }, 1000)
 }
 
-
 function changeGameboard() {
     gameboard.innerHTML ="";
     shapeAndInstructionDiv = document.createElement("div");
@@ -150,10 +149,10 @@ export async function renderShapes(shapes: Shape[]) {
         const shapeItem = document.createElement("div");
         shapeItem.classList.add(`${shape.type}`, "shape-item");
         if (shape.type === "triangle") {
-            shapeItem.style.borderBottomColor = `var(--color-${shape.color})`;
+            shapeItem.style.borderBottomColor = `var(--${shape.color})`;
         }
         else {
-            shapeItem.style.backgroundColor = `var(--color-${shape.color})`;
+            shapeItem.style.backgroundColor = `var(--${shape.color})`;
         }
         shapesDiv.appendChild(shapeItem);
 
@@ -175,15 +174,13 @@ export async function renderInstruction(newInstruction: Instruction, newInstruct
     instruction.classList.add("instruction");
     instruction.textContent = newInstruction.info;
     const shape = document.createElement("div");
+    shape.classList.add(`${newInstructionShape.type}`);
 
     if (newInstructionShape.type === "triangle") {
-        shape.style.borderBottomColor = `var(--color-${newInstructionShape.color})`;
+        shape.style.borderBottomColor = `var(--${newInstructionShape.color})`;
     }
     else {
-        shape.style.backgroundColor = `var(--color-${newInstructionShape.color})`;
-    }
-    if (newInstruction.ruleType === "colorFillBlankShape") {
-        shape.classList.add("blank-shape");
+        shape.style.backgroundColor = `var(--${newInstructionShape.color})`;
     }
 
     // shape.classList.add(`${newInstructionShape.type}`);
@@ -197,6 +194,14 @@ export function updateUI() {
     levelCounter.textContent = state.level.toString();
     scoreCounter.textContent = state.score.toString();
     timer.textContent = state.timeLeft.toString();
+    lives.textContent = "❤️".repeat(state.lives);
+}
+
+export function updateTimerUI() {
+    timer.textContent = state.timeLeft.toString();
+}
+
+export function updateLivesUI() {
     lives.textContent = "❤️".repeat(state.lives);
 }
 export function updateLevelUI() {
@@ -218,4 +223,12 @@ export function resetForNextRound() {
     setTimeout(() => {
         scoreCounter.classList.remove("jump-score");
     }, 1000);
+}
+
+export function renderGameOverMessage(): void {
+    const gameoverMessage = document.createElement("p");
+    gameoverMessage.classList.add("countdown");
+    gameoverMessage.textContent = "Game Over!";
+
+    gameboard.replaceChildren(gameoverMessage);
 }

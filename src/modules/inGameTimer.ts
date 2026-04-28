@@ -1,5 +1,6 @@
-import {updateUI} from "./inGameUI";
-import {state, startNewRound} from "./inGameLogic";
+import { renderGameOver } from "./gameOver";
+import { renderGameOverMessage, updateLivesUI, updateTimerUI } from "./inGameUI";
+import { state, startNewRound } from "./inGameLogic";
 
 let timerIntervalId: number | null = null;
 
@@ -8,20 +9,25 @@ export function startRoundTimer(): void {
 
   timerIntervalId = window.setInterval(() => {
     state.timeLeft--;
-    updateUI();
+    updateTimerUI();
 
     if (state.timeLeft <= 0) {
       state.timeLeft = 0;
       stopRoundTimer();
       state.lives--;
-      updateUI();
+      updateLivesUI();
+      updateTimerUI();
 
       if (state.lives > 0) {
         setTimeout(() => {
-          startNewRound();
+          void startNewRound();
         }, 600);
       } else {
-        console.log("No lives left. Game over!");
+        renderGameOverMessage();
+
+        setTimeout(() => {
+          void renderGameOver();
+        }, 1200);
       }
     }
   }, 1000);
