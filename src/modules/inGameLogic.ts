@@ -16,7 +16,9 @@ import {
     resetForNextRound, 
     updateTimerUI, renderGameOverMessage, 
     updateLivesUI} from "./inGameUI";
+
 import { renderGameOver } from "./gameOver";
+    
 // LINDA:
 // Den här typen beskriver vad ett klick betyder i rundan.
 // Jag använder den för att skilja på:
