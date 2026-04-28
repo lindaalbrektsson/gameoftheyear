@@ -1,9 +1,7 @@
 import { renderActivePlayerStartPage } from "./activePlayerStartPage";
-import { renderStartPage } from "./startPage";
 import { initGameFlow } from "./inGame";
 
 const mainContainer = document.querySelector("main");
-let currentScore = "#####"; // TODO: hämta in currentscore från ingame när den finns?
 
 type Player = {
   id: string;
@@ -75,8 +73,6 @@ export async function renderGameOver(): Promise<void> {
     const activePlayerName = localStorage.getItem("activePlayer") ?? "";
     if (activePlayerName) {
       renderActivePlayerStartPage();
-    } else {
-      renderStartPage();
     }
   });
 
@@ -86,7 +82,7 @@ export async function renderGameOver(): Promise<void> {
   const gameOverContainer = document.createElement("div");
   gameOverContainer.className = "game-over-container";
 
-  // Fetch data  från json
+  // Fetch data från json
   const players = await fetchPlayers();
   const games = await fetchGames();
 
@@ -96,9 +92,24 @@ export async function renderGameOver(): Promise<void> {
   );
 
   let recentGames: Game[] = [];
+  let latestScore = 0; // Håller senaste rundans poäng
+
   if (activePlayer) {
-    recentGames = games
-      .filter((game) => game.playerId === activePlayer.id)
+    const playerGames = games.filter(
+      (game) => game.playerId === activePlayer.id,
+    );
+
+    // hämta det senaste spelet baserat på datum
+    // pusha score i inGame när rundan är över precis innan vi byter vy till gameover?
+    const sortedByDate = [...playerGames].sort((a, b) => {
+      return new Date(b.gameDate).getTime() - new Date(a.gameDate).getTime();
+    });
+
+    if (sortedByDate.length > 0) {
+      latestScore = sortedByDate[0].score;
+    }
+
+    recentGames = playerGames
       .sort((a, b) => {
         // sortera spelhistorik med level först
         if (b.level !== a.level) {
@@ -134,11 +145,11 @@ export async function renderGameOver(): Promise<void> {
 
   const scoreTitle = document.createElement("h2");
   scoreTitle.className = "panel-title";
-  scoreTitle.textContent = "Your Score This Round";
+  scoreTitle.textContent = "Your Score Last Round";
 
   const scoreValue = document.createElement("p");
   scoreValue.className = "highscore-value";
-  scoreValue.textContent = `${currentScore} points`;
+  scoreValue.textContent = `${latestScore} points`;
 
   scoreContainer.append(scoreTitle, scoreValue);
 
@@ -229,7 +240,7 @@ function createRecentGamesTable(rows: Game[]): HTMLElement {
 
     const gameDate = document.createElement("span");
     gameDate.className = "score-cell score-date";
-    gameDate.textContent = game.gameDate;
+    gameDate.textContent = game.gameDate.replace("T", " "); // Ersätta "T" med space i datum för att formattera det renare
 
     const gameLevel = document.createElement("span");
     gameLevel.className = "score-cell score-level";
@@ -251,6 +262,7 @@ function createRecentGamesTable(rows: Game[]): HTMLElement {
 
   return scoreTable;
 }
+
 // ta bort från spelarhistorik
 function createDeleteButton(
   game: Game,
@@ -274,6 +286,7 @@ function createDeleteButton(
 
   return deleteBtn;
 }
+
 // bekräfta borttagning av spelhistorik
 function createDeleteConfirmation(
   game: Game,
