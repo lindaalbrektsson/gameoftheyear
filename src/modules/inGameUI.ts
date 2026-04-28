@@ -11,6 +11,7 @@ import { startNewRound, resetState, state, handleTileClick } from "./inGameLogic
 let gameboard: HTMLDivElement;
 let shapeAndInstructionDiv: HTMLDivElement;
 let shapesDiv: HTMLDivElement;
+let timerAndLivesDiv: HTMLDivElement;
 let levelCounter: HTMLSpanElement;
 let scoreCounter: HTMLSpanElement;
 let timer: HTMLSpanElement;
@@ -100,7 +101,7 @@ function renderRestartLevelScore (): HTMLDivElement {
 }
 
 function renderTimerAndLives (): HTMLDivElement {
-    const timerAndLivesDiv = document.createElement("div");
+    timerAndLivesDiv = document.createElement("div");
     timerAndLivesDiv.classList.add("timer-and-lives-div")
     const timeLeft = document.createElement("p");
     timeLeft.classList.add("time-left");
@@ -236,6 +237,6 @@ export function renderGameOverMessage(): void {
     const gameoverMessage = document.createElement("p");
     gameoverMessage.classList.add("game-over");
     gameoverMessage.textContent = "Game Over!";
-
+    timerAndLivesDiv.innerHTML = "";
     gameboard.replaceChildren(gameoverMessage);
 }

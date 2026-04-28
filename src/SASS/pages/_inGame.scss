@@ -3,20 +3,21 @@
 
 .active-player-info {
     font-family: $font-heading;
-    font-size: 20px;
+    font-size: 2rem;
 }
 
 .in-game-container {
     width: 100%;
     padding: $space-md;
     @include stack($gap: $space-xl, $align: center);
+    height: calc(100dvh - 400px);
 }
 
 .restart-level-score-div {
     width: 100%;
     @include flex-between($align: center);
     gap: $space-md;
-    // flex-wrap: wrap;
+    min-height: 55px;
 }
 .level-and-score-div {
     display: flex;
@@ -42,6 +43,8 @@
 
 .gameboard {
     @include stack($gap: $space-md, $align: center);
+    flex: 1;
+    justify-content: center;
 }
 
 .countdown {
@@ -51,7 +54,7 @@
 }
 .game-over {
     font-family: $font-heading;
-    font-size: 3vw;
+    font-size: clamp(2rem, 4vw, 60px);
 }
 .shape-and-instruction-div {
     @include panel;
@@ -59,13 +62,12 @@
     gap: $space-xl;
     align-items: center;
     padding: $space-md;
+}
 
-    .instruction {
-        font-weight: 600;
-        font-size: 1rem;
-        margin: 0;
-    }
-
+.instruction {
+    font-weight: 600;
+    font-size: 1.5rem;
+    margin: 0;
 }
 .shapes-div {
     @include panel;
@@ -74,7 +76,7 @@
     justify-content: center;
     gap: $space-md;
     padding: $space-md;
-    width: calc((40px + $space-md)*7);
+    width: calc((70px + $space-md)*7);
 }
 
 .jump-score {
@@ -132,9 +134,10 @@
     100% { text-shadow: 2px 2px 5px white; }
 }
 
-@include responsive(850px) {
+@include responsive(800px) {
     .level-and-score-div, 
-    .timer-and-lives-div {
+    .timer-and-lives-div,
+    .active-player-info {
         font-size: 1.5rem;
             .time-left {
                 width: 107px;
@@ -143,13 +146,28 @@
                 width: 100px;
             }
     }
-
+    .instruction {
+        font-size: 1rem;
+    }
+}
+@media (max-height: 930px) {
+        .shapes-div {
+        width: calc((40px + $space-md)*7);
+    }
+    .instruction {
+        font-size: 1.5rem;
+    }
+}
+@include responsive(700px) {
+    .shapes-div {
+        width: calc((50px + $space-md)*7);
+    }
 }
 @include responsive(470px) {
+    .active-player-info {
+        font-size: 1rem;
+    }
     .shapes-div {
         width: calc((30px + $space-md)*7);
-    }
-    .end-game-btn, .restart-btn {
-        font-family: 0;
     }
 }

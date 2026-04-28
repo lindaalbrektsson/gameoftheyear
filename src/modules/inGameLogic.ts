@@ -261,7 +261,7 @@ function handleRoundComplete(): void {
     setTimeout(() => {
         // updateLevelUI();
         void startNewRound();
-    }, 600);
+    }, 800);
     
 }
 
@@ -280,10 +280,13 @@ function handleWrongClick(shapeItem: HTMLDivElement): void {
 
     if (state.lives <= 0) {
         stopRoundTimer();
-        renderGameOverMessage();
+        setTimeout(()=> {
+            renderGameOverMessage();
+        }, 1000)
+        
         setTimeout(() => {
           void renderGameOver();
-        }, 1200);
+        }, 2000);
     }
 }
 
