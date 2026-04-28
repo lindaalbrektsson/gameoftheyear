@@ -1,3 +1,4 @@
+import { renderActivePlayerStartPage } from "./activePlayerStartPage";
 import { initGameFlow } from "./inGameLogic";
 
 type Player = {
@@ -96,7 +97,7 @@ export async function renderStartPage(): Promise<void> {
         existingPlayer.playerName,
         () => {
           localStorage.setItem("activePlayer", existingPlayer.playerName);
-          initGameFlow();
+          renderActivePlayerStartPage();
         },
         () => {
           playerNameInput.value = "";
