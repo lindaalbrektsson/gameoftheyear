@@ -13,7 +13,8 @@ import {
     renderShapes, renderInstruction,
     updateUI,
     updateScoreUI, updateLevelUI,
-    resetForNextRound } from "./inGameUI";
+    resetForNextRound, 
+    updateTimerUI} from "./inGameUI";
 // LINDA:
 // Den här typen beskriver vad ett klick betyder i rundan.
 // Jag använder den för att skilja på:
@@ -77,6 +78,8 @@ export function resetState() {
 
 export async function startNewRound() {
     resetForNextRound();
+    state.timeLeft = 10;
+    updateTimerUI();
 
     // LINDA:
     // Jag har byggt om startNewRound så att hela rundan förbereds först.
@@ -296,6 +299,7 @@ function handleCorrectClick(shapeItem: HTMLDivElement): void {
 // Det här händer när alla korrekta svar i rundan är hittade:
 // level höjs, difficulty uppdateras och en ny runda startar.
 function handleRoundComplete(): void {
+    stopRoundTimer();
     state.level++;
     state.difficultyLevel = Math.min(5, Math.ceil(state.level / 2));
     updateUI();
