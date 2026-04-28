@@ -223,3 +223,11 @@ export function resetForNextRound() {
         scoreCounter.classList.remove("jump-score");
     }, 1000);
 }
+
+export function renderGameOverMessage(): void {
+    const gameoverMessage = document.createElement("p");
+    gameoverMessage.classList.add("countdown");
+    gameoverMessage.textContent = "Game Over!";
+
+    gameboard.replaceChildren(gameoverMessage);
+}
