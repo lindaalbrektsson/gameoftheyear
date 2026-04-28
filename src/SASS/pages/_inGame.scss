@@ -8,18 +8,20 @@
 
 .in-game-container {
     width: 100%;
-    padding: 1rem;
-    @include stack($gap: 0, $align: center);
+    padding: $space-md;
+    @include stack($gap: $space-xl, $align: center);
 }
 
 .restart-level-score-div {
     width: 100%;
     @include flex-between($align: center);
+    gap: $space-md;
+    // flex-wrap: wrap;
 }
 .level-and-score-div {
     display: flex;
     gap: 2rem;
-    font-size: 1.5rem;
+    font-size: 2rem;
     font-family: $font-heading;
 }
 
@@ -27,21 +29,20 @@
     display: flex;
     gap: 1rem;
     align-items: flex-end;
-    height: 81px;
-    font-size: 1.5rem;
-    p {
+
+    font-size: 2rem;
+    .time-left {
         font-family: $font-heading;
-        width: 120px;
+        width: 145px;
     }
     .lives {
-    width: 100px;
-    text-align: right;
-}
+        width: 133px;
+        text-align: left;
+    }
 }
 
 .gameboard {
     @include stack($gap: $space-md, $align: center);
-    // justify-content: flex-start;
 }
 
 .countdown {
@@ -120,8 +121,18 @@
     0% { filter: brightness(0);}
     100% { filter: brightness(1); }
 }
-@media (max-width: 470px) {
+
+@include responsive(850px) {
+    .level-and-score-div, 
+    .timer-and-lives-div {
+        font-size: 1.5rem;
+    }
+}
+@include responsive(470px) {
     .shapes-div {
         width: calc((30px + $space-md)*7);
+    }
+    .end-game-btn, .restart-btn {
+        font-family: 0;
     }
 }

@@ -3,8 +3,6 @@ import { renderActivePlayerStartPage } from "./activePlayerStartPage";
 import { type Instruction } from "./API/instructions";
 import { stopRoundTimer } from "./inGameTimer";
 import { startNewRound, resetState, state, handleTileClick } from "./inGameLogic";
-//Denna kan köras från startsidorna och endgame
-
 
 //Deklarerar dessa variabler för att kunna använda dem i funktioner
 // let activePlayerInfo: HTMLLIElement;
@@ -15,7 +13,6 @@ let levelCounter: HTMLSpanElement;
 let scoreCounter: HTMLSpanElement;
 let timer: HTMLSpanElement;
 let lives: HTMLParagraphElement;
-
 
 export function renderInGame () {
     renderHeaderMenu();
@@ -103,6 +100,7 @@ function renderTimerAndLives (): HTMLDivElement {
     const timerAndLivesDiv = document.createElement("div");
     timerAndLivesDiv.classList.add("timer-and-lives-div")
     const timeLeft = document.createElement("p");
+    timeLeft.classList.add("time-left");
     timer = document.createElement("span");
     timer.classList.add("timer");
     timeLeft.textContent = "Time left: "
@@ -115,10 +113,9 @@ function renderTimerAndLives (): HTMLDivElement {
 
 export function startCountdown() {
     const countdown = document.createElement("p");
-    countdown.classList.add("pulse");
-    countdown.classList.add("countdown");
     gameboard.innerHTML = "";
     gameboard.appendChild(countdown);
+    countdown.classList.add("countdown");
 
     let counter = 5;
 
@@ -167,7 +164,6 @@ export async function renderShapes(shapes: Shape[]) {
 };
 
 //Hämtar instructionShape utifrån instruktionens ruletype
-
 export async function renderInstruction(newInstruction: Instruction, newInstructionShape: Shape) {
 
     const instruction = document.createElement("p");
@@ -227,7 +223,7 @@ export function resetForNextRound() {
 
 export function renderGameOverMessage(): void {
     const gameoverMessage = document.createElement("p");
-    gameoverMessage.classList.add("countdown");
+    gameoverMessage.classList.add("game-over");
     gameoverMessage.textContent = "Game Over!";
 
     gameboard.replaceChildren(gameoverMessage);
