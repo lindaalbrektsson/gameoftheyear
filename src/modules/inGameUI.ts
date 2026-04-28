@@ -203,6 +203,10 @@ export function updateTimerUI() {
 
 export function updateLivesUI() {
     lives.textContent = "❤️".repeat(state.lives);
+    lives.classList.add("highlight");
+    setTimeout(() => {
+        lives.classList.remove("highlight");
+    }, 1000);
 }
 export function updateLevelUI() {
     levelCounter.textContent = state.level.toString();
@@ -212,6 +216,9 @@ export function updateLevelUI() {
 export function updateScoreUI() {
     scoreCounter.textContent = state.score.toString();
     scoreCounter.classList.add("jump-score");
+    setTimeout(() => {
+        scoreCounter.classList.remove("jump-score");
+    }, 800);
 };
 
 export function resetForNextRound() {

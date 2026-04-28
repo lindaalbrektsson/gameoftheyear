@@ -273,7 +273,6 @@ function handleWrongClick(shapeItem: HTMLDivElement): void {
     state.lives--;
     state.score = Math.max(0, state.score - 50);
     updateLivesUI();
-    updateScoreUI();
 
     setTimeout(() => {
         shapeItem.classList.remove("incorrect");

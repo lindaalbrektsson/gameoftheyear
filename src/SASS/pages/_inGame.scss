@@ -29,7 +29,6 @@
     display: flex;
     gap: 1rem;
     align-items: flex-end;
-
     font-size: 2rem;
     .time-left {
         font-family: $font-heading;
@@ -49,6 +48,10 @@
     font-size: 150px;
     font-family: $font-heading;
     margin: 0;
+}
+.game-over {
+    font-family: $font-heading;
+    font-size: 3vw;
 }
 .shape-and-instruction-div {
     @include panel;
@@ -121,12 +124,26 @@
     0% { filter: brightness(0);}
     100% { filter: brightness(1); }
 }
+.highlight {
+    animation: highlight 0.6s ease;
+}
+@keyframes highlight {
+    0% { text-shadow: 2px 2px 3px $color-orange-light;}
+    100% { text-shadow: 2px 2px 5px white; }
+}
 
 @include responsive(850px) {
     .level-and-score-div, 
     .timer-and-lives-div {
         font-size: 1.5rem;
+            .time-left {
+                width: 107px;
+            }
+            .lives {
+                width: 100px;
+            }
     }
+
 }
 @include responsive(470px) {
     .shapes-div {
