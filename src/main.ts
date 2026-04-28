@@ -2,9 +2,15 @@ import "./styles.scss";
 import { renderStartPage } from "./modules/startPage";
 import { renderActivePlayerStartPage } from "./modules/activePlayerStartPage";
 import { initGameFlow } from "./modules/inGame";
+import { initGameFlow as initGameFlowLinda } from "./modules/inGameLindaTest";
 import { renderGameOver } from "./modules/gameOver";
 
-type ViewName = "start" | "active-player" | "in-game" | "game-over";
+type ViewName =
+  | "start"
+  | "active-player"
+  | "in-game"
+  | "in-game-linda-test"
+  | "game-over";
 
 function getViewFromHash(): ViewName | null {
   const hash = window.location.hash.replace("#", "");
@@ -13,6 +19,7 @@ function getViewFromHash(): ViewName | null {
     hash === "start" ||
     hash === "active-player" ||
     hash === "in-game" ||
+    hash === "in-game-linda-test" ||
     hash === "game-over"
   ) {
     return hash;
@@ -48,6 +55,16 @@ async function renderView(view: ViewName): Promise<void> {
     return;
   }
 
+  if (view === "in-game-linda-test") {
+    if (!localStorage.getItem("activePlayer")) {
+      redirectToStartView();
+      return;
+    }
+
+    initGameFlowLinda();
+    return;
+  }
+ 
   await renderGameOver();
 }
 
