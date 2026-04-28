@@ -2,24 +2,23 @@
 @use "../abstracts/mixins" as *;
 
 .header-container {
-  @include flex-between($align: flex-end);
-  gap: $space-md;
+  @include flex-between(center);
+  gap: $space-xl;
   padding: $space-md;
   flex-wrap: wrap;
+  width: 100%;
 }
 
 .header-logo {
   display: block;
-  width: clamp(320px, 35vw, 500px);
+  width: clamp(230px, 35vw, 500px);
   height: auto;
 }
 
 .header-menu {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  @include flex-between(center);
   gap: $space-md;
-  
+  justify-content: space-between;
   li {
     margin: 0;
     padding: 0;
@@ -27,6 +26,11 @@
   }
 }
 
+// @include responsive(700px) {
+//   .active-player-info {
+//     width: 90%;
+//   }
+// }
 // @include responsive($tablet-width) {
 //   .header-container {
 //     padding: 0.75rem 1rem 0;
@@ -37,16 +41,16 @@
 //   }
 // }
 
-@include responsive(800px) {
-  .header-container {
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-  }
+// @include responsive(800px) {
+//   .header-container {
+//     flex-direction: column;
+//     align-items: flex-start;
+//     justify-content: flex-start;
+//   }
 
-  .header-menu {
-    width: 100%;
-    gap: 0.5rem;
-    font-size: 0.95rem;
-  }
-}
+//   .header-menu {
+//     width: 100%;
+//     gap: 0.5rem;
+//     font-size: 0.95rem;
+//   }
+// }

@@ -103,6 +103,7 @@ function renderTimerAndLives (): HTMLDivElement {
     const timerAndLivesDiv = document.createElement("div");
     timerAndLivesDiv.classList.add("timer-and-lives-div")
     const timeLeft = document.createElement("p");
+    timeLeft.classList.add("time-left");
     timer = document.createElement("span");
     timer.classList.add("timer");
     timeLeft.textContent = "Time left: "
@@ -226,7 +227,7 @@ export function resetForNextRound() {
 
 export function renderGameOverMessage(): void {
     const gameoverMessage = document.createElement("p");
-    gameoverMessage.classList.add("countdown");
+    gameoverMessage.classList.add("game-over");
     gameoverMessage.textContent = "Game Over!";
 
     gameboard.replaceChildren(gameoverMessage);

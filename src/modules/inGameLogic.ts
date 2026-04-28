@@ -14,7 +14,9 @@ import {
     updateUI,
     updateScoreUI, updateLevelUI,
     resetForNextRound, 
-    updateTimerUI} from "./inGameUI";
+    updateTimerUI, renderGameOverMessage, 
+    updateLivesUI} from "./inGameUI";
+import { renderGameOver } from "./gameOver";
 // LINDA:
 // Den här typen beskriver vad ett klick betyder i rundan.
 // Jag använder den för att skilja på:
@@ -57,7 +59,7 @@ export const state = {
     //Vi får fundera på om activeplayer ska ligga här eller om vi sätter en global funktion för hämtning av spelare+id
     level: 1,
     score: 0,
-    timeLeft: 0,
+    timeLeft: 10,
     lives: 3,
     difficultyLevel: 1
 };
@@ -81,12 +83,6 @@ export async function startNewRound() {
     state.timeLeft = 10;
     updateTimerUI();
 
-    // LINDA:
-    // Jag har byggt om startNewRound så att hela rundan förbereds först.
-    // Här väljs:
-    // - Instruktionen som ska gälla för rundan
-    // - Instruktions-shapen som ska visas bredvid texten i instruktionen
-    // - vilka shapes på spelplanen som då ska räknas som rätta svar
     roundResolved = false;
     clickedCorrectIds.clear();
 
@@ -111,47 +107,6 @@ export async function startNewRound() {
     setTimeout(()=> updateLevelUI(), 400);
     startRoundTimer();
 }
-
-
-
-// function renderShapes() {
-//     // LINDA:
-//     // Jag renderar de shapes som redan valts för rundan,
-//     // så att spelplanen matchar den instruktion som också valts för samma runda.
-//     currentRoundShapes.forEach(shape => {
-//         const shapeItem = document.createElement("div");
-//         shapeItem.classList.add(`${shape.type}`, "shape-item")
-//         applyShapeColor(shapeItem, shape);
-//         shapesDiv.appendChild(shapeItem);
-
-//         shapeItem.addEventListener("click", () => {
-//             handleTileClick(shape, shapeItem);
-//         });
-//     });
-// };
-
-// function renderInstruction() {
-//     if (!currentInstruction || !currentInstructionShape) {
-//         return;
-//     }
-
-//     const instruction = document.createElement("p");
-//     instruction.classList.add("instruction");
-//     instruction.textContent = currentInstruction.info;
-//     const shape = document.createElement("div");
-
-// // LINDA:
-// // Här byggde jag vidare på Hannas påbörjade idé i renderInstruction:
-// // - ruleType berättar HUR rundan ska rättas
-// // - shape bredvid instruktionen hjälper till att visa VAD rundan ska rättas mot
-// // För colorFillBlankShape visar shape formen,
-// // medan texten / targetColor visar vilken färg som är rätt.
-//     shape.classList.add(currentInstructionShape.type, "shape-item");
-//     applyShapeColor(shape, currentInstructionShape);
-
-//     shapeAndInstructionDiv.append(shape, instruction);
-// };
-// LINDA:
 // Här utgår rättningen från:
 // instruction.ruleType = hur vi ska jämföra
 // instructionShape = vad spelaren ska jämföra mot
@@ -302,12 +257,12 @@ function handleRoundComplete(): void {
     stopRoundTimer();
     state.level++;
     state.difficultyLevel = Math.min(5, Math.ceil(state.level / 2));
-    updateUI();
-    updateLevelUI();
 
     setTimeout(() => {
+        // updateLevelUI();
         void startNewRound();
     }, 600);
+    
 }
 
 // LINDA:
@@ -317,7 +272,7 @@ function handleWrongClick(shapeItem: HTMLDivElement): void {
     shapeItem.classList.add("incorrect");
     state.lives--;
     state.score = Math.max(0, state.score - 50);
-    updateUI();
+    updateLivesUI();
     updateScoreUI();
 
     setTimeout(() => {
@@ -325,34 +280,12 @@ function handleWrongClick(shapeItem: HTMLDivElement): void {
     }, 300);
 
     if (state.lives <= 0) {
-        return;
+        stopRoundTimer();
+        renderGameOverMessage();
+        setTimeout(() => {
+          void renderGameOver();
+        }, 1200);
     }
-}
-
-// LINDA:
-// Jag använder den här funktionen för att visa shapes visuellt i testversionen.
-// Själva border/outline-lösningen för blank shapes la jag till tillfälligt här,
-// eftersom Hannas version ännu inte hade den delen färdig.
-// Tanken var bara att göra blank-shapen synlig nog för att kunna testa logiken.
-function applyShapeColor(shapeItem: HTMLDivElement, shape: Shape): void {
-    if (shape.color === "blank") {
-        if (shape.type === "triangle") {
-            shapeItem.style.borderBottomColor = "rgba(255, 255, 255, 0.2)";
-        } else {
-            shapeItem.style.backgroundColor = "rgba(255, 255, 255, 0.12)";
-            shapeItem.style.outline = "2px dashed rgba(255, 255, 255, 0.8)";
-            shapeItem.style.outlineOffset = "2px";
-        }
-
-        return;
-    }
-
-    if (shape.type === "triangle") {
-        shapeItem.style.borderBottomColor = shape.color;
-        return;
-    }
-
-    shapeItem.style.backgroundColor = shape.color;
 }
 
 
