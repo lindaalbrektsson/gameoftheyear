@@ -3,6 +3,7 @@ import {
   getInstructionShape,
   type Shape,
 } from "./API/shapes";
+import { saveGameResult } from "./API/games";
 import { getRandomInstruction, type Instruction } from "./API/instructions";
 import { startRoundTimer, stopRoundTimer } from "./inGameTimer";
 import {
@@ -21,7 +22,6 @@ import {
 } from "./inGameUI";
 
 import { renderGameOver } from "./gameOver";
-import { saveGameResult } from "./API/scores";
 import { getStoredActivePlayerName } from "./localStorage";
 
 // Den här typen beskriver vad ett klick betyder i rundan.

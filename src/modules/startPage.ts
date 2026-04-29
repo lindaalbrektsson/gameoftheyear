@@ -1,12 +1,12 @@
 import { renderActivePlayerStartPage } from "./activePlayerStartPage";
+import {
+  createPlayer as createPlayerRecord,
+  findPlayerByName,
+  getPlayers,
+  type Player,
+} from "./API/players";
 import { initGameFlow } from "./inGameLogic";
 import { setStoredActivePlayerName } from "./localStorage";
-
-type Player = {
-  id?: string;
-  playerName: string;
-  bestScore: number;
-};
 
 export async function renderStartPage(): Promise<void> {
   const main = document.querySelector("main");
@@ -21,7 +21,7 @@ export async function renderStartPage(): Promise<void> {
   let couldNotFetchPlayers = false;
 
   try {
-    existingPlayers = await fetchPlayers();
+    existingPlayers = await getPlayers();
     console.log("Fetched players from API", existingPlayers);
   } catch (error) {
     couldNotFetchPlayers = true;
@@ -89,9 +89,7 @@ export async function renderStartPage(): Promise<void> {
       return;
     }
 
-    const existingPlayer = existingPlayers.find(
-      (player) => player.playerName.toLowerCase() === playerName.toLowerCase()
-    );
+    const existingPlayer = findPlayerByName(existingPlayers, playerName);
 
     if (existingPlayer) {
       showExistingPlayerPopup(
@@ -110,8 +108,10 @@ export async function renderStartPage(): Promise<void> {
       return;
     }
 
-    const newPlayer = createPlayer(playerName);
-    const createdPlayer = await savePlayer(newPlayer);
+    const createdPlayer = await createPlayerRecord({
+      playerName,
+      bestScore: 0,
+    });
 
     console.log("Created player from API", createdPlayer);
 
@@ -190,35 +190,3 @@ function showExistingPlayerPopup(
   });
 }
 
-function createPlayer(playerName: string): Player {
-  return {
-    playerName,
-    bestScore: 0,
-  };
-}
-
-async function savePlayer(player: Player): Promise<Player> {
-  const response = await fetch("http://localhost:3000/players", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(player),
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to save player");
-  }
-
-  return response.json();
-}
-
-async function fetchPlayers(): Promise<Player[]> {
-  const response = await fetch("http://localhost:3000/players");
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch players");
-  }
-
-  return response.json();
-}

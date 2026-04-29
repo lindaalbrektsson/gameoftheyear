@@ -1,54 +1,18 @@
+import { deleteGameRecord, getGames, type Game } from "./API/games";
+import { getPlayers, type Player } from "./API/players";
 import { renderActivePlayerStartPage } from "./activePlayerStartPage";
 import { initGameFlow } from "./inGameLogic";
-import { formatGameDate, getLatestGame, sortGamesByNewest } from "./highscore";
+import {
+  buildGlobalHighscoreEntries,
+  formatGameDate,
+  getLatestGame,
+  sortGamesByNewest,
+  type GlobalHighscoreEntry,
+} from "./highscore";
 import { getStoredActivePlayerName } from "./localStorage";
 import { renderStartPage } from "./startPage";
-import { deleteGameRecord } from "./API/scores";
 
 const mainContainer = document.querySelector("main");
-
-type Player = {
-  id: string;
-  playerName: string;
-};
-
-type Game = {
-  id: string;
-  gameDate: string;
-  score: number;
-  level: number;
-  playerId: string;
-};
-
-type GlobalHighscoreEntry = {
-  playerName: string;
-  level: number;
-  score: number;
-};
-
-const API_URL = "http://localhost:3000";
-
-async function fetchPlayers(): Promise<Player[]> {
-  try {
-    const res = await fetch(`${API_URL}/players`);
-    if (!res.ok) throw new Error("Failed to fetch players");
-    return await res.json();
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
-}
-
-async function fetchGames(): Promise<Game[]> {
-  try {
-    const res = await fetch(`${API_URL}/games`);
-    if (!res.ok) throw new Error("Failed to fetch games");
-    return await res.json();
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
-}
 
 export async function renderGameOver(): Promise<void> {
   if (!mainContainer) {
@@ -59,7 +23,6 @@ export async function renderGameOver(): Promise<void> {
   headerMenu?.replaceChildren();
   const activePlayerName = getStoredActivePlayerName();
 
-  // endGame "hem" knapp
   const activePlayerInfo = document.createElement("li");
   const endGameLi = document.createElement("li");
   const endGameBtn = document.createElement("button");
@@ -77,12 +40,13 @@ export async function renderGameOver(): Promise<void> {
   endGameBtn.classList.add("game-btn", "end-game-btn");
 
   homepageIcon.classList.add("fa-regular", "fa-house");
-  endGameBtn.textContent = ""; // ingen text så bara hemikonen syns
+  endGameBtn.textContent = "";
   endGameBtn.appendChild(homepageIcon);
   endGameLi.appendChild(endGameBtn);
 
-  endGameBtn.addEventListener("click", function (evt) {
-    evt.preventDefault();
+  endGameBtn.addEventListener("click", (event) => {
+    event.preventDefault();
+
     if (activePlayerName) {
       void renderActivePlayerStartPage();
       return;
@@ -93,13 +57,10 @@ export async function renderGameOver(): Promise<void> {
 
   mainContainer.replaceChildren();
 
-  // gameovercontainer för att ha egen styling istället för "main" som påverkar alla
   const gameOverContainer = document.createElement("div");
   gameOverContainer.className = "game-over-container";
 
-  // Fetch data från json
-  const players = await fetchPlayers();
-  const games = await fetchGames();
+  const [players, games] = await Promise.all([getPlayers(), getGames()]);
 
   const activePlayer = activePlayerName
     ? players.find(
@@ -109,7 +70,7 @@ export async function renderGameOver(): Promise<void> {
     : undefined;
 
   let recentGames: Game[] = [];
-  let latestScore = 0; // Håller senaste rundans poäng
+  let latestScore = 0;
 
   if (activePlayer) {
     const playerGames = games.filter(
@@ -125,18 +86,7 @@ export async function renderGameOver(): Promise<void> {
     recentGames = sortGamesByNewest(playerGames).slice(0, 10);
   }
 
-  // globala toopplistan och varje spelar-id mappas till rätt namn
-  const globalHighscoreEntries: GlobalHighscoreEntry[] = games
-    .map((game) => {
-      const player = players.find((p) => p.id === game.playerId);
-      return {
-        playerName: player ? player.playerName : "Unknown",
-        level: game.level,
-        score: game.score,
-      };
-    })
-    .sort((a, b) => b.score - a.score) // sortera från högst score till lägst
-    .slice(0, 5); // hämta top 5
+  const globalHighscoreEntries = buildGlobalHighscoreEntries(players, games);
 
   const leftColumn = document.createElement("div");
   leftColumn.className = "column left-column";
@@ -162,8 +112,8 @@ export async function renderGameOver(): Promise<void> {
   restartGameBtn.type = "button";
   restartGameBtn.textContent = "Play Again!";
 
-  restartGameBtn.addEventListener("click", function (evt) {
-    evt.preventDefault();
+  restartGameBtn.addEventListener("click", (event) => {
+    event.preventDefault();
     initGameFlow();
   });
 
@@ -267,7 +217,6 @@ function createRecentGamesTable(rows: Game[]): HTMLElement {
   return scoreTable;
 }
 
-// ta bort från spelarhistorik
 function createDeleteButton(
   game: Game,
   deleteCell: HTMLElement,
@@ -291,7 +240,6 @@ function createDeleteButton(
   return deleteBtn;
 }
 
-// bekräfta borttagning av spelhistorik
 function createDeleteConfirmation(
   game: Game,
   deleteCell: HTMLElement,
@@ -319,14 +267,10 @@ function createDeleteConfirmation(
 
   confirmBtn.addEventListener("click", async () => {
     try {
-      // modul för JSON DELETE i spelhistory
       await deleteGameRecord(game.id);
-
-      // om vi lyckas ta bort spelhistorik från db, ta bort visuellt också
       scoreRow.remove();
     } catch (error) {
       console.error(`Failed to delete game with id: ${game.id}`, error);
-      // Om vi inte lyckas ta bort spelhistoriken från db, lägg tillbaka delete knapp
       const deleteBtn = createDeleteButton(game, deleteCell, scoreRow);
       deleteCell.replaceChildren(deleteBtn);
     }
@@ -343,7 +287,9 @@ function createDeleteConfirmation(
   return confirmationWrapper;
 }
 
-function createGlobalHighscoreTable(rows: GlobalHighscoreEntry[]): HTMLElement {
+function createGlobalHighscoreTable(
+  rows: GlobalHighscoreEntry[],
+): HTMLElement {
   const scoreTable = document.createElement("div");
   scoreTable.className = "score-table";
 

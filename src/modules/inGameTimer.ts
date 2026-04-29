@@ -1,3 +1,4 @@
+import { saveGameResult } from "./API/games";
 import { renderGameOver } from "./gameOver";
 import {
   renderGameOverMessage,
@@ -5,7 +6,6 @@ import {
   updateTimerUI,
 } from "./inGameUI";
 import { state, startNewRound } from "./inGameLogic";
-import { saveGameResult } from "./API/scores";
 import { getStoredActivePlayerName } from "./localStorage";
 
 let timerIntervalId: number | null = null;

@@ -1,5 +1,10 @@
 import { initGameFlow } from "./inGameLogic";
-import { deleteGameRecord } from "./API/scores";
+import { deleteGameRecord, getGames, type Game } from "./API/games";
+import {
+  findPlayerByName,
+  getPlayers,
+  type Player,
+} from "./API/players";
 import { renderStartPage } from "./startPage";
 import {
   clearStoredActivePlayerName,
@@ -12,16 +17,8 @@ import {
   getBestGame,
   sortGamesByNewest,
   type EntityId,
-  type GameRecord,
   type GlobalHighscoreEntry,
-  type PlayerRecord,
 } from "./highscore";
-
-const API_BASE_URL = "http://localhost:3000";
-
-type Player = PlayerRecord;
-
-type Game = GameRecord;
 
 const ACTIVE_PLAYER_NOT_FOUND_ERROR = "ACTIVE_PLAYER_NOT_FOUND";
 
@@ -83,7 +80,7 @@ async function loadDashboardData(activePlayerName: string): Promise<{
   playerGames: Game[];
   globalHighscoreEntries: GlobalHighscoreEntry[];
 }> {
-  const [players, games] = await Promise.all([fetchPlayers(), fetchGames()]);
+  const [players, games] = await Promise.all([getPlayers(), getGames()]);
   const activePlayer = getActivePlayer(players, activePlayerName);
 
   const playerGames = sortGamesByNewest(
@@ -99,22 +96,11 @@ async function loadDashboardData(activePlayerName: string): Promise<{
   };
 }
 
-async function fetchPlayers(): Promise<Player[]> {
-  return fetchJson<Player[]>("/players");
-}
-
-async function fetchGames(): Promise<Game[]> {
-  return fetchJson<Game[]>("/games");
-}
-
 function getActivePlayer(
   players: Player[],
   activePlayerName: string
 ): Player {
-  const existingPlayer = players.find(
-    (player) =>
-      player.playerName.toLowerCase() === activePlayerName.toLowerCase()
-  );
+  const existingPlayer = findPlayerByName(players, activePlayerName);
 
   if (existingPlayer) {
     setStoredActivePlayerName(existingPlayer.playerName);
@@ -123,35 +109,6 @@ function getActivePlayer(
 
   throw new Error(ACTIVE_PLAYER_NOT_FOUND_ERROR);
 }
-
-async function fetchJson<T>(
-  path: string,
-  init?: RequestInit
-): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-    ...init,
-  });
-
-  if (!response.ok) {
-    throw new Error(`Request failed for ${path} with status ${response.status}`);
-  }
-
-  if (response.status === 204) {
-    return undefined as T;
-  }
-
-  const responseText = await response.text();
-
-  if (!responseText) {
-    return undefined as T;
-  }
-
-  return JSON.parse(responseText) as T;
-}
-
 function renderDashboard(
   main: Element,
   activePlayerName: string,

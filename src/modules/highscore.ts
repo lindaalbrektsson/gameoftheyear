@@ -1,17 +1,11 @@
+import type { Game } from "./API/games";
+import type { Player } from "./API/players";
+
 export type EntityId = string | number;
 
-export type PlayerRecord = {
-  id: EntityId;
-  playerName: string;
-};
+export type PlayerRecord = Player;
 
-export type GameRecord = {
-  id: EntityId;
-  gameDate: string;
-  score: number;
-  level: number;
-  playerId: EntityId;
-};
+export type GameRecord = Game;
 
 export type GlobalHighscoreEntry = {
   playerName: string;
