@@ -1,10 +1,3 @@
-/*
-/*
-LINDA:
-Här är mina ändringar aktiva i koden så att den går att testa visuellt: http://localhost:5173/#in-game-linda-test
-Den vanliga inGame.ts är oförändrad så att det går att jämföra och så att mina ändringar inte påverkar något.
-*/
-
 import {
   getShuffledShapes,
   getInstructionShape,
@@ -273,36 +266,39 @@ function handleRoundComplete(): void {
   state.level++;
   state.difficultyLevel = Math.min(5, Math.ceil(state.level / 2));
 
-  setTimeout(() => {
-    // updateLevelUI();
-    void startNewRound();
-  }, 600);
+    setTimeout(() => {
+        // updateLevelUI();
+        void startNewRound();
+    }, 800);
+    
 }
 
 // LINDA:
 // Det här händer när spelaren klickar fel:
 // poäng dras av, ett liv försvinner, men samma runda fortsätter om liv finns kvar.
 function handleWrongClick(shapeItem: HTMLDivElement): void {
-  shapeItem.classList.add("incorrect");
-  state.lives--;
-  state.score = Math.max(0, state.score - 50);
-  updateLivesUI();
-  updateScoreUI();
+    shapeItem.classList.add("incorrect");
+    state.lives--;
+    state.score = Math.max(0, state.score - 50);
+    updateLivesUI();
 
-  setTimeout(() => {
-    shapeItem.classList.remove("incorrect");
-  }, 300);
-
-  if (state.lives <= 0) {
-    stopRoundTimer();
-    renderGameOverMessage();
-    // spara score innan vi byter vy
-    const activePlayerName = getStoredActivePlayerName();
-    if (activePlayerName) {
-      void saveGameResult(activePlayerName, state.score, state.level);
-    }
     setTimeout(() => {
-      void renderGameOver();
-    }, 1200);
-  }
+        shapeItem.classList.remove("incorrect");
+    }, 300);
+
+    if (state.lives <= 0) {
+        stopRoundTimer();
+        setTimeout(()=> {
+            renderGameOverMessage();
+        }, 1000)
+        
+        const activePlayerName = getStoredActivePlayerName();
+        if (activePlayerName) {
+        void saveGameResult(activePlayerName, state.score, state.level);
+        }
+        
+        setTimeout(() => {
+            void renderGameOver();
+        }, 2000);
+    }
 }

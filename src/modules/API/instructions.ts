@@ -39,7 +39,6 @@ export async function getRandomInstruction(difficultyLevel: number): Promise<Ins
     );
 
     const randomIndex = Math.floor(Math.random() * currentInstructions.length);
-    console.log(randomIndex);
     return currentInstructions[randomIndex];
 };
 
