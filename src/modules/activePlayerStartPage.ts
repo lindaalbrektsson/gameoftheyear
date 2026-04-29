@@ -13,6 +13,8 @@ import {
 } from "./localStorage";
 import {
   buildGlobalHighscoreEntries,
+  createEmptyGlobalHighscoreState,
+  createEmptyHistoryState,
   formatGameDate,
   getBestGame,
   sortGamesByNewest,
@@ -260,6 +262,7 @@ function createStatusPanel(titleText: string, bodyText: string): HTMLElement {
 function createPlayerHighscore(bestGame: Game | null): HTMLElement {
   const playerHighscoreSection = document.createElement("section");
   playerHighscoreSection.classList.add("player-highscore");
+  const bestScore = bestGame?.score ?? 0;
 
   const highscoreTitle = document.createElement("h2");
   highscoreTitle.classList.add("panel-title");
@@ -267,9 +270,16 @@ function createPlayerHighscore(bestGame: Game | null): HTMLElement {
 
   const highscoreText = document.createElement("p");
   highscoreText.classList.add("highscore-value");
-  highscoreText.textContent = `${bestGame?.score ?? 0} points`;
+  highscoreText.textContent = `${bestScore} points`;
 
   playerHighscoreSection.append(highscoreTitle, highscoreText);
+
+  if (bestScore === 0) {
+    const highscoreHint = document.createElement("p");
+    highscoreHint.classList.add("panel-subtitle", "highscore-empty-hint");
+    highscoreHint.textContent = "You have no highscore...yet! \u{1F525}";
+    playerHighscoreSection.append(highscoreHint);
+  }
 
   return playerHighscoreSection;
 }
@@ -292,11 +302,7 @@ function createPlayerGameHistorySection(
   playerGameHistorySection.append(sectionTitle, sectionSubtitle);
 
   if (playerGames.length === 0) {
-    const emptyState = document.createElement("p");
-    emptyState.classList.add("panel-subtitle");
-    emptyState.textContent =
-      "No saved games yet. Finished games will appear here once the game flow stores them.";
-    playerGameHistorySection.append(emptyState);
+    playerGameHistorySection.append(createEmptyHistoryState());
     return playerGameHistorySection;
   }
 
@@ -533,11 +539,7 @@ function createGlobalHighscore(
   const topFive = globalHighscoreEntries.slice(0, 5);
 
   if (topFive.length === 0) {
-    const emptyState = document.createElement("p");
-    emptyState.classList.add("panel-subtitle");
-    emptyState.textContent =
-      "No highscores yet. Saved games from all players will appear here.";
-    globalHighscoreSection.append(sectionTitle, emptyState);
+    globalHighscoreSection.append(sectionTitle, createEmptyGlobalHighscoreState());
     return globalHighscoreSection;
   }
 

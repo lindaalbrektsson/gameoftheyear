@@ -13,6 +13,11 @@ export type GlobalHighscoreEntry = {
   score: number;
 };
 
+const EMPTY_HISTORY_MESSAGE =
+  "No saved games yet. Finished games will appear here once a round has been completed.";
+const EMPTY_GLOBAL_HIGHSCORE_MESSAGE =
+  "No highscores yet. Saved games from all players will appear here.";
+
 const GLOBAL_HIGHSCORE_LIMIT = 5;
 const DEFAULT_COLLAPSED_HISTORY_ROW_COUNT = GLOBAL_HIGHSCORE_LIMIT + 1;
 const HISTORY_PANEL_SELECTOR = ".player-recent-games";
@@ -164,6 +169,21 @@ export function buildGlobalHighscoreEntries(
       level,
       score,
     }));
+}
+
+function createEmptyStateMessage(message: string): HTMLParagraphElement {
+  const emptyState = document.createElement("p");
+  emptyState.classList.add("panel-subtitle", "empty-state-message");
+  emptyState.textContent = message;
+  return emptyState;
+}
+
+export function createEmptyHistoryState(): HTMLParagraphElement {
+  return createEmptyStateMessage(EMPTY_HISTORY_MESSAGE);
+}
+
+export function createEmptyGlobalHighscoreState(): HTMLParagraphElement {
+  return createEmptyStateMessage(EMPTY_GLOBAL_HIGHSCORE_MESSAGE);
 }
 
 function updateHistoryToggleLabel(

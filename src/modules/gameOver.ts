@@ -4,6 +4,8 @@ import { renderActivePlayerStartPage } from "./activePlayerStartPage";
 import { initGameFlow, state } from "./inGameLogic";
 import {
   buildGlobalHighscoreEntries,
+  createEmptyGlobalHighscoreState,
+  createEmptyHistoryState,
   formatGameDate,
   sortGamesByNewest,
   type GlobalHighscoreEntry,
@@ -131,12 +133,14 @@ export async function renderGameOver(isNewRecord = false): Promise<void> {
   recentGamesSubtitle.className = "panel-subtitle";
   recentGamesSubtitle.textContent = "Your latest sessions";
 
-  const recentGamesTable = createRecentGamesTable(recentGames);
-  recentGamesScoreboard.append(
-    recentGamesTitle,
-    recentGamesSubtitle,
-    recentGamesTable,
-  );
+  recentGamesScoreboard.append(recentGamesTitle, recentGamesSubtitle);
+
+  if (recentGames.length === 0) {
+    recentGamesScoreboard.append(createEmptyHistoryState());
+  } else {
+    const recentGamesTable = createRecentGamesTable(recentGames);
+    recentGamesScoreboard.append(recentGamesTable);
+  }
 
   const globalHighScoreList = document.createElement("section");
   globalHighScoreList.className = "global-high-score-list global-highscore";
@@ -145,11 +149,17 @@ export async function renderGameOver(isNewRecord = false): Promise<void> {
   globalHighScoreTitle.className = "panel-title";
   globalHighScoreTitle.textContent = "Global Highscore";
 
-  const globalHighScoreTable = createGlobalHighscoreTable(
-    globalHighscoreEntries,
-    activePlayerName,
-  );
-  globalHighScoreList.append(globalHighScoreTitle, globalHighScoreTable);
+  globalHighScoreList.append(globalHighScoreTitle);
+
+  if (globalHighscoreEntries.length === 0) {
+    globalHighScoreList.append(createEmptyGlobalHighscoreState());
+  } else {
+    const globalHighScoreTable = createGlobalHighscoreTable(
+      globalHighscoreEntries,
+      activePlayerName,
+    );
+    globalHighScoreList.append(globalHighScoreTable);
+  }
 
   leftColumn.append(scoreContainer, restartGameBtn, globalHighScoreList);
 
