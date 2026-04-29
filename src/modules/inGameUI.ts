@@ -204,7 +204,7 @@ export function updateLivesUI() {
     lives.classList.add("highlight");
     setTimeout(() => {
         lives.classList.remove("highlight");
-    }, 1000);
+    }, 400);
 }
 export function updateLevelUI() {
     levelCounter.textContent = state.level.toString();
@@ -216,7 +216,7 @@ export function updateScoreUI() {
     scoreCounter.classList.add("jump-score");
     setTimeout(() => {
         scoreCounter.classList.remove("jump-score");
-    }, 800);
+    }, 400);
 };
 
 export function resetForNextRound() {
@@ -225,9 +225,6 @@ export function resetForNextRound() {
     levelCounter.classList.remove("jump-level");
     shapeAndInstructionDiv.innerHTML= "";
     shapesDiv.innerHTML = "";
-    setTimeout(() => {
-        scoreCounter.classList.remove("jump-score");
-    }, 1000);
 }
 
 export function renderGameOverMessage(): void {
