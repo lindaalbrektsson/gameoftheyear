@@ -2,200 +2,226 @@
 @use "../abstracts/variables" as *;
 
 .active-player-info {
-    font-family: $font-heading;
-    font-size: 2rem;
+  font-family: $font-heading;
+  font-size: 2rem;
 }
 
 .in-game-container {
-    width: 100%;
-    padding: $space-md;
-    @include stack($gap: $space-xl, $align: center);
-    height: calc(100dvh - 400px);
+  width: 100%;
+  padding: $space-md;
+  @include stack($gap: $space-xl, $align: center);
+  height: calc(100dvh - 400px);
 }
 
 .restart-level-score-div {
-    width: 100%;
-    @include flex-between($align: center);
-    gap: $space-md;
-    min-height: 55px;
+  width: 100%;
+  @include flex-between($align: center);
+  gap: $space-md;
+  min-height: 55px;
 }
 .level-and-score-div {
-    display: flex;
-    gap: 2rem;
-    font-size: 2rem;
-    font-family: $font-heading;
+  display: flex;
+  gap: 2rem;
+  font-size: 2rem;
+  font-family: $font-heading;
 }
 
 .timer-and-lives-div {
-    display: flex;
-    gap: 1rem;
-    align-items: flex-end;
-    font-size: 2rem;
-    .time-left {
-        font-family: $font-heading;
-        width: 145px;
-    }
-    .lives {
-        width: 133px;
-        text-align: left;
-    }
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end;
+  font-size: 2rem;
+  .time-left {
+    font-family: $font-heading;
+    width: 145px;
+  }
+  .lives {
+    width: 133px;
+    text-align: left;
+  }
 }
 
 .gameboard {
-    @include stack($gap: $space-md, $align: center);
-    flex: 1;
-    justify-content: center;
+  @include stack($gap: $space-md, $align: center);
+  flex: 1;
+  justify-content: center;
 }
 
 .countdown {
-    font-size: 150px;
-    font-family: $font-heading;
-    margin: 0;
+  font-size: 150px;
+  font-family: $font-heading;
+  margin: 0;
+}
+.game-over,
+.error-loading-game {
+  font-family: $font-heading;
+  color: $color-red;
+  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.521);
 }
 .game-over {
-    font-family: $font-heading;
-    font-size: clamp(3rem, 7vw, 150px);
+  font-size: clamp(3rem, 7vw, 70px);
+}
+.error-loading-game {
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
 }
 .shape-and-instruction-div {
-    @include panel;
-    display: flex;
-    gap: $space-xl;
-    align-items: center;
-    padding: $space-md;
+  @include panel;
+  display: flex;
+  gap: $space-xl;
+  align-items: center;
+  padding: $space-md;
 }
 
 .instruction {
-    font-weight: 600;
-    font-size: 1.5rem;
-    margin: 0;
+  font-weight: 600;
+  font-size: 1.5rem;
+  margin: 0;
 }
 .shapes-div {
-    @include panel;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: $space-md;
-    padding: $space-md;
-    width: calc((70px + $space-md)*7);
+  @include panel;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: $space-md;
+  padding: $space-md;
+  width: calc((70px + $space-md) * 7);
 }
 
 .jump-score {
-    animation: jump-score 0.6s ease-out;
-    display: inline-block;
+  animation: jump-score 0.6s ease-out;
+  display: inline-block;
 }
 
 @keyframes jump-score {
-    0% { transform: scale(0.8); }
-    50% { 
-        transform: scale(1.4); 
-        color: $color-yellow; 
-        text-shadow: 1px 1px 3px white; 
-    }
-    100% { transform: scale(1); }
+  0% {
+    transform: scale(0.8);
+  }
+  50% {
+    transform: scale(1.4);
+    color: $color-yellow;
+    text-shadow: 1px 1px 3px white;
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .jump-level {
-    animation: jump-level 0.6s ease-out;
-    display: inline-block;
+  animation: jump-level 0.6s ease-out;
+  display: inline-block;
 }
 
 @keyframes jump-level {
-    0% { transform: scale(0.7); }
-    50% {
-        transform: scale(1.1); 
-        color: $color-green; 
-    }
-    100% { transform: scale(1); }
+  0% {
+    transform: scale(0.7);
+  }
+  50% {
+    transform: scale(1.1);
+    color: $color-green;
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .pulse {
-    animation: pulse 1s ease infinite;
-    display: inline-block;
+  animation: pulse 1s ease infinite;
+  display: inline-block;
 }
 
 @keyframes pulse {
-    0% { transform: scale(1.2); }
-    100% { transform: scale(1); }
+  0% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .fade-in {
-    animation: fade-in 0.5s ease-in;
+  animation: fade-in 0.5s ease-in;
 }
 
 @keyframes fade-in {
-    0% { filter: brightness(0);}
-    100% { filter: brightness(1); }
+  0% {
+    filter: brightness(0);
+  }
+  100% {
+    filter: brightness(1);
+  }
 }
 .highlight {
-    animation: highlight 0.6s ease;
+  animation: highlight 0.6s ease;
 }
 @keyframes highlight {
-    0% { text-shadow: 2px 2px 3px $color-orange-light;}
-    100% { text-shadow: 2px 2px 5px white; }
+  0% {
+    text-shadow: 2px 2px 3px $color-orange-light;
+  }
+  100% {
+    text-shadow: 2px 2px 5px white;
+  }
 }
 
 //Media-anpassningar
-
 @include responsive(800px) {
-    .level-and-score-div, 
-    .timer-and-lives-div,
-    .active-player-info {
-        font-size: 1.5rem;
-            .time-left {
-                width: 107px;
-            }
-            .lives {
-                width: 100px;
-            }
+  .level-and-score-div,
+  .timer-and-lives-div,
+  .active-player-info {
+    font-size: 1.5rem;
+    .time-left {
+      width: 107px;
     }
-    .instruction {
-        font-size: 1rem;
+    .lives {
+      width: 100px;
     }
+  }
+  .instruction {
+    font-size: 1rem;
+  }
 }
 @media (max-height: 910px) {
-        .shapes-div {
-        width: calc((40px + $space-md)*7);
-    }
-    .instruction {
-        font-size: 1.2rem;
-    }
+  .shapes-div {
+    width: calc((40px + $space-md) * 7);
+  }
+  .instruction {
+    font-size: 1.2rem;
+  }
 }
 
 @media (max-height: 800px) {
-    .level-and-score-div, 
-    .timer-and-lives-div,
-    .active-player-info {
-        font-size: 1.5rem;
-            .time-left {
-                width: 107px;
-            }
-            .lives {
-                width: 100px;
-            }
+  .level-and-score-div,
+  .timer-and-lives-div,
+  .active-player-info {
+    font-size: 1.5rem;
+    .time-left {
+      width: 107px;
     }
-    .instruction {
-        font-size: 1rem;
-    }    
+    .lives {
+      width: 100px;
+    }
+  }
+  .instruction {
+    font-size: 1rem;
+  }
 }
 @media (max-height: 700px) {
-    .shapes-div {
-        width: calc((30px + $space-md)*7);
-    }
-
+  .shapes-div {
+    width: calc((30px + $space-md) * 7);
+  }
 }
 @include responsive(700px) {
-    .shapes-div {
-        width: calc((50px + $space-md)*7);
-    }
-    .instruction {
-        font-size: 1rem;
-    }    
+  .shapes-div {
+    width: calc((50px + $space-md) * 7);
+  }
+  .instruction {
+    font-size: 1rem;
+  }
 }
 @include responsive(470px) {
-    .active-player-info {
-        font-size: 1.2rem;
-    }
-    .shapes-div {
-        width: calc((30px + $space-md)*7);
-    }
+  .active-player-info {
+    font-size: 1.2rem;
+  }
+  .shapes-div {
+    width: calc((30px + $space-md) * 7);
+  }
 }
