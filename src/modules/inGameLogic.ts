@@ -49,7 +49,7 @@ let roundResolved = false;
 export const state = {
   level: 1,
   score: 0,
-  timeLeft: 10,
+  timeLeft: 7,
   lives: 3,
   difficultyLevel: 1,
 };
@@ -57,7 +57,7 @@ export const state = {
 export function resetState() {
   state.level = 1;
   state.score = 0;
-  state.timeLeft = 10;
+  state.timeLeft = 7;
   state.lives = 3;
   state.difficultyLevel = 1;
   validAnswerIds = [];
@@ -67,7 +67,7 @@ export function resetState() {
 
 export async function startNewRound() {
   resetForNextRound();
-  state.timeLeft = 10;
+  state.timeLeft = 7;
   updateTimerUI();
 
   roundResolved = false;
