@@ -28,7 +28,10 @@ export function startRoundTimer(): void {
         setTimeout(async () => {
           await renderGameOver();
           const gameOverContainer = document.querySelector(".game-over-container") as HTMLDivElement;
-          gameOverContainer?.classList.add("fade-in");
+          
+          requestAnimationFrame(() => {
+            gameOverContainer?.classList.add("fade-in");
+          });
         }, 2500);
       }
     }
