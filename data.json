@@ -2,7 +2,8 @@
   "players": [
     {
       "id": "p1",
-      "playerName": "Linda"
+      "playerName": "Linda",
+      "bestScore": 550
     },
     {
       "id": "p2",
@@ -14,7 +15,8 @@
     },
     {
       "id": "p4",
-      "playerName": "Ronaldo"
+      "playerName": "Ronaldo",
+      "bestScore": 3350
     },
     {
       "playerName": "Lasse",
@@ -64,6 +66,34 @@
       "score": 310,
       "level": 8,
       "playerId": "p3"
+    },
+    {
+      "id": "d0N5B3Uxf64",
+      "gameDate": "2026-04-29T04:09:20",
+      "score": 0,
+      "level": 2,
+      "playerId": "p4"
+    },
+    {
+      "id": "qk0pt2WRsR8",
+      "gameDate": "2026-04-29T04:11:15",
+      "score": 3350,
+      "level": 15,
+      "playerId": "p4"
+    },
+    {
+      "id": "IfCt_DKi_F8",
+      "gameDate": "2026-04-29T04:20:25",
+      "score": 0,
+      "level": 1,
+      "playerId": "p4"
+    },
+    {
+      "id": "8M1lLw3QemY",
+      "gameDate": "2026-04-29T04:39:15",
+      "score": 550,
+      "level": 6,
+      "playerId": "p1"
     }
   ],
   "shapes": [
