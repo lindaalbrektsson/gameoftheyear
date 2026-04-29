@@ -7,10 +7,14 @@
 }
 
 .in-game-container {
-  width: 100%;
+  @include panel;
+  max-width: 1200px;
+  margin: 0 auto;
   padding: $space-md;
-  @include stack($gap: $space-xl, $align: center);
-  height: calc(100dvh - 400px);
+  @include stack($gap: $space-md, $align: center);
+  height: 70dvh;
+  max-height: 700px;
+  transform: translateY(3rem);
 }
 
 .restart-level-score-div {
@@ -18,6 +22,7 @@
   @include flex-between($align: center);
   gap: $space-md;
   min-height: 55px;
+  text-align: center;
 }
 .level-and-score-div {
   display: flex;
@@ -43,8 +48,9 @@
 
 .gameboard {
   @include stack($gap: $space-md, $align: center);
-  flex: 1;
   justify-content: center;
+  margin-top: $space-md;
+  
 }
 
 .countdown {
@@ -67,12 +73,13 @@
 .shape-and-instruction-div {
   @include panel;
   display: flex;
-  gap: $space-xl;
+  gap: $space-md;
   align-items: center;
   padding: $space-md;
 }
 
 .instruction {
+  text-align: center;
   font-weight: 600;
   font-size: 1.5rem;
   margin: 0;
@@ -84,7 +91,8 @@
   justify-content: center;
   gap: $space-md;
   padding: $space-md;
-  width: calc((70px + $space-md) * 7);
+  max-width: calc((var(--shape-size) + $space-md) * 10);
+  max-height: 77%;
 }
 
 .jump-score {
@@ -143,20 +151,6 @@
   }
 }
 
-.pulse {
-  animation: pulse 1s ease infinite;
-  display: inline-block;
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(1.2);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
 .fade-in {
   animation: fade-in 0.5s ease-in;
 }
@@ -174,14 +168,26 @@
 }
 @keyframes highlight {
   0% {
-    text-shadow: 2px 2px 3px $color-orange-light;
+    text-shadow: 3px 3px 6px $color-orange-light;
   }
   100% {
-    text-shadow: 2px 2px 5px white;
+    text-shadow: 2px 2px 7px rgba(255, 255, 255, 0.753);
   }
 }
 
 //Media-anpassningar
+@include responsive(1250px) {
+  .in-game-container {
+    margin: $space-md;
+    max-width: 100dvw;
+  }
+}
+@media (max-height: 910px) {
+  .instruction {
+    font-size: 1.2rem;
+  }
+}
+
 @include responsive(800px) {
   .level-and-score-div,
   .timer-and-lives-div,
@@ -193,17 +199,9 @@
     .lives {
       width: 100px;
     }
-  }
-  .instruction {
-    font-size: 1rem;
-  }
-}
-@media (max-height: 910px) {
-  .shapes-div {
-    width: calc((40px + $space-md) * 7);
-  }
-  .instruction {
-    font-size: 1.2rem;
+    .instruction {
+      font-size: 1rem;
+    }
   }
 }
 
@@ -223,24 +221,17 @@
     font-size: 1rem;
   }
 }
-@media (max-height: 700px) {
-  .shapes-div {
-    width: calc((30px + $space-md) * 7);
+@media (max-height: 850px) {
+  .in-game-container {
+    transform: translateY(0);
   }
 }
-@include responsive(700px) {
-  .shapes-div {
-    width: calc((50px + $space-md) * 7);
-  }
-  .instruction {
-    font-size: 1rem;
-  }
-}
-@include responsive(470px) {
+
+@include responsive(540px) {
   .active-player-info {
     font-size: 1.2rem;
   }
   .shapes-div {
-    width: calc((30px + $space-md) * 7);
+    max-width: calc((30px + $space-md) * 6.8);
   }
 }

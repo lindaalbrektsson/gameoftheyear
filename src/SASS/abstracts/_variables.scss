@@ -21,7 +21,7 @@ $color-panel-border: rgba(255, 255, 255, 0.5);
 $color-panel-inner: rgba(255, 255, 255, 0.06);
 
 // Accent colors
-$color-blank:rgb(148, 148, 150);
+$color-blank: rgb(148, 148, 150);
 
 $color-pink: #ff4c91;
 $color-pink-soft: rgba(255, 76, 145, 0.35);
@@ -66,10 +66,11 @@ $space-xl: 2rem;
 $space-2xl: 3rem;
 
 // Shadows
-$shadow-panel: 0 0 0 1px rgba(255, 255, 255, 0.06) inset,
-    0 0 12px rgba(255, 0, 153, 0.18),
-    0 0 24px rgba(0, 195, 255, 0.12),
-    0 10px 30px rgba(0, 0, 0, 0.45);
+$shadow-panel:
+  0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+  0 0 12px rgba(255, 0, 153, 0.18),
+  0 0 24px rgba(0, 195, 255, 0.12),
+  0 10px 30px rgba(0, 0, 0, 0.45);
 
 $shadow-button: 0 10px 24px rgba(0, 0, 0, 0.35);
 
@@ -84,11 +85,12 @@ $tablet-width: 900px;
 $mobile-width: 600px;
 
 :root {
-    --blank: #{$color-blank};
-    --blue: #{$color-blue};
-    --red: #{$color-red};
-    --yellow: #{$color-yellow};
-    --green: #{$color-green};
-    --orange: #{$color-orange};
-    --purple: #{$color-purple};
+  --blank: #{$color-blank};
+  --blue: #{$color-blue};
+  --red: #{$color-red};
+  --yellow: #{$color-yellow};
+  --green: #{$color-green};
+  --orange: #{$color-orange};
+  --purple: #{$color-purple};
+  --shape-size: clamp(30px, 6vmin, 70px);
 }

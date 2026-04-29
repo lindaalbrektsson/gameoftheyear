@@ -2,24 +2,26 @@
 @use "../abstracts/mixins" as *;
 
 .header-container {
-  @include flex-between(center);
-  gap: $space-xl;
+  @include stack($space-md, center);
   padding: $space-md;
-  flex-wrap: wrap;
   width: 100%;
   min-height: 155px;
+  justify-content: center;
 }
 
 .header-logo {
   display: block;
-  width: clamp(230px, 35vw, 500px);
+  object-fit: contain;
+  width: clamp(320px, 35vw, 500px);
   height: auto;
+  flex-shrink: 0;
 }
 
 .header-menu {
   @include flex-between(center);
-  gap: $space-md;
+  gap: $space-xl;
   justify-content: space-between;
+  max-width: 1200px;
   li {
     margin: 0;
     padding: 0;
