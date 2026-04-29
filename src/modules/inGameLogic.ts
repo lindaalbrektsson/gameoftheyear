@@ -299,6 +299,6 @@ function handleWrongClick(shapeItem: HTMLDivElement): void {
         
         setTimeout(() => {
             void renderGameOver();
-        }, 2000);
+        }, 2500);
     }
 }
