@@ -2,18 +2,21 @@
 @use "../abstracts/mixins" as *;
 
 .header-container {
-  @include flex-between(center);
+  display: flex;
   gap: $space-xl;
   padding: $space-md;
-  flex-wrap: wrap;
+  // flex-wrap: wrap;
   width: 100%;
   min-height: 155px;
 }
 
 .header-logo {
   display: block;
+  justify-self: center;
+  object-fit: contain;
   width: clamp(230px, 35vw, 500px);
   height: auto;
+  flex-shrink: 0;
 }
 
 .header-menu {
