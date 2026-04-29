@@ -284,10 +284,11 @@ function handleWrongClick(shapeItem: HTMLDivElement): void {
     if (state.lives <= 0) {
         stopRoundTimer();
         renderGameOverMessage();
-        setTimeout(() => {
-          void renderGameOver();
-        }, 1200);
+
+    setTimeout(async() => {
+        await renderGameOver();
+        const gameOverContainer = document.querySelector(".game-over-container") as HTMLDivElement;
+        gameOverContainer?.classList.add("fade-in");
+      }, 2500);
     }
 }
-
-

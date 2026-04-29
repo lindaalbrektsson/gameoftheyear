@@ -223,8 +223,12 @@ export function resetForNextRound() {
 
 export function renderGameOverMessage(): void {
     const gameoverMessage = document.createElement("p");
-    gameoverMessage.classList.add("game-over");
+    gameoverMessage.classList.add("countdown");
     gameoverMessage.textContent = "Game Over!";
 
     gameboard.replaceChildren(gameoverMessage);
+
+    requestAnimationFrame(() => {
+        gameboard.classList.add("fade-in");
+    });
 }

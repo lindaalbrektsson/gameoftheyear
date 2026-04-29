@@ -25,9 +25,11 @@ export function startRoundTimer(): void {
       } else {
         renderGameOverMessage();
 
-        setTimeout(() => {
-          void renderGameOver();
-        }, 1200);
+        setTimeout(async () => {
+          await renderGameOver();
+          const gameOverContainer = document.querySelector(".game-over-container") as HTMLDivElement;
+          gameOverContainer?.classList.add("fade-in");
+        }, 2500);
       }
     }
   }, 1000);
