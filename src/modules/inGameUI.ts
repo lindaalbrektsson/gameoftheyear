@@ -21,24 +21,24 @@ let timer: HTMLSpanElement;
 let lives: HTMLParagraphElement;
 
 export function renderInGame() {
-    renderHeaderMenu();
-    const main = document.querySelector("main");
-    if (!main) {
-        throw new Error("Can't find main element");
-    }
-    main.innerHTML = "";
-    const inGameContainer = document.createElement("div");
-    inGameContainer.classList.add("in-game-container");
+  renderHeaderMenu();
+  const main = document.querySelector("main");
+  if (!main) {
+    throw new Error("Can't find main element");
+  }
+  main.innerHTML = "";
+  const inGameContainer = document.createElement("div");
+  inGameContainer.classList.add("in-game-container");
 
-    const restartLevelScoreDiv = renderRestartLevelScore();
-    const timerAndLivesDiv = renderTimerAndLives();
+  const restartLevelScoreDiv = renderRestartLevelScore();
+  const timerAndLivesDiv = renderTimerAndLives();
 
-    gameboard = document.createElement("div");
-    gameboard.classList.add("gameboard");
+  gameboard = document.createElement("div");
+  gameboard.classList.add("gameboard");
 
-    inGameContainer.append(restartLevelScoreDiv, timerAndLivesDiv, gameboard);
-    main.appendChild(inGameContainer);
-    inGameContainer.classList.add("fade-in");
+  inGameContainer.append(restartLevelScoreDiv, timerAndLivesDiv, gameboard);
+  main.appendChild(inGameContainer);
+  inGameContainer.classList.add("fade-in");
 }
 
 function renderHeaderMenu() {
@@ -107,19 +107,19 @@ function renderRestartLevelScore(): HTMLDivElement {
   return restartLevelScoreDiv;
 }
 
-function renderTimerAndLives (): HTMLDivElement {
-    timerAndLivesDiv = document.createElement("div");
-    timerAndLivesDiv.classList.add("timer-and-lives-div")
-    const timeLeft = document.createElement("p");
-    timeLeft.classList.add("time-left");
-    timer = document.createElement("span");
-    timer.classList.add("timer");
-    timeLeft.textContent = "Time left: "
-    timeLeft.appendChild(timer)
-    lives = document.createElement("p");
-    lives.classList.add("lives");
-    timerAndLivesDiv.append(timeLeft, lives);
-    return timerAndLivesDiv;
+function renderTimerAndLives(): HTMLDivElement {
+  timerAndLivesDiv = document.createElement("div");
+  timerAndLivesDiv.classList.add("timer-and-lives-div");
+  const timeLeft = document.createElement("p");
+  timeLeft.classList.add("time-left");
+  timer = document.createElement("span");
+  timer.classList.add("timer");
+  timeLeft.textContent = "Time left: ";
+  timeLeft.appendChild(timer);
+  lives = document.createElement("p");
+  lives.classList.add("lives");
+  timerAndLivesDiv.append(timeLeft, lives);
+  return timerAndLivesDiv;
 }
 
 export function startCountdown() {
@@ -176,7 +176,7 @@ export async function renderShapes(shapes: Shape[]) {
 // Gets the instruction shape from the instruction's rule type.
 export async function renderInstruction(
   newInstruction: Instruction,
-  newInstructionShape: Shape
+  newInstructionShape: Shape,
 ) {
   const instruction = document.createElement("p");
   instruction.classList.add("instruction");
@@ -207,11 +207,11 @@ export function updateTimerUI() {
 }
 
 export function updateLivesUI() {
-    lives.textContent = "❤️".repeat(state.lives);
-    lives.classList.add("highlight");
-    setTimeout(() => {
-        lives.classList.remove("highlight");
-    }, 400);
+  lives.textContent = "❤️".repeat(state.lives);
+  lives.classList.add("highlight");
+  setTimeout(() => {
+    lives.classList.remove("highlight");
+  }, 400);
 }
 
 export function updateLevelUI() {
@@ -223,31 +223,31 @@ export function updateLevelUI() {
 }
 
 export function updateScoreUI() {
-    scoreCounter.textContent = state.score.toString();
-    scoreCounter.classList.add("jump-score");
-    setTimeout(() => {
-        scoreCounter.classList.remove("jump-score");
-    }, 400);
-};
+  scoreCounter.textContent = state.score.toString();
+  scoreCounter.classList.add("jump-score");
+  setTimeout(() => {
+    scoreCounter.classList.remove("jump-score");
+  }, 400);
+}
 
 export function resetForNextRound() {
-    gameboard.classList.remove("fade-in");
-    gameboard.innerHTML = "";
-    shapeAndInstructionDiv.innerHTML= "";
-    shapesDiv.innerHTML = "";
+  gameboard.classList.remove("fade-in");
+  gameboard.innerHTML = "";
+  shapeAndInstructionDiv.innerHTML = "";
+  shapesDiv.innerHTML = "";
 }
 
 export function renderGameOverMessage(): void {
-    const gameoverMessage = document.createElement("p");
-    gameoverMessage.classList.add("countdown");
-    gameoverMessage.textContent = "Game Over!";
-    timerAndLivesDiv.innerHTML = "";
-    gameboard.replaceChildren(gameoverMessage);
+  const gameoverMessage = document.createElement("p");
+  gameoverMessage.classList.add("game-over");
+  gameoverMessage.textContent = "Game Over!";
+  timerAndLivesDiv.innerHTML = "";
+  gameboard.replaceChildren(gameoverMessage);
 }
 
 export function renderErrorLoadingGame() {
   const errorLoadingGame = document.createElement("p");
   errorLoadingGame.classList.add("error-loading-game");
-  errorLoadingGame.textContent = "Can't load gameboard. Try again!"
+  errorLoadingGame.textContent = "Can't load gameboard. Try again!";
   gameboard.appendChild(errorLoadingGame);
 }

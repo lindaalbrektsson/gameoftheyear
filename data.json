@@ -10,7 +10,8 @@
     },
     {
       "id": "p3",
-      "playerName": "Hanna"
+      "playerName": "Hanna",
+      "bestScore": 950
     },
     {
       "id": "p4",
@@ -68,6 +69,34 @@
     {
       "id": "9JBJXhYQg4Y",
       "gameDate": "2026-04-29T09:17:26",
+      "score": 0,
+      "level": 1,
+      "playerId": "p3"
+    },
+    {
+      "id": "9JODVJX_O9c",
+      "gameDate": "2026-04-29T11:37:14",
+      "score": 950,
+      "level": 7,
+      "playerId": "p3"
+    },
+    {
+      "id": "m_qYcq3CLOQ",
+      "gameDate": "2026-04-29T11:38:04",
+      "score": 200,
+      "level": 2,
+      "playerId": "p3"
+    },
+    {
+      "id": "JafeQSJKBNs",
+      "gameDate": "2026-04-29T11:38:57",
+      "score": 0,
+      "level": 1,
+      "playerId": "p3"
+    },
+    {
+      "id": "G6IFICDGypk",
+      "gameDate": "2026-04-29T11:40:26",
       "score": 0,
       "level": 1,
       "playerId": "p3"
