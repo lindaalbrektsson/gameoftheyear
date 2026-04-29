@@ -224,9 +224,8 @@ export function updateLevelUI() {
 
 export function updateScoreUI(changeType: "increase" | "decrease") {
   scoreCounter.textContent = state.score.toString();
-    if (changeType === "increase") {
-      scoreCounter.classList.add("jump-score");
-
+  if (changeType === "increase") {
+    scoreCounter.classList.add("jump-score");
   } else {
     scoreCounter.classList.add("drop-score");
   }

@@ -7,7 +7,6 @@
   width: 100%;
   min-height: 155px;
   justify-content: center;
-  margin-bottom: 2rem;
 }
 
 .header-logo {
@@ -20,8 +19,9 @@
 
 .header-menu {
   @include flex-between(center);
-  gap: $space-md;
+  gap: $space-xl;
   justify-content: space-between;
+  max-width: 1200px;
   li {
     margin: 0;
     padding: 0;

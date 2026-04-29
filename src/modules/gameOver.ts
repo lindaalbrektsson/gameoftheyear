@@ -164,6 +164,7 @@ export async function renderGameOver(isNewRecord = false): Promise<void> {
 
   gameOverContainer.append(leftColumn, rightColumn);
   mainContainer.append(gameOverContainer);
+  gameOverContainer.classList.add("fade-in");
 }
 
 function createRecentGamesTable(rows: Game[]): HTMLElement {

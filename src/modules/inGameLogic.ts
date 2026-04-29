@@ -49,7 +49,7 @@ let roundResolved = false;
 export const state = {
   level: 1,
   score: 0,
-  timeLeft: 7,
+  timeLeft: 0,
   lives: 3,
   difficultyLevel: 1,
 };
@@ -57,7 +57,7 @@ export const state = {
 export function resetState() {
   state.level = 1;
   state.score = 0;
-  state.timeLeft = 7;
+  state.timeLeft = 0;
   state.lives = 3;
   state.difficultyLevel = 1;
   validAnswerIds = [];
@@ -67,8 +67,7 @@ export function resetState() {
 
 export async function startNewRound() {
   resetForNextRound();
-  state.timeLeft = 7;
-  updateTimerUI();
+  state.timeLeft = 10;
 
   roundResolved = false;
   clickedCorrectIds.clear();
@@ -90,11 +89,19 @@ export async function startNewRound() {
     currentRoundShapes,
   );
 
+  if (
+    currentInstruction.ruleType === "colorFillBlankShape" ||
+    currentInstruction.ruleType === "matchShapeAndColor"
+  ) {
+    state.timeLeft = 6;
+  }
+
+  updateTimerUI();
+  startRoundTimer();
   renderInstruction(currentInstruction, currentInstructionShape);
   renderShapes(currentRoundShapes);
 
   setTimeout(updateLevelUI, 400);
-  startRoundTimer();
 }
 //Rätt svar utifrån ruletype
 function isCorrectAnswer(
@@ -241,7 +248,7 @@ function handleRoundComplete(): void {
 function handleWrongClick(shapeItem: HTMLDivElement): void {
   shapeItem.classList.add("incorrect");
   state.lives--;
-  state.score = Math.max(0, state.score - 50);
+  state.score = Math.max(state.score - 50);
   updateScoreUI("decrease");
   updateLivesUI();
 
@@ -251,7 +258,7 @@ function handleWrongClick(shapeItem: HTMLDivElement): void {
 
   if (state.lives <= 0) {
     stopRoundTimer();
-    renderGameOverMessage();
+    setTimeout(renderGameOverMessage, 600);
     const finalScore = state.score;
     const finalLevel = state.level;
     setTimeout(async () => {
@@ -261,6 +268,6 @@ function handleWrongClick(shapeItem: HTMLDivElement): void {
           ? await saveGameResult(activePlayerName, finalScore, finalLevel)
           : false;
       await renderGameOver(isNewRecord);
-    }, 1200);
+    }, 2500);
   }
 }
