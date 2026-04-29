@@ -1,30 +1,25 @@
 @use "../abstracts/variables" as *;
 @use "../abstracts/mixins" as *;
 
-.game-btn,
-.dev-view-btn {
+.game-btn {
 @include button-base;
 }
 
-.game-btn:hover,
-.dev-view-btn:hover {
+.game-btn:hover {
   border-color: $color-white;
   transform: translateY(-1px);
 }
 
-.game-btn:active,
-.dev-view-btn:active {
+.game-btn:active {
   transform: translateY(0);
 }
 
-.game-btn:focus-visible,
-.dev-view-btn:focus-visible {
+.game-btn:focus-visible {
   outline: 2px solid $color-white;
   outline-offset: 3px;
 }
 
-.game-btn:disabled,
-.dev-view-btn:disabled {
+.game-btn:disabled {
   opacity: 0.45;
   cursor: not-allowed;
   transform: none;

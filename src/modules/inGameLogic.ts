@@ -28,6 +28,7 @@ import {
 
 import { renderGameOver } from "./gameOver";
 import { saveGameResult } from "./API/scoreAPI";
+import { getStoredActivePlayerName } from "./localStorage";
 
 // LINDA:
 // Den här typen beskriver vad ett klick betyder i rundan.
@@ -296,7 +297,7 @@ function handleWrongClick(shapeItem: HTMLDivElement): void {
     stopRoundTimer();
     renderGameOverMessage();
     // spara score innan vi byter vy
-    const activePlayerName = localStorage.getItem("activePlayer");
+    const activePlayerName = getStoredActivePlayerName();
     if (activePlayerName) {
       void saveGameResult(activePlayerName, state.score, state.level);
     }

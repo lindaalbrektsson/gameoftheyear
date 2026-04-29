@@ -1,28 +1,27 @@
 import { initGameFlow } from "./inGameLogic";
+import { deleteGameRecord } from "./API/scoreAPI";
 import { renderStartPage } from "./startPage";
+import {
+  clearStoredActivePlayerName,
+  getStoredActivePlayerName,
+  setStoredActivePlayerName,
+} from "./localStorage";
+import {
+  buildGlobalHighscoreEntries,
+  formatGameDate,
+  getBestGame,
+  sortGamesByNewest,
+  type EntityId,
+  type GameRecord,
+  type GlobalHighscoreEntry,
+  type PlayerRecord,
+} from "./highscore";
 
 const API_BASE_URL = "http://localhost:3000";
 
-type EntityId = string | number;
+type Player = PlayerRecord;
 
-type Player = {
-  id: EntityId;
-  playerName: string;
-};
-
-type Game = {
-  id: EntityId;
-  gameDate: string;
-  score: number;
-  level: number;
-  playerId: EntityId;
-};
-
-type GlobalHighscoreEntry = {
-  playerName: string;
-  level: number;
-  score: number;
-};
+type Game = GameRecord;
 
 const ACTIVE_PLAYER_NOT_FOUND_ERROR = "ACTIVE_PLAYER_NOT_FOUND";
 
@@ -35,7 +34,7 @@ export async function renderActivePlayerStartPage(): Promise<void> {
     throw new Error("Could not find main element");
   }
 
-  const activePlayerName = localStorage.getItem("activePlayer");
+  const activePlayerName = getStoredActivePlayerName();
 
   if (!activePlayerName) {
     renderMissingPlayerState(
@@ -118,17 +117,11 @@ function getActivePlayer(
   );
 
   if (existingPlayer) {
-    localStorage.setItem("activePlayer", existingPlayer.playerName);
+    setStoredActivePlayerName(existingPlayer.playerName);
     return existingPlayer;
   }
 
   throw new Error(ACTIVE_PLAYER_NOT_FOUND_ERROR);
-}
-
-async function deleteGame(gameId: EntityId): Promise<void> {
-  await fetchJson<void>(`/games/${gameId}`, {
-    method: "DELETE",
-  });
 }
 
 async function fetchJson<T>(
@@ -173,12 +166,8 @@ function renderDashboard(
   const leftSection = document.createElement("section");
   leftSection.classList.add("left-section");
 
-  const playerHighscoreValue =
-    playerGames.length > 0
-      ? Math.max(...playerGames.map((game) => game.score))
-      : 0;
-
-  const playerHighscoreSection = createPlayerHighscore(playerHighscoreValue);
+  const playerBestGame = getBestGame(playerGames);
+  const playerHighscoreSection = createPlayerHighscore(playerBestGame);
 
   const bottomPanelContainer = document.createElement("div");
   bottomPanelContainer.classList.add("bottom-panel-container");
@@ -191,7 +180,7 @@ function renderDashboard(
   function showPlayerGameHistory(): void {
     bottomPanelContainer.replaceChildren(
       createPlayerGameHistorySection(playerGames, async (gameId) => {
-        await deleteGame(gameId);
+        await deleteGameRecord(String(gameId));
         await renderActivePlayerStartPage();
       })
     );
@@ -228,6 +217,9 @@ function renderDashboard(
 
   activePlayerStartPage.append(leftSection, rightSection);
   main.replaceChildren(activePlayerStartPage);
+  requestAnimationFrame(() => {
+    activePlayerStartPage.classList.add("fade-in");
+  });
 }
 
 function renderLoadError(main: Element): void {
@@ -251,7 +243,7 @@ function renderLoadError(main: Element): void {
   changePlayerBtn.type = "button";
   changePlayerBtn.textContent = "Change Player";
   changePlayerBtn.addEventListener("click", () => {
-    localStorage.removeItem("activePlayer");
+    clearStoredActivePlayerName();
     void renderStartPage();
   });
 
@@ -273,7 +265,7 @@ function renderMissingPlayerState(
   goToStartPageBtn.type = "button";
   goToStartPageBtn.textContent = "Go to Start Page";
   goToStartPageBtn.addEventListener("click", () => {
-    localStorage.removeItem("activePlayer");
+    clearStoredActivePlayerName();
     void renderStartPage();
   });
 
@@ -307,7 +299,7 @@ function createStatusPanel(titleText: string, bodyText: string): HTMLElement {
   return panel;
 }
 
-function createPlayerHighscore(highscoreValue: number): HTMLElement {
+function createPlayerHighscore(bestGame: Game | null): HTMLElement {
   const playerHighscoreSection = document.createElement("section");
   playerHighscoreSection.classList.add("player-highscore");
 
@@ -317,7 +309,7 @@ function createPlayerHighscore(highscoreValue: number): HTMLElement {
 
   const highscoreText = document.createElement("p");
   highscoreText.classList.add("highscore-value");
-  highscoreText.textContent = `${highscoreValue} points`;
+  highscoreText.textContent = `${bestGame?.score ?? 0} points`;
 
   playerHighscoreSection.append(highscoreTitle, highscoreText);
 
@@ -583,7 +575,7 @@ function createButtonRow(activePlayerName: string): HTMLElement {
   startGameBtn.type = "button";
   startGameBtn.textContent = "Start Game";
   startGameBtn.addEventListener("click", () => {
-    localStorage.setItem("activePlayer", activePlayerName);
+    setStoredActivePlayerName(activePlayerName);
     initGameFlow();
   });
 
@@ -592,7 +584,7 @@ function createButtonRow(activePlayerName: string): HTMLElement {
   changePlayerBtn.type = "button";
   changePlayerBtn.textContent = "Change Player";
   changePlayerBtn.addEventListener("click", () => {
-    localStorage.removeItem("activePlayer");
+    clearStoredActivePlayerName();
     void renderStartPage();
   });
 
@@ -706,74 +698,3 @@ function createGlobalHighscoreRow(
   return scoreRow;
 }
 
-function buildGlobalHighscoreEntries(
-  players: Player[],
-  games: Game[]
-): GlobalHighscoreEntry[] {
-  const playerNamesById = new Map(
-    players.map((player) => [String(player.id), player.playerName])
-  );
-  const bestGameByPlayerId = new Map<string, GlobalHighscoreEntry>();
-
-  games.forEach((game) => {
-    const playerId = String(game.playerId);
-    const playerName = playerNamesById.get(playerId);
-
-    if (!playerName) {
-      return;
-    }
-
-    const existingBest = bestGameByPlayerId.get(playerId);
-    const isBetterScore =
-      !existingBest ||
-      game.score > existingBest.score ||
-      (game.score === existingBest.score && game.level > existingBest.level);
-
-    if (isBetterScore) {
-      bestGameByPlayerId.set(playerId, {
-        playerName,
-        level: game.level,
-        score: game.score,
-      });
-    }
-  });
-
-  return [...bestGameByPlayerId.values()].sort((left, right) => {
-    if (right.score !== left.score) {
-      return right.score - left.score;
-    }
-
-    if (right.level !== left.level) {
-      return right.level - left.level;
-    }
-
-    return left.playerName.localeCompare(right.playerName);
-  });
-}
-
-function sortGamesByNewest(games: Game[]): Game[] {
-  return [...games].sort((left, right) => {
-    const dateDifference =
-      new Date(right.gameDate).getTime() - new Date(left.gameDate).getTime();
-
-    if (dateDifference !== 0) {
-      return dateDifference;
-    }
-
-    if (right.score !== left.score) {
-      return right.score - left.score;
-    }
-
-    return right.level - left.level;
-  });
-}
-
-function formatGameDate(gameDate: string): string {
-  const parsedDate = new Date(gameDate);
-
-  if (Number.isNaN(parsedDate.getTime())) {
-    return gameDate;
-  }
-
-  return parsedDate.toLocaleDateString("sv-SE");
-}

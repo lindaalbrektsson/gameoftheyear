@@ -68,6 +68,8 @@
   display: grid;
   gap: 0.45rem;
   margin-top: 0.6rem;
+  align-content: start;
+  grid-auto-rows: max-content;
 }
 
 .score-row {
