@@ -1,18 +1,51 @@
 import { deleteGameRecord, getGames, type Game } from "./API/games";
 import { getPlayers, type Player } from "./API/players";
 import { renderActivePlayerStartPage } from "./activePlayerStartPage";
-import { initGameFlow } from "./inGameLogic";
+import { initGameFlow, state, resetState } from "./inGameLogic";
 import {
-  buildGlobalHighscoreEntries,
   formatGameDate,
-  getLatestGame,
   sortGamesByNewest,
-  type GlobalHighscoreEntry,
+  buildGlobalHighscoreEntries,
+  type PlayerRecord,
+  type GameRecord,
 } from "./highscore";
 import { getStoredActivePlayerName } from "./localStorage";
 import { renderStartPage } from "./startPage";
 
 const mainContainer = document.querySelector("main");
+
+type Player = PlayerRecord & { bestScore: number };
+type Game = GameRecord;
+
+type GlobalHighscoreEntry = {
+  playerName: string;
+  level: number;
+  score: number;
+};
+
+const API_URL = "http://localhost:3000";
+
+async function fetchPlayers(): Promise<Player[]> {
+  try {
+    const res = await fetch(`${API_URL}/players`);
+    if (!res.ok) throw new Error("Failed to fetch players");
+    return await res.json();
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+}
+
+async function fetchGames(): Promise<Game[]> {
+  try {
+    const res = await fetch(`${API_URL}/games`);
+    if (!res.ok) throw new Error("Failed to fetch games");
+    return await res.json();
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+}
 
 export async function renderGameOver(): Promise<void> {
   if (!mainContainer) {
@@ -60,15 +93,8 @@ export async function renderGameOver(): Promise<void> {
   const gameOverContainer = document.createElement("div");
   gameOverContainer.className = "game-over-container";
 
-  let players: Player[] = [];
-  let games: Game[] = [];
-
-  try {
-    [players, games] = await Promise.all([getPlayers(), getGames()]);
-  } catch (error) {
-    console.error("Failed to load game over data", error);
-  }
-
+  // Hämta data för att kunna matcha spelare och uppdatera poäng
+  const players = await fetchPlayers();
   const activePlayer = activePlayerName
     ? players.find(
         (player) =>
@@ -76,24 +102,69 @@ export async function renderGameOver(): Promise<void> {
       )
     : undefined;
 
-  let recentGames: Game[] = [];
-  let latestScore = 0;
+  const finalScoreThisRound = state.score;
+  let isNewRecord = false;
 
+  if (activePlayer && state.score > 0) {
+    try {
+      //  UTC+2 (svensk tid)
+      const now = new Date();
+      const localOffset = now.getTimezoneOffset() * 60000;
+      const localTime = new Date(now.getTime() - localOffset);
+
+      const newGame = {
+        gameDate: localTime.toISOString().substring(0, 19),
+        score: state.score,
+        level: state.level,
+        playerId: activePlayer.id,
+      };
+
+      // POST: Spara rundan i historiken
+      await fetch(`${API_URL}/games`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newGame),
+      });
+
+      // PUT:uppdatera bestscore om score > bestscore
+      const currentBest = activePlayer.bestScore || 0;
+      if (state.score > currentBest) {
+        isNewRecord = true;
+        const updatedPlayer = {
+          ...activePlayer,
+          bestScore: state.score,
+        };
+
+        await fetch(`${API_URL}/players/${activePlayer.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updatedPlayer),
+        });
+      }
+
+      // efter att vi sparat nollställver vi state
+      resetState();
+    } catch (error) {
+      console.error("Failed to save game data:", error);
+    }
+  }
+
+  // hämta spelen igen med den nysparade rundan i listorna
+  const games = await fetchGames();
+
+  let recentGames: Game[] = [];
   if (activePlayer) {
     const playerGames = games.filter(
-      (game) => game.playerId === activePlayer.id,
+      (game) => String(game.playerId) === String(activePlayer.id),
     );
-
-    const latestGame = getLatestGame(playerGames);
-
-    if (latestGame) {
-      latestScore = latestGame.score;
-    }
-
     recentGames = sortGamesByNewest(playerGames).slice(0, 10);
   }
 
-  const globalHighscoreEntries = buildGlobalHighscoreEntries(players, games);
+  // globala topplistan från highscore.ts
+  const globalHighscoreEntries = buildGlobalHighscoreEntries(
+    players,
+    games,
+  ).slice(0, 5);
 
   const leftColumn = document.createElement("div");
   leftColumn.className = "column left-column";
@@ -106,11 +177,11 @@ export async function renderGameOver(): Promise<void> {
 
   const scoreTitle = document.createElement("h2");
   scoreTitle.className = "panel-title";
-  scoreTitle.textContent = "Your Score Last Round";
+  scoreTitle.textContent = "Your Score This Round";
 
   const scoreValue = document.createElement("p");
   scoreValue.className = "highscore-value";
-  scoreValue.textContent = `${latestScore} points`;
+  scoreValue.textContent = `${finalScoreThisRound} points`;
 
   scoreContainer.append(scoreTitle, scoreValue);
 
@@ -134,10 +205,9 @@ export async function renderGameOver(): Promise<void> {
 
   const recentGamesSubtitle = document.createElement("p");
   recentGamesSubtitle.className = "panel-subtitle";
-  recentGamesSubtitle.textContent = "Manage your history";
+  recentGamesSubtitle.textContent = "Your latest sessions";
 
   const recentGamesTable = createRecentGamesTable(recentGames);
-
   recentGamesScoreboard.append(
     recentGamesTitle,
     recentGamesSubtitle,
@@ -146,9 +216,13 @@ export async function renderGameOver(): Promise<void> {
 
   leftColumn.append(scoreContainer, restartGameBtn, recentGamesScoreboard);
 
-  const highScoreNotice = document.createElement("div");
-  highScoreNotice.className = "high-score-notice";
-  highScoreNotice.textContent = "You made it to the highscore list!";
+  // visa bara om isnewrecord alltså score > bestscore
+  if (isNewRecord) {
+    const highScoreNotice = document.createElement("div");
+    highScoreNotice.className = "high-score-notice";
+    highScoreNotice.textContent = "New Personal Best!";
+    rightColumn.append(highScoreNotice);
+  }
 
   const globalHighScoreList = document.createElement("section");
   globalHighScoreList.className = "global-high-score-list global-highscore";
@@ -159,11 +233,11 @@ export async function renderGameOver(): Promise<void> {
 
   const globalHighScoreTable = createGlobalHighscoreTable(
     globalHighscoreEntries,
+    activePlayerName, // för att visa var i global highscore spelaren hamnat
   );
-
   globalHighScoreList.append(globalHighScoreTitle, globalHighScoreTable);
 
-  rightColumn.append(highScoreNotice, globalHighScoreList);
+  rightColumn.append(globalHighScoreList);
 
   gameOverContainer.append(leftColumn, rightColumn);
   mainContainer.append(gameOverContainer);
@@ -188,11 +262,7 @@ function createRecentGamesTable(rows: Game[]): HTMLElement {
   scoreHeader.className = "score-cell score-points";
   scoreHeader.textContent = "Score";
 
-  const deleteHeader = document.createElement("span");
-  deleteHeader.classList.add("score-cell", "score-delete");
-  deleteHeader.textContent = "";
-
-  headerRow.append(dateHeader, levelHeader, scoreHeader, deleteHeader);
+  headerRow.append(dateHeader, levelHeader, scoreHeader);
   scoreTable.append(headerRow);
 
   rows.forEach((game) => {
@@ -211,91 +281,16 @@ function createRecentGamesTable(rows: Game[]): HTMLElement {
     gameScore.className = "score-cell score-points";
     gameScore.textContent = String(game.score);
 
-    const deleteCell = document.createElement("span");
-    deleteCell.classList.add("score-cell", "score-delete");
-
-    const deleteBtn = createDeleteButton(game, deleteCell, scoreRow);
-    deleteCell.append(deleteBtn);
-
-    scoreRow.append(gameDate, gameLevel, gameScore, deleteCell);
+    scoreRow.append(gameDate, gameLevel, gameScore);
     scoreTable.append(scoreRow);
   });
 
   return scoreTable;
 }
 
-function createDeleteButton(
-  game: Game,
-  deleteCell: HTMLElement,
-  scoreRow: HTMLElement,
-): HTMLButtonElement {
-  const deleteBtn = document.createElement("button");
-  deleteBtn.classList.add("delete-game-btn");
-  deleteBtn.type = "button";
-  deleteBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
-  deleteBtn.setAttribute("aria-label", "Delete game");
-
-  deleteBtn.addEventListener("click", () => {
-    const deleteConfirmation = createDeleteConfirmation(
-      game,
-      deleteCell,
-      scoreRow,
-    );
-    deleteCell.replaceChildren(deleteConfirmation);
-  });
-
-  return deleteBtn;
-}
-
-function createDeleteConfirmation(
-  game: Game,
-  deleteCell: HTMLElement,
-  scoreRow: HTMLElement,
-): HTMLElement {
-  const confirmationWrapper = document.createElement("div");
-  confirmationWrapper.classList.add("delete-confirmation");
-
-  const confirmationText = document.createElement("span");
-  confirmationText.classList.add("delete-confirmation-text");
-  confirmationText.textContent = "Delete game?";
-
-  const buttonsWrapper = document.createElement("div");
-  buttonsWrapper.classList.add("delete-confirmation-buttons");
-
-  const confirmBtn = document.createElement("button");
-  confirmBtn.classList.add("game-btn", "confirm-delete-btn");
-  confirmBtn.type = "button";
-  confirmBtn.textContent = "Yes";
-
-  const cancelBtn = document.createElement("button");
-  cancelBtn.classList.add("game-btn", "cancel-delete-btn");
-  cancelBtn.type = "button";
-  cancelBtn.textContent = "No";
-
-  confirmBtn.addEventListener("click", async () => {
-    try {
-      await deleteGameRecord(game.id);
-      scoreRow.remove();
-    } catch (error) {
-      console.error(`Failed to delete game with id: ${game.id}`, error);
-      const deleteBtn = createDeleteButton(game, deleteCell, scoreRow);
-      deleteCell.replaceChildren(deleteBtn);
-    }
-  });
-
-  cancelBtn.addEventListener("click", () => {
-    const deleteBtn = createDeleteButton(game, deleteCell, scoreRow);
-    deleteCell.replaceChildren(deleteBtn);
-  });
-
-  buttonsWrapper.append(confirmBtn, cancelBtn);
-  confirmationWrapper.append(confirmationText, buttonsWrapper);
-
-  return confirmationWrapper;
-}
-
 function createGlobalHighscoreTable(
   rows: GlobalHighscoreEntry[],
+  activePlayerName: string | null,
 ): HTMLElement {
   const scoreTable = document.createElement("div");
   scoreTable.className = "score-table";
@@ -322,6 +317,14 @@ function createGlobalHighscoreTable(
     const scoreRow = document.createElement("div");
     scoreRow.className = "score-row";
 
+    // Highlighta raden (bestscore)
+    if (
+      activePlayerName &&
+      row.playerName.toLowerCase() === activePlayerName.toLowerCase()
+    ) {
+      scoreRow.classList.add("active-player-highlight");
+    }
+
     const name = document.createElement("span");
     name.className = "score-cell score-name";
 
@@ -335,7 +338,7 @@ function createGlobalHighscoreTable(
       name.textContent = `🥉 ${row.playerName}`;
       scoreRow.classList.add("bronze-rank");
     } else {
-      name.textContent = row.playerName;
+      name.textContent = `${index + 1}. ${row.playerName}`;
     }
 
     const level = document.createElement("span");

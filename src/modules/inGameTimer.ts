@@ -6,7 +6,6 @@ import {
   updateTimerUI,
 } from "./inGameUI";
 import { state, startNewRound } from "./inGameLogic";
-import { getStoredActivePlayerName } from "./localStorage";
 
 let timerIntervalId: number | null = null;
 
@@ -29,14 +28,7 @@ export function startRoundTimer(): void {
           void startNewRound();
         }, 600);
       } else {
-         setTimeout(()=> {
-           renderGameOverMessage();
-        }, 1000)
-        // spara score innan vi byter till gameover vy
-        const activePlayerName = getStoredActivePlayerName();
-        if (activePlayerName) {
-          void saveGameResult(activePlayerName, state.score, state.level);
-        }
+        renderGameOverMessage();
         setTimeout(() => {
           void renderGameOver();
         }, 2500);
