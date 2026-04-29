@@ -1,5 +1,5 @@
 import { deleteGameRecord, getGames, type Game } from "./API/games";
-import { getPlayers } from "./API/players";
+import { getPlayers, type Player } from "./API/players";
 import { renderActivePlayerStartPage } from "./activePlayerStartPage";
 import { initGameFlow } from "./inGameLogic";
 import {
@@ -60,7 +60,14 @@ export async function renderGameOver(): Promise<void> {
   const gameOverContainer = document.createElement("div");
   gameOverContainer.className = "game-over-container";
 
-  const [players, games] = await Promise.all([getPlayers(), getGames()]);
+  let players: Player[] = [];
+  let games: Game[] = [];
+
+  try {
+    [players, games] = await Promise.all([getPlayers(), getGames()]);
+  } catch (error) {
+    console.error("Failed to load game over data", error);
+  }
 
   const activePlayer = activePlayerName
     ? players.find(
