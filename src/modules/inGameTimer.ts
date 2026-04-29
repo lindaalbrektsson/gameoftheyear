@@ -6,6 +6,7 @@ import {
   updateTimerUI,
 } from "./inGameUI";
 import { state, startNewRound } from "./inGameLogic";
+import { getStoredActivePlayerName } from "./localStorage";
 
 let timerIntervalId: number | null = null;
 
@@ -29,8 +30,15 @@ export function startRoundTimer(): void {
         }, 600);
       } else {
         renderGameOverMessage();
-        setTimeout(() => {
-          void renderGameOver();
+        const finalScore = state.score;
+        const finalLevel = state.level;
+        setTimeout(async () => {
+          const activePlayerName = getStoredActivePlayerName();
+          const isNewRecord =
+            activePlayerName && finalScore > 0
+              ? await saveGameResult(activePlayerName, finalScore, finalLevel)
+              : false;
+          await renderGameOver(isNewRecord);
         }, 2500);
       }
     }

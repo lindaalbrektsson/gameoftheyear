@@ -87,31 +87,33 @@ export async function deleteGameRecord(gameId: string): Promise<void> {
 async function updatePlayerBestScoreIfNeeded(
   player: Player,
   score: number,
-): Promise<void> {
+): Promise<boolean> {
   const currentBestScore = player.bestScore || 0;
 
   if (score <= currentBestScore) {
-    return;
+    return false;
   }
 
   await updatePlayer({
     ...player,
     bestScore: score,
   });
+
+  return true;
 }
 
 export async function saveGameResult(
   playerName: string,
   score: number,
   level: number,
-): Promise<void> {
+): Promise<boolean> {
   try {
     const players = await getPlayers();
     const activePlayer = findPlayerByName(players, playerName);
 
     if (!activePlayer) {
       console.error("Could not save game: Player not found.");
-      return;
+      return false;
     }
 
     await createGameRecord({
@@ -121,8 +123,9 @@ export async function saveGameResult(
       playerId: activePlayer.id,
     });
 
-    await updatePlayerBestScoreIfNeeded(activePlayer, score);
+    return await updatePlayerBestScoreIfNeeded(activePlayer, score);
   } catch (error) {
     console.error("Failed to save game result:", error);
+    return false;
   }
 }

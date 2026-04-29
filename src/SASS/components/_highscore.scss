@@ -25,8 +25,8 @@
   min-height: 380px;
 }
 
-.player-recent-games:not(.recent-games-scoreboard),
-.global-highscore:not(.global-high-score-list) {
+.player-recent-games,
+.global-highscore {
   min-height: 28rem;
   max-height: 28rem;
   overflow: hidden;
@@ -67,6 +67,14 @@
   align-self: start;
 }
 
+.game-over-container .global-highscore {
+  min-height: auto;
+  max-height: none;
+  height: auto;
+  align-self: start;
+  overflow: visible;
+}
+
 .player-score-table,
 .global-highscore .score-table {
   flex-grow: 1;
@@ -94,7 +102,7 @@
   font-size: 0.95rem;
 }
 
-.player-recent-games:not(.recent-games-scoreboard) > .panel-subtitle {
+.player-recent-games > .panel-subtitle {
   display: none;
 }
 
@@ -118,31 +126,26 @@
   grid-auto-rows: max-content;
 }
 
-.player-recent-games:not(.recent-games-scoreboard) .player-score-table,
-.global-highscore:not(.global-high-score-list) .score-table {
+.player-recent-games .player-score-table,
+.global-highscore .score-table {
   min-height: 0;
 }
 
-.player-recent-games:not(.recent-games-scoreboard).has-history-toggle .player-score-table {
+.player-recent-games.has-history-toggle .player-score-table {
   max-height: none;
 }
 
-.global-highscore:not(.global-high-score-list) .score-table {
+.global-highscore .score-table {
   max-height: none;
   overflow: visible;
 }
 
-.player-recent-games:not(.recent-games-scoreboard).has-history-toggle:not(.is-expanded)
+.player-recent-games.has-history-toggle:not(.is-expanded)
   .player-score-table {
   overflow: hidden;
 }
 
-.player-recent-games:not(.recent-games-scoreboard).has-history-toggle:not(.is-expanded)
-  .player-score-row:nth-of-type(n + 8) {
-  display: none;
-}
-
-.player-recent-games:not(.recent-games-scoreboard).is-expanded .player-score-table {
+.player-recent-games.is-expanded .player-score-table {
   overflow-y: auto;
   padding-right: 0.35rem;
   scrollbar-gutter: stable;
@@ -320,5 +323,27 @@
     transform: translateY(-1px);
     background: rgba(255, 255, 255, 0.1);
     border-color: rgba(255, 255, 255, 0.35);
+  }
+}
+
+@include responsive($tablet-width) {
+  .player-recent-games,
+  .global-highscore {
+    min-height: auto;
+    max-height: none;
+  }
+
+  .player-recent-games.is-expanded .player-score-table {
+    max-height: 55vh;
+  }
+}
+
+@include responsive($mobile-width) {
+  .player-highscore {
+    padding: 0.85rem 0.9rem;
+  }
+
+  .player-recent-games {
+    padding-bottom: 2rem;
   }
 }

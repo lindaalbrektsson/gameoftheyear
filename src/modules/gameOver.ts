@@ -1,53 +1,19 @@
-import { deleteGameRecord, getGames, type Game } from "./API/games";
-import { getPlayers, type Player } from "./API/players";
+import { getGames, type Game } from "./API/games";
+import { findPlayerByName, getPlayers, type Player } from "./API/players";
 import { renderActivePlayerStartPage } from "./activePlayerStartPage";
-import { initGameFlow, state, resetState } from "./inGameLogic";
+import { initGameFlow, state } from "./inGameLogic";
 import {
+  buildGlobalHighscoreEntries,
   formatGameDate,
   sortGamesByNewest,
-  buildGlobalHighscoreEntries,
-  type PlayerRecord,
-  type GameRecord,
+  type GlobalHighscoreEntry,
 } from "./highscore";
 import { getStoredActivePlayerName } from "./localStorage";
 import { renderStartPage } from "./startPage";
 
 const mainContainer = document.querySelector("main");
 
-type Player = PlayerRecord & { bestScore: number };
-type Game = GameRecord;
-
-type GlobalHighscoreEntry = {
-  playerName: string;
-  level: number;
-  score: number;
-};
-
-const API_URL = "http://localhost:3000";
-
-async function fetchPlayers(): Promise<Player[]> {
-  try {
-    const res = await fetch(`${API_URL}/players`);
-    if (!res.ok) throw new Error("Failed to fetch players");
-    return await res.json();
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
-}
-
-async function fetchGames(): Promise<Game[]> {
-  try {
-    const res = await fetch(`${API_URL}/games`);
-    if (!res.ok) throw new Error("Failed to fetch games");
-    return await res.json();
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
-}
-
-export async function renderGameOver(): Promise<void> {
+export async function renderGameOver(isNewRecord = false): Promise<void> {
   if (!mainContainer) {
     return;
   }
@@ -93,84 +59,40 @@ export async function renderGameOver(): Promise<void> {
   const gameOverContainer = document.createElement("div");
   gameOverContainer.className = "game-over-container";
 
-  // Hämta data för att kunna matcha spelare och uppdatera poäng
-  const players = await fetchPlayers();
+  let players: Player[] = [];
+  let games: Game[] = [];
+
+  try {
+    [players, games] = await Promise.all([getPlayers(), getGames()]);
+  } catch (error) {
+    console.error("Failed to load game over data:", error);
+  }
+
   const activePlayer = activePlayerName
-    ? players.find(
-        (player) =>
-          player.playerName.toLowerCase() === activePlayerName.toLowerCase(),
-      )
+    ? findPlayerByName(players, activePlayerName)
     : undefined;
 
   const finalScoreThisRound = state.score;
-  let isNewRecord = false;
-
-  if (activePlayer && state.score > 0) {
-    try {
-      //  UTC+2 (svensk tid)
-      const now = new Date();
-      const localOffset = now.getTimezoneOffset() * 60000;
-      const localTime = new Date(now.getTime() - localOffset);
-
-      const newGame = {
-        gameDate: localTime.toISOString().substring(0, 19),
-        score: state.score,
-        level: state.level,
-        playerId: activePlayer.id,
-      };
-
-      // POST: Spara rundan i historiken
-      await fetch(`${API_URL}/games`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newGame),
-      });
-
-      // PUT:uppdatera bestscore om score > bestscore
-      const currentBest = activePlayer.bestScore || 0;
-      if (state.score > currentBest) {
-        isNewRecord = true;
-        const updatedPlayer = {
-          ...activePlayer,
-          bestScore: state.score,
-        };
-
-        await fetch(`${API_URL}/players/${activePlayer.id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(updatedPlayer),
-        });
-      }
-
-      // efter att vi sparat nollställver vi state
-      resetState();
-    } catch (error) {
-      console.error("Failed to save game data:", error);
-    }
-  }
-
-  // hämta spelen igen med den nysparade rundan i listorna
-  const games = await fetchGames();
 
   let recentGames: Game[] = [];
   if (activePlayer) {
     const playerGames = games.filter(
       (game) => String(game.playerId) === String(activePlayer.id),
     );
-    recentGames = sortGamesByNewest(playerGames).slice(0, 10);
+    recentGames = sortGamesByNewest(playerGames);
   }
 
-  // globala topplistan från highscore.ts
-  const globalHighscoreEntries = buildGlobalHighscoreEntries(
-    players,
-    games,
-  ).slice(0, 5);
+  const globalHighscoreEntries = buildGlobalHighscoreEntries(players, games);
 
   const leftColumn = document.createElement("div");
   leftColumn.className = "column left-column";
 
   const rightColumn = document.createElement("div");
   rightColumn.className = "column right-column";
+
+  if (isNewRecord) {
+    rightColumn.classList.add("has-high-score-notice");
+  }
 
   const scoreContainer = document.createElement("section");
   scoreContainer.className = "score-container";
@@ -198,10 +120,12 @@ export async function renderGameOver(): Promise<void> {
   const recentGamesScoreboard = document.createElement("section");
   recentGamesScoreboard.className =
     "recent-games-scoreboard player-recent-games";
+  recentGamesScoreboard.dataset.collapsedRows = "8";
+  recentGamesScoreboard.dataset.collapsedRowsDesktop = "11";
 
   const recentGamesTitle = document.createElement("h2");
   recentGamesTitle.className = "panel-title";
-  recentGamesTitle.textContent = "Your Recent Games";
+  recentGamesTitle.textContent = "Your Game History";
 
   const recentGamesSubtitle = document.createElement("p");
   recentGamesSubtitle.className = "panel-subtitle";
@@ -214,16 +138,6 @@ export async function renderGameOver(): Promise<void> {
     recentGamesTable,
   );
 
-  leftColumn.append(scoreContainer, restartGameBtn, recentGamesScoreboard);
-
-  // visa bara om isnewrecord alltså score > bestscore
-  if (isNewRecord) {
-    const highScoreNotice = document.createElement("div");
-    highScoreNotice.className = "high-score-notice";
-    highScoreNotice.textContent = "New Personal Best!";
-    rightColumn.append(highScoreNotice);
-  }
-
   const globalHighScoreList = document.createElement("section");
   globalHighScoreList.className = "global-high-score-list global-highscore";
 
@@ -233,11 +147,20 @@ export async function renderGameOver(): Promise<void> {
 
   const globalHighScoreTable = createGlobalHighscoreTable(
     globalHighscoreEntries,
-    activePlayerName, // för att visa var i global highscore spelaren hamnat
+    activePlayerName,
   );
   globalHighScoreList.append(globalHighScoreTitle, globalHighScoreTable);
 
-  rightColumn.append(globalHighScoreList);
+  leftColumn.append(scoreContainer, restartGameBtn, globalHighScoreList);
+
+  if (isNewRecord) {
+    const highScoreNotice = document.createElement("div");
+    highScoreNotice.className = "high-score-notice";
+    highScoreNotice.textContent = "New Personal Best!";
+    rightColumn.append(highScoreNotice);
+  }
+
+  rightColumn.append(recentGamesScoreboard);
 
   gameOverContainer.append(leftColumn, rightColumn);
   mainContainer.append(gameOverContainer);
@@ -248,7 +171,7 @@ function createRecentGamesTable(rows: Game[]): HTMLElement {
   scoreTable.className = "score-table player-score-table";
 
   const headerRow = document.createElement("div");
-  headerRow.className = "score-row score-header player-score-row";
+  headerRow.className = "score-row score-header";
 
   const dateHeader = document.createElement("span");
   dateHeader.className = "score-cell score-date";
@@ -267,7 +190,7 @@ function createRecentGamesTable(rows: Game[]): HTMLElement {
 
   rows.forEach((game) => {
     const scoreRow = document.createElement("div");
-    scoreRow.className = "score-row player-score-row";
+    scoreRow.className = "score-row";
 
     const gameDate = document.createElement("span");
     gameDate.className = "score-cell score-date";
@@ -308,7 +231,7 @@ function createGlobalHighscoreTable(
 
   const scoreHeader = document.createElement("span");
   scoreHeader.className = "score-cell score-points";
-  scoreHeader.textContent = "Points";
+  scoreHeader.textContent = "Score";
 
   headerRow.append(nameHeader, levelHeader, scoreHeader);
   scoreTable.append(headerRow);
@@ -317,7 +240,6 @@ function createGlobalHighscoreTable(
     const scoreRow = document.createElement("div");
     scoreRow.className = "score-row";
 
-    // Highlighta raden (bestscore)
     if (
       activePlayerName &&
       row.playerName.toLowerCase() === activePlayerName.toLowerCase()
@@ -339,6 +261,14 @@ function createGlobalHighscoreTable(
       scoreRow.classList.add("bronze-rank");
     } else {
       name.textContent = `${index + 1}. ${row.playerName}`;
+    }
+
+    if (index === 0) {
+      name.textContent = `\u{1F947} ${row.playerName}`;
+    } else if (index === 1) {
+      name.textContent = `\u{1F948} ${row.playerName}`;
+    } else if (index === 2) {
+      name.textContent = `\u{1F949} ${row.playerName}`;
     }
 
     const level = document.createElement("span");

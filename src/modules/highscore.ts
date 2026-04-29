@@ -14,20 +14,61 @@ export type GlobalHighscoreEntry = {
 };
 
 const GLOBAL_HIGHSCORE_LIMIT = 5;
-const COLLAPSED_HISTORY_ROW_COUNT = GLOBAL_HIGHSCORE_LIMIT + 1;
-const HISTORY_PANEL_SELECTOR = ".player-recent-games:not(.recent-games-scoreboard)";
+const DEFAULT_COLLAPSED_HISTORY_ROW_COUNT = GLOBAL_HIGHSCORE_LIMIT + 1;
+const HISTORY_PANEL_SELECTOR = ".player-recent-games";
 const HISTORY_TABLE_SELECTOR = ".player-score-table";
-const HISTORY_ROW_SELECTOR = ".player-score-row:not(.score-header)";
+const HISTORY_ROW_SELECTOR = ".score-row:not(.score-header)";
 const HISTORY_TOGGLE_CLASS = "history-panel-toggle";
 const HISTORY_EXPANDED_CLASS = "is-expanded";
 const HISTORY_HAS_TOGGLE_CLASS = "has-history-toggle";
+const DESKTOP_HISTORY_BREAKPOINT = 900;
 const ACTIVE_PLAYER_HISTORY_PANEL_SELECTOR =
-  ".active-player-start-page .player-recent-games:not(.recent-games-scoreboard)";
+  ".active-player-start-page .player-recent-games";
 const ACTIVE_PLAYER_GLOBAL_PANEL_SELECTOR =
-  ".active-player-start-page .global-highscore:not(.global-high-score-list)";
+  ".active-player-start-page .global-highscore";
 const ACTIVE_PLAYER_GLOBAL_SCORE_ROW_SELECTOR =
   `${ACTIVE_PLAYER_GLOBAL_PANEL_SELECTOR} .score-row:not(.score-header)`;
 const ACTIVE_PLAYER_HISTORY_BOTTOM_OFFSET = 20;
+const ACTIVE_PLAYER_HISTORY_SYNC_BREAKPOINT = 900;
+
+function parseCollapsedRowsValue(value: string | undefined): number | null {
+  const parsedValue = Number.parseInt(value ?? "", 10);
+
+  if (Number.isNaN(parsedValue) || parsedValue < 1) {
+    return null;
+  }
+
+  return parsedValue;
+}
+
+function getCollapsedHistoryRowCount(panel: HTMLElement): number {
+  if (typeof window !== "undefined" && window.innerWidth > DESKTOP_HISTORY_BREAKPOINT) {
+    const desktopCollapsedRowsValue = parseCollapsedRowsValue(
+      panel.dataset.collapsedRowsDesktop
+    );
+
+    if (desktopCollapsedRowsValue !== null) {
+      return desktopCollapsedRowsValue;
+    }
+  }
+
+  const collapsedRowsValue = parseCollapsedRowsValue(panel.dataset.collapsedRows);
+
+  return collapsedRowsValue ?? DEFAULT_COLLAPSED_HISTORY_ROW_COUNT;
+}
+
+function applyCollapsedHistoryVisibility(
+  panel: HTMLElement,
+  dataRows: HTMLElement[],
+  collapsedHistoryRowCount: number
+): void {
+  const isExpanded = panel.classList.contains(HISTORY_EXPANDED_CLASS);
+
+  dataRows.forEach((row, index) => {
+    row.style.display =
+      !isExpanded && index >= collapsedHistoryRowCount ? "none" : "";
+  });
+}
 
 export function formatGameDate(gameDate: string): string {
   const parsedDate = new Date(gameDate);
@@ -148,18 +189,23 @@ function enhanceHistoryPanel(panel: HTMLElement): void {
     return;
   }
 
-  const dataRows = scoreTable.querySelectorAll(HISTORY_ROW_SELECTOR).length;
+  const dataRows = Array.from(
+    scoreTable.querySelectorAll<HTMLElement>(HISTORY_ROW_SELECTOR)
+  );
+  const collapsedHistoryRowCount = getCollapsedHistoryRowCount(panel);
   const existingToggleButton = panel.querySelector<HTMLButtonElement>(
     `.${HISTORY_TOGGLE_CLASS}`
   );
 
-  if (dataRows <= COLLAPSED_HISTORY_ROW_COUNT) {
+  if (dataRows.length <= collapsedHistoryRowCount) {
     panel.classList.remove(HISTORY_HAS_TOGGLE_CLASS, HISTORY_EXPANDED_CLASS);
+    applyCollapsedHistoryVisibility(panel, dataRows, collapsedHistoryRowCount);
     existingToggleButton?.remove();
     return;
   }
 
   panel.classList.add(HISTORY_HAS_TOGGLE_CLASS);
+  applyCollapsedHistoryVisibility(panel, dataRows, collapsedHistoryRowCount);
 
   if (existingToggleButton) {
     updateHistoryToggleLabel(
@@ -177,6 +223,7 @@ function enhanceHistoryPanel(panel: HTMLElement): void {
   toggleButton.addEventListener("click", () => {
     const isExpanded = panel.classList.toggle(HISTORY_EXPANDED_CLASS);
     updateHistoryToggleLabel(toggleButton, isExpanded);
+    applyCollapsedHistoryVisibility(panel, dataRows, collapsedHistoryRowCount);
   });
 
   panel.append(toggleButton);
@@ -210,7 +257,23 @@ function syncActivePlayerPanelHeight(): void {
     ACTIVE_PLAYER_GLOBAL_SCORE_ROW_SELECTOR
   );
 
-  if (!historyPanel || !historyTable || globalScoreRows.length === 0) {
+  if (!historyPanel || !historyTable) {
+    return;
+  }
+
+  if (window.innerWidth <= ACTIVE_PLAYER_HISTORY_SYNC_BREAKPOINT) {
+    historyPanel.style.height = "";
+    historyPanel.style.minHeight = "";
+    historyPanel.style.maxHeight = "";
+
+    historyTable.style.maxHeight = historyPanel.classList.contains(HISTORY_EXPANDED_CLASS)
+      ? "55vh"
+      : "";
+
+    return;
+  }
+
+  if (globalScoreRows.length === 0) {
     return;
   }
 
