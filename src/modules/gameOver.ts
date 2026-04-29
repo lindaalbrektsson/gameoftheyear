@@ -1,5 +1,8 @@
 import { renderActivePlayerStartPage } from "./activePlayerStartPage";
 import { initGameFlow } from "./inGameLogic";
+import { formatGameDate } from "./highscore";
+import { getStoredActivePlayerName } from "./localStorage";
+import { renderStartPage } from "./startPage";
 
 const mainContainer = document.querySelector("main");
 
@@ -53,11 +56,20 @@ export async function renderGameOver(): Promise<void> {
 
   const headerMenu = document.querySelector(".header-menu");
   headerMenu?.replaceChildren();
+  const activePlayerName = getStoredActivePlayerName();
 
   // endGame "hem" knapp
+  const activePlayerInfo = document.createElement("li");
   const endGameLi = document.createElement("li");
   const endGameBtn = document.createElement("button");
   const homepageIcon = document.createElement("i");
+
+  if (activePlayerName) {
+    activePlayerInfo.classList.add("active-player-info");
+    activePlayerInfo.textContent = `Playing as: ${activePlayerName}`;
+    headerMenu?.append(activePlayerInfo);
+  }
+
   headerMenu?.append(endGameLi);
 
   endGameBtn.type = "button";
@@ -70,10 +82,12 @@ export async function renderGameOver(): Promise<void> {
 
   endGameBtn.addEventListener("click", function (evt) {
     evt.preventDefault();
-    const activePlayerName = localStorage.getItem("activePlayer") ?? "";
     if (activePlayerName) {
-      renderActivePlayerStartPage();
+      void renderActivePlayerStartPage();
+      return;
     }
+
+    void renderStartPage();
   });
 
   mainContainer.replaceChildren();
@@ -86,10 +100,12 @@ export async function renderGameOver(): Promise<void> {
   const players = await fetchPlayers();
   const games = await fetchGames();
 
-  const activePlayerName = localStorage.getItem("activePlayer") ?? "";
-  const activePlayer = players.find(
-    (player) => player.playerName === activePlayerName,
-  );
+  const activePlayer = activePlayerName
+    ? players.find(
+        (player) =>
+          player.playerName.toLowerCase() === activePlayerName.toLowerCase(),
+      )
+    : undefined;
 
   let recentGames: Game[] = [];
   let latestScore = 0; // Håller senaste rundans poäng
@@ -240,7 +256,7 @@ function createRecentGamesTable(rows: Game[]): HTMLElement {
 
     const gameDate = document.createElement("span");
     gameDate.className = "score-cell score-date";
-    gameDate.textContent = game.gameDate.replace("T", " "); // Ersätta "T" med space i datum för att formattera det renare
+    gameDate.textContent = formatGameDate(game.gameDate);
 
     const gameLevel = document.createElement("span");
     gameLevel.className = "score-cell score-level";

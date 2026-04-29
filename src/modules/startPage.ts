@@ -1,5 +1,6 @@
 import { renderActivePlayerStartPage } from "./activePlayerStartPage";
 import { initGameFlow } from "./inGameLogic";
+import { setStoredActivePlayerName } from "./localStorage";
 
 type Player = {
   id?: string;
@@ -96,7 +97,7 @@ export async function renderStartPage(): Promise<void> {
       showExistingPlayerPopup(
         existingPlayer.playerName,
         () => {
-          localStorage.setItem("activePlayer", existingPlayer.playerName);
+          setStoredActivePlayerName(existingPlayer.playerName);
           renderActivePlayerStartPage();
         },
         () => {
@@ -114,7 +115,7 @@ export async function renderStartPage(): Promise<void> {
 
     console.log("Created player from API", createdPlayer);
 
-    localStorage.setItem("activePlayer", createdPlayer.playerName);
+    setStoredActivePlayerName(createdPlayer.playerName);
     initGameFlow();
   });
 

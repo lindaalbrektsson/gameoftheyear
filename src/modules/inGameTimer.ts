@@ -1,6 +1,5 @@
-import { renderGameOver } from "./gameOver";
-import { renderGameOverMessage, updateLivesUI, updateTimerUI } from "./inGameUI";
-import { state, startNewRound } from "./inGameLogic";
+import { updateLivesUI, updateTimerUI } from "./inGameUI";
+import { finishGame, state, startNewRound } from "./inGameLogic";
 
 let timerIntervalId: number | null = null;
 
@@ -23,11 +22,7 @@ export function startRoundTimer(): void {
           void startNewRound();
         }, 600);
       } else {
-        renderGameOverMessage();
-
-        setTimeout(() => {
-          void renderGameOver();
-        }, 1200);
+        finishGame();
       }
     }
   }, 1000);
