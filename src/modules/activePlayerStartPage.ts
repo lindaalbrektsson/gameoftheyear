@@ -1,4 +1,5 @@
 import { initGameFlow } from "./inGameLogic";
+import { deleteGameRecord } from "./API/scoreAPI";
 import { renderStartPage } from "./startPage";
 import {
   clearStoredActivePlayerName,
@@ -123,12 +124,6 @@ function getActivePlayer(
   throw new Error(ACTIVE_PLAYER_NOT_FOUND_ERROR);
 }
 
-async function deleteGame(gameId: EntityId): Promise<void> {
-  await fetchJson<void>(`/games/${gameId}`, {
-    method: "DELETE",
-  });
-}
-
 async function fetchJson<T>(
   path: string,
   init?: RequestInit
@@ -185,7 +180,7 @@ function renderDashboard(
   function showPlayerGameHistory(): void {
     bottomPanelContainer.replaceChildren(
       createPlayerGameHistorySection(playerGames, async (gameId) => {
-        await deleteGame(gameId);
+        await deleteGameRecord(String(gameId));
         await renderActivePlayerStartPage();
       })
     );

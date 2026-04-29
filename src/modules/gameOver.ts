@@ -1,8 +1,9 @@
 import { renderActivePlayerStartPage } from "./activePlayerStartPage";
 import { initGameFlow } from "./inGameLogic";
-import { formatGameDate } from "./highscore";
+import { formatGameDate, getLatestGame, sortGamesByNewest } from "./highscore";
 import { getStoredActivePlayerName } from "./localStorage";
 import { renderStartPage } from "./startPage";
+import { deleteGameRecord } from "./API/scoreAPI";
 
 const mainContainer = document.querySelector("main");
 
@@ -115,26 +116,13 @@ export async function renderGameOver(): Promise<void> {
       (game) => game.playerId === activePlayer.id,
     );
 
-    // hämta det senaste spelet baserat på datum
-    // pusha score i inGame när rundan är över precis innan vi byter vy till gameover?
-    const sortedByDate = [...playerGames].sort((a, b) => {
-      return new Date(b.gameDate).getTime() - new Date(a.gameDate).getTime();
-    });
+    const latestGame = getLatestGame(playerGames);
 
-    if (sortedByDate.length > 0) {
-      latestScore = sortedByDate[0].score;
+    if (latestGame) {
+      latestScore = latestGame.score;
     }
 
-    recentGames = playerGames
-      .sort((a, b) => {
-        // sortera spelhistorik med level först
-        if (b.level !== a.level) {
-          return b.level - a.level;
-        }
-        // Sortera på score efter
-        return b.score - a.score;
-      })
-      .slice(0, 10); // hämta top 10 historik
+    recentGames = sortGamesByNewest(playerGames).slice(0, 10);
   }
 
   // globala toopplistan och varje spelar-id mappas till rätt namn
@@ -331,12 +319,8 @@ function createDeleteConfirmation(
 
   confirmBtn.addEventListener("click", async () => {
     try {
-      // JSON Server DELETE
-      const response = await fetch(`${API_URL}/games/${game.id}`, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) throw new Error("Failed to delete the game");
+      // modul för JSON DELETE i spelhistory
+      await deleteGameRecord(game.id);
 
       // om vi lyckas ta bort spelhistorik från db, ta bort visuellt också
       scoreRow.remove();
