@@ -1,5 +1,9 @@
 import { renderActivePlayerStartPage } from "./activePlayerStartPage";
 import { initGameFlow } from "./inGameLogic";
+import { formatGameDate, getLatestGame, sortGamesByNewest } from "./highscore";
+import { getStoredActivePlayerName } from "./localStorage";
+import { renderStartPage } from "./startPage";
+import { deleteGameRecord } from "./API/scoreAPI";
 
 const mainContainer = document.querySelector("main");
 
@@ -53,11 +57,20 @@ export async function renderGameOver(): Promise<void> {
 
   const headerMenu = document.querySelector(".header-menu");
   headerMenu?.replaceChildren();
+  const activePlayerName = getStoredActivePlayerName();
 
   // endGame "hem" knapp
+  const activePlayerInfo = document.createElement("li");
   const endGameLi = document.createElement("li");
   const endGameBtn = document.createElement("button");
   const homepageIcon = document.createElement("i");
+
+  if (activePlayerName) {
+    activePlayerInfo.classList.add("active-player-info");
+    activePlayerInfo.textContent = `Playing as: ${activePlayerName}`;
+    headerMenu?.append(activePlayerInfo);
+  }
+
   headerMenu?.append(endGameLi);
 
   endGameBtn.type = "button";
@@ -70,10 +83,12 @@ export async function renderGameOver(): Promise<void> {
 
   endGameBtn.addEventListener("click", function (evt) {
     evt.preventDefault();
-    const activePlayerName = localStorage.getItem("activePlayer") ?? "";
     if (activePlayerName) {
-      renderActivePlayerStartPage();
+      void renderActivePlayerStartPage();
+      return;
     }
+
+    void renderStartPage();
   });
 
   mainContainer.replaceChildren();
@@ -86,10 +101,12 @@ export async function renderGameOver(): Promise<void> {
   const players = await fetchPlayers();
   const games = await fetchGames();
 
-  const activePlayerName = localStorage.getItem("activePlayer") ?? "";
-  const activePlayer = players.find(
-    (player) => player.playerName === activePlayerName,
-  );
+  const activePlayer = activePlayerName
+    ? players.find(
+        (player) =>
+          player.playerName.toLowerCase() === activePlayerName.toLowerCase(),
+      )
+    : undefined;
 
   let recentGames: Game[] = [];
   let latestScore = 0; // Håller senaste rundans poäng
@@ -99,26 +116,13 @@ export async function renderGameOver(): Promise<void> {
       (game) => game.playerId === activePlayer.id,
     );
 
-    // hämta det senaste spelet baserat på datum
-    // pusha score i inGame när rundan är över precis innan vi byter vy till gameover?
-    const sortedByDate = [...playerGames].sort((a, b) => {
-      return new Date(b.gameDate).getTime() - new Date(a.gameDate).getTime();
-    });
+    const latestGame = getLatestGame(playerGames);
 
-    if (sortedByDate.length > 0) {
-      latestScore = sortedByDate[0].score;
+    if (latestGame) {
+      latestScore = latestGame.score;
     }
 
-    recentGames = playerGames
-      .sort((a, b) => {
-        // sortera spelhistorik med level först
-        if (b.level !== a.level) {
-          return b.level - a.level;
-        }
-        // Sortera på score efter
-        return b.score - a.score;
-      })
-      .slice(0, 10); // hämta top 10 historik
+    recentGames = sortGamesByNewest(playerGames).slice(0, 10);
   }
 
   // globala toopplistan och varje spelar-id mappas till rätt namn
@@ -240,7 +244,7 @@ function createRecentGamesTable(rows: Game[]): HTMLElement {
 
     const gameDate = document.createElement("span");
     gameDate.className = "score-cell score-date";
-    gameDate.textContent = game.gameDate.replace("T", " "); // Ersätta "T" med space i datum för att formattera det renare
+    gameDate.textContent = formatGameDate(game.gameDate);
 
     const gameLevel = document.createElement("span");
     gameLevel.className = "score-cell score-level";
@@ -315,12 +319,8 @@ function createDeleteConfirmation(
 
   confirmBtn.addEventListener("click", async () => {
     try {
-      // JSON Server DELETE
-      const response = await fetch(`${API_URL}/games/${game.id}`, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) throw new Error("Failed to delete the game");
+      // modul för JSON DELETE i spelhistory
+      await deleteGameRecord(game.id);
 
       // om vi lyckas ta bort spelhistorik från db, ta bort visuellt också
       scoreRow.remove();
