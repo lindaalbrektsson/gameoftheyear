@@ -342,8 +342,7 @@ function createPlayerGameHistorySection(
     return playerGameHistorySection;
   }
 
-  const latestEightGames = playerGames.slice(0, 8);
-  const playerScoreTable = createPlayerScoreTable(latestEightGames, onDeleteGame);
+  const playerScoreTable = createPlayerScoreTable(playerGames, onDeleteGame);
 
   playerGameHistorySection.append(playerScoreTable);
 
