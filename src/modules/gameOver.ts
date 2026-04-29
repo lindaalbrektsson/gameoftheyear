@@ -1,5 +1,5 @@
 import { deleteGameRecord, getGames, type Game } from "./API/games";
-import { getPlayers, type Player } from "./API/players";
+import { getPlayers } from "./API/players";
 import { renderActivePlayerStartPage } from "./activePlayerStartPage";
 import { initGameFlow } from "./inGameLogic";
 import {
