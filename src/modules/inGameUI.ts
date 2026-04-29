@@ -14,6 +14,7 @@ import { getStoredActivePlayerName } from "./localStorage";
 let gameboard: HTMLDivElement;
 let shapeAndInstructionDiv: HTMLDivElement;
 let shapesDiv: HTMLDivElement;
+let timerAndLivesDiv: HTMLDivElement;
 let levelCounter: HTMLSpanElement;
 let scoreCounter: HTMLSpanElement;
 let timer: HTMLSpanElement;
@@ -37,6 +38,7 @@ export function renderInGame() {
 
   inGameContainer.append(restartLevelScoreDiv, timerAndLivesDiv, gameboard);
   main.appendChild(inGameContainer);
+  inGameContainer.classList.add("fade-in");
 }
 
 function renderHeaderMenu() {
@@ -106,7 +108,7 @@ function renderRestartLevelScore(): HTMLDivElement {
 }
 
 function renderTimerAndLives(): HTMLDivElement {
-  const timerAndLivesDiv = document.createElement("div");
+  timerAndLivesDiv = document.createElement("div");
   timerAndLivesDiv.classList.add("timer-and-lives-div");
   const timeLeft = document.createElement("p");
   timeLeft.classList.add("time-left");
@@ -174,7 +176,7 @@ export async function renderShapes(shapes: Shape[]) {
 // Gets the instruction shape from the instruction's rule type.
 export async function renderInstruction(
   newInstruction: Instruction,
-  newInstructionShape: Shape
+  newInstructionShape: Shape,
 ) {
   const instruction = document.createElement("p");
   instruction.classList.add("instruction");
@@ -206,33 +208,46 @@ export function updateTimerUI() {
 
 export function updateLivesUI() {
   lives.textContent = "❤️".repeat(state.lives);
+  lives.classList.add("highlight");
+  setTimeout(() => {
+    lives.classList.remove("highlight");
+  }, 400);
 }
 
 export function updateLevelUI() {
   levelCounter.textContent = state.level.toString();
   levelCounter.classList.add("jump-level");
+  setTimeout(() => {
+    levelCounter.classList.remove("jump-level");
+  }, 400);
 }
 
 export function updateScoreUI() {
   scoreCounter.textContent = state.score.toString();
   scoreCounter.classList.add("jump-score");
+  setTimeout(() => {
+    scoreCounter.classList.remove("jump-score");
+  }, 400);
 }
 
 export function resetForNextRound() {
   gameboard.classList.remove("fade-in");
   gameboard.innerHTML = "";
-  levelCounter.classList.remove("jump-level");
   shapeAndInstructionDiv.innerHTML = "";
   shapesDiv.innerHTML = "";
-  setTimeout(() => {
-    scoreCounter.classList.remove("jump-score");
-  }, 1000);
 }
 
 export function renderGameOverMessage(): void {
   const gameoverMessage = document.createElement("p");
   gameoverMessage.classList.add("game-over");
   gameoverMessage.textContent = "Game Over!";
-
+  timerAndLivesDiv.innerHTML = "";
   gameboard.replaceChildren(gameoverMessage);
+}
+
+export function renderErrorLoadingGame() {
+  const errorLoadingGame = document.createElement("p");
+  errorLoadingGame.classList.add("error-loading-game");
+  errorLoadingGame.textContent = "Can't load gameboard. Try again!";
+  gameboard.appendChild(errorLoadingGame);
 }

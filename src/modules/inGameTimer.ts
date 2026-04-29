@@ -30,7 +30,7 @@ export function startRoundTimer(): void {
         renderGameOverMessage();
         setTimeout(() => {
           void renderGameOver();
-        }, 1200);
+        }, 2500);
       }
     }
   }, 1000);

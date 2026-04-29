@@ -26,15 +26,6 @@
   box-shadow: none;
 }
 
-// .start-game-btn,
-// .change-player-btn,
-// .how-to-play-btn,
-// .end-game-btn,
-// .restart-btn,
-// .restart-game-btn {
-//   min-width: 11rem;
-// }
-
 .start-game-btn {
   @include neon-button(
     rgba(0, 220, 140, 0.9),

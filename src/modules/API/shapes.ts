@@ -47,7 +47,6 @@ export async function getCurrentShapes(difficultyLevel: number): Promise<Shape[]
 export async function getShuffledShapes(difficultyLevel: number): Promise<Shape[]> {
     const shapes = await getCurrentShapes(difficultyLevel);
     shapes.sort(() => Math.random() - 0.5);
-    console.log(shapes);
     return shapes;
 }
 

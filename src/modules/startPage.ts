@@ -134,6 +134,9 @@ export async function renderStartPage(): Promise<void> {
   startPage.appendChild(playerFormSection);
 
   main.replaceChildren(startPage);
+  requestAnimationFrame(() => {
+    startPage.classList.add("fade-in");
+  });
 }
 
 function showExistingPlayerPopup(
