@@ -244,3 +244,10 @@ export function renderGameOverMessage(): void {
     timerAndLivesDiv.innerHTML = "";
     gameboard.replaceChildren(gameoverMessage);
 }
+
+export function renderErrorLoadingGame() {
+  const errorLoadingGame = document.createElement("p");
+  errorLoadingGame.classList.add("error-loading-game");
+  errorLoadingGame.textContent = "Can't load gameboard. Try again!"
+  gameboard.appendChild(errorLoadingGame);
+}

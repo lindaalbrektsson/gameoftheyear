@@ -17,6 +17,7 @@ import {
   updateTimerUI,
   renderGameOverMessage,
   updateLivesUI,
+  renderErrorLoadingGame
 } from "./inGameUI";
 
 import { renderGameOver } from "./gameOver";
@@ -51,9 +52,9 @@ export function initGameFlow() {
 // - samma shapes på spelplanen
 // - samma lista med rätta svar
 // - information om rundan redan är avgjord eller inte
-let currentInstruction: Instruction | null = null;
-let currentInstructionShape: Shape | null = null;
-let currentRoundShapes: Shape[] = [];
+let currentInstruction: Instruction;
+let currentInstructionShape: Shape;
+let currentRoundShapes: Shape[];
 let validAnswerIds: string[] = [];
 let clickedCorrectIds = new Set<string>();
 let roundResolved = false;
@@ -75,9 +76,6 @@ export function resetState() {
   state.timeLeft = 10;
   state.lives = 3;
   state.difficultyLevel = 1;
-  currentInstruction = null;
-  currentInstructionShape = null;
-  currentRoundShapes = [];
   validAnswerIds = [];
   clickedCorrectIds.clear();
   roundResolved = false;
@@ -90,18 +88,16 @@ export async function startNewRound() {
 
   roundResolved = false;
   clickedCorrectIds.clear();
-
-  currentRoundShapes = await getShuffledShapes(state.difficultyLevel);
-
-  currentInstruction = await getRandomInstruction(state.difficultyLevel);
-  currentInstructionShape = await getInstructionShape(
-    currentInstruction,
-    state.difficultyLevel,
-  );
-
-  if (!currentInstructionShape) {
-    return;
+  try {
+    currentRoundShapes = await getShuffledShapes(state.difficultyLevel);
+    currentInstruction = await getRandomInstruction(state.difficultyLevel);
+    currentInstructionShape = await getInstructionShape(currentInstruction, state.difficultyLevel);
   }
+  catch (error) {
+    console.log(error);
+    renderErrorLoadingGame();
+    return;
+  };
 
   validAnswerIds = getValidAnswerIds(
     currentInstruction,

@@ -52,9 +52,17 @@
     font-family: $font-heading;
     margin: 0;
 }
-.game-over {
+.game-over, .error-loading-game {
     font-family: $font-heading;
-    font-size: clamp(3rem, 7vw, 150px);
+    color: $color-red;
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.521);
+    
+}
+.game-over {
+    font-size: clamp(3rem, 7vw, 70px);
+}
+.error-loading-game {
+    font-size: clamp(1.5rem, 3vw, 2.5rem);
 }
 .shape-and-instruction-div {
     @include panel;

@@ -23,7 +23,7 @@ export type ColorType =
 
 async function getInstructions(): Promise<Instruction[]> {
    
-    const response = await fetch("http://localhost:3000/instructions");
+    const response = await fetch("http://localhost:3000/instruction");
 
     if (!response.ok) {
         throw new Error ("Couldn't get instructions");
