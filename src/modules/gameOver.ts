@@ -3,7 +3,7 @@ import { initGameFlow } from "./inGameLogic";
 import { formatGameDate, getLatestGame, sortGamesByNewest } from "./highscore";
 import { getStoredActivePlayerName } from "./localStorage";
 import { renderStartPage } from "./startPage";
-import { deleteGameRecord } from "./API/scoreAPI";
+import { deleteGameRecord } from "./API/scores";
 
 const mainContainer = document.querySelector("main");
 

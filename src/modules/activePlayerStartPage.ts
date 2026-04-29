@@ -1,5 +1,5 @@
 import { initGameFlow } from "./inGameLogic";
-import { deleteGameRecord } from "./API/scoreAPI";
+import { deleteGameRecord } from "./API/scores";
 import { renderStartPage } from "./startPage";
 import {
   clearStoredActivePlayerName,

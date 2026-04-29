@@ -21,7 +21,7 @@ import {
 } from "./inGameUI";
 
 import { renderGameOver } from "./gameOver";
-import { saveGameResult } from "./API/scoreAPI";
+import { saveGameResult } from "./API/scores";
 import { getStoredActivePlayerName } from "./localStorage";
 
 // Den här typen beskriver vad ett klick betyder i rundan.
