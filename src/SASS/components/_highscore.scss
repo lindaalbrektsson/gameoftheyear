@@ -25,6 +25,56 @@
   min-height: 380px;
 }
 
+.player-recent-games,
+.global-highscore {
+  min-height: 28rem;
+  max-height: 28rem;
+  overflow: hidden;
+}
+
+.active-player-start-page {
+  align-items: start;
+}
+
+.active-player-start-page .left-section,
+.active-player-start-page .right-section {
+  height: auto;
+}
+
+.active-player-start-page .left-section {
+  grid-template-rows: 140px auto;
+}
+
+.active-player-start-page .right-section {
+  grid-template-rows: 100px 90px 90px auto;
+  align-content: start;
+}
+
+.active-player-start-page .bottom-panel-container,
+.active-player-start-page .bottom-panel-container > * {
+  height: auto;
+}
+
+.active-player-start-page .bottom-panel-container {
+  min-height: auto;
+}
+
+.active-player-start-page .player-recent-games,
+.active-player-start-page .global-highscore {
+  min-height: auto;
+  max-height: none;
+  height: auto;
+  align-self: start;
+}
+
+.game-over-container .global-highscore {
+  min-height: auto;
+  max-height: none;
+  height: auto;
+  align-self: start;
+  overflow: visible;
+}
+
 .player-score-table,
 .global-highscore .score-table {
   flex-grow: 1;
@@ -52,6 +102,10 @@
   font-size: 0.95rem;
 }
 
+.player-recent-games > .panel-subtitle {
+  display: none;
+}
+
 .highscore-value {
   margin: $space-sm 0 0;
   color: $color-yellow;
@@ -70,6 +124,31 @@
   margin-top: 0.6rem;
   align-content: start;
   grid-auto-rows: max-content;
+}
+
+.player-recent-games .player-score-table,
+.global-highscore .score-table {
+  min-height: 0;
+}
+
+.player-recent-games.has-history-toggle .player-score-table {
+  max-height: none;
+}
+
+.global-highscore .score-table {
+  max-height: none;
+  overflow: visible;
+}
+
+.player-recent-games.has-history-toggle:not(.is-expanded)
+  .player-score-table {
+  overflow: hidden;
+}
+
+.player-recent-games.is-expanded .player-score-table {
+  overflow-y: auto;
+  padding-right: 0.35rem;
+  scrollbar-gutter: stable;
 }
 
 .score-row {
@@ -221,4 +300,50 @@
   background: rgba(255, 255, 255, 0.12);
   border-color: rgba(255, 255, 255, 0.35);
   transform: scale(1.04);
+}
+
+.history-panel-toggle {
+  align-self: flex-start;
+  margin-top: auto;
+  padding: 0.55rem 0.95rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: $radius-md;
+  background: rgba(255, 255, 255, 0.06);
+  color: $color-white;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  transition:
+    transform $transition-fast,
+    background $transition-fast,
+    border-color $transition-fast;
+
+  &:hover {
+    transform: translateY(-1px);
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.35);
+  }
+}
+
+@include responsive($tablet-width) {
+  .player-recent-games,
+  .global-highscore {
+    min-height: auto;
+    max-height: none;
+  }
+
+  .player-recent-games.is-expanded .player-score-table {
+    max-height: 55vh;
+  }
+}
+
+@include responsive($mobile-width) {
+  .player-highscore {
+    padding: 0.85rem 0.9rem;
+  }
+
+  .player-recent-games {
+    padding-bottom: 2rem;
+  }
 }

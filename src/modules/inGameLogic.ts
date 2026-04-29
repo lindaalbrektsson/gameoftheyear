@@ -3,6 +3,7 @@ import {
   getInstructionShape,
   type Shape,
 } from "./API/shapes";
+import { saveGameResult } from "./API/games";
 import { getRandomInstruction, type Instruction } from "./API/instructions";
 import { startRoundTimer, stopRoundTimer } from "./inGameTimer";
 import {
@@ -21,7 +22,6 @@ import {
 } from "./inGameUI";
 
 import { renderGameOver } from "./gameOver";
-import { saveGameResult } from "./API/scores";
 import { getStoredActivePlayerName } from "./localStorage";
 
 // Den här typen beskriver vad ett klick betyder i rundan.
@@ -49,7 +49,7 @@ let roundResolved = false;
 export const state = {
   level: 1,
   score: 0,
-  timeLeft: 10,
+  timeLeft: 7,
   lives: 3,
   difficultyLevel: 1,
 };
@@ -57,7 +57,7 @@ export const state = {
 export function resetState() {
   state.level = 1;
   state.score = 0;
-  state.timeLeft = 10;
+  state.timeLeft = 7;
   state.lives = 3;
   state.difficultyLevel = 1;
   validAnswerIds = [];
@@ -67,7 +67,7 @@ export function resetState() {
 
 export async function startNewRound() {
   resetForNextRound();
-  state.timeLeft = 10;
+  state.timeLeft = 7;
   updateTimerUI();
 
   roundResolved = false;
@@ -225,7 +225,7 @@ function handleCorrectClick(shapeItem: HTMLDivElement): void {
   shapeItem.classList.add("correct");
   shapeItem.style.pointerEvents = "none";
   state.score += 100;
-  updateScoreUI();
+  updateScoreUI("increase");
 }
 
 // Det här händer när alla korrekta svar i rundan är hittade:
@@ -242,6 +242,7 @@ function handleWrongClick(shapeItem: HTMLDivElement): void {
   shapeItem.classList.add("incorrect");
   state.lives--;
   state.score = Math.max(0, state.score - 50);
+  updateScoreUI("decrease");
   updateLivesUI();
 
   setTimeout(() => {
@@ -250,13 +251,16 @@ function handleWrongClick(shapeItem: HTMLDivElement): void {
 
   if (state.lives <= 0) {
     stopRoundTimer();
-    setTimeout(renderGameOverMessage, 1000);
-
-    const activePlayerName = getStoredActivePlayerName();
-    if (activePlayerName) {
-      void saveGameResult(activePlayerName, state.score, state.level);
-    }
-
-    setTimeout(renderGameOver, 2500);
+    renderGameOverMessage();
+    const finalScore = state.score;
+    const finalLevel = state.level;
+    setTimeout(async () => {
+      const activePlayerName = getStoredActivePlayerName();
+      const isNewRecord =
+        activePlayerName && finalScore > 0
+          ? await saveGameResult(activePlayerName, finalScore, finalLevel)
+          : false;
+      await renderGameOver(isNewRecord);
+    }, 1200);
   }
 }

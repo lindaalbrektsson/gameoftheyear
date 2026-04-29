@@ -1,12 +1,13 @@
 import { renderActivePlayerStartPage } from "./activePlayerStartPage";
+import {
+  createPlayer as createPlayerRecord,
+  findPlayerByName,
+  getPlayers,
+  type Player,
+} from "./API/players";
+import { createHowToPlaySection } from "./howToPlay";
 import { initGameFlow } from "./inGameLogic";
 import { setStoredActivePlayerName } from "./localStorage";
-
-type Player = {
-  id?: string;
-  playerName: string;
-  bestScore: number;
-};
 
 export async function renderStartPage(): Promise<void> {
   const main = document.querySelector("main");
@@ -21,7 +22,7 @@ export async function renderStartPage(): Promise<void> {
   let couldNotFetchPlayers = false;
 
   try {
-    existingPlayers = await fetchPlayers();
+    existingPlayers = await getPlayers();
     console.log("Fetched players from API", existingPlayers);
   } catch (error) {
     couldNotFetchPlayers = true;
@@ -31,36 +32,7 @@ export async function renderStartPage(): Promise<void> {
   const startPage = document.createElement("div");
   startPage.classList.add("start-page");
 
-  const howToPlaySection = document.createElement("section");
-  howToPlaySection.classList.add("how-to-play");
-
-  const howToPlayTitle = document.createElement("h2");
-  howToPlayTitle.classList.add("how-to-play-title");
-  howToPlayTitle.textContent = "How to Play";
-
-  const howToPlayList = document.createElement("ul");
-  howToPlayList.classList.add("how-to-play-list");
-
-  const steps = [
-    "Enter your name and start a new game",
-    "Click on the correct tiles based on the given rule",
-    "Complete the round before the timer runs out",
-    "You have three lives, so avoid mistakes to keep playing",
-    "Each succesful round gives you score",
-    "A failed round costs you a life and decreases your score",
-    "Advance through levels as difficulty increases",
-    "Try to beat your previous highscore",
-    "Compete for a spot on the global leaderboard",
-  ];
-
-  steps.forEach((step) => {
-    const listItem = document.createElement("li");
-    listItem.textContent = step;
-    howToPlayList.appendChild(listItem);
-  });
-
-  howToPlaySection.appendChild(howToPlayTitle);
-  howToPlaySection.appendChild(howToPlayList);
+  const howToPlaySection = createHowToPlaySection();
 
   const playerFormSection = document.createElement("section");
   playerFormSection.classList.add("player-form");
@@ -89,9 +61,7 @@ export async function renderStartPage(): Promise<void> {
       return;
     }
 
-    const existingPlayer = existingPlayers.find(
-      (player) => player.playerName.toLowerCase() === playerName.toLowerCase()
-    );
+    const existingPlayer = findPlayerByName(existingPlayers, playerName);
 
     if (existingPlayer) {
       showExistingPlayerPopup(
@@ -110,8 +80,10 @@ export async function renderStartPage(): Promise<void> {
       return;
     }
 
-    const newPlayer = createPlayer(playerName);
-    const createdPlayer = await savePlayer(newPlayer);
+    const createdPlayer = await createPlayerRecord({
+      playerName,
+      bestScore: 0,
+    });
 
     console.log("Created player from API", createdPlayer);
 
@@ -190,35 +162,3 @@ function showExistingPlayerPopup(
   });
 }
 
-function createPlayer(playerName: string): Player {
-  return {
-    playerName,
-    bestScore: 0,
-  };
-}
-
-async function savePlayer(player: Player): Promise<Player> {
-  const response = await fetch("http://localhost:3000/players", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(player),
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to save player");
-  }
-
-  return response.json();
-}
-
-async function fetchPlayers(): Promise<Player[]> {
-  const response = await fetch("http://localhost:3000/players");
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch players");
-  }
-
-  return response.json();
-}

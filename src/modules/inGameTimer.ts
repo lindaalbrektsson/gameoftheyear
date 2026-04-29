@@ -1,3 +1,4 @@
+import { saveGameResult } from "./API/games";
 import { renderGameOver } from "./gameOver";
 import {
   renderGameOverMessage,
@@ -5,7 +6,6 @@ import {
   updateTimerUI,
 } from "./inGameUI";
 import { state, startNewRound } from "./inGameLogic";
-import { saveGameResult } from "./API/scores";
 import { getStoredActivePlayerName } from "./localStorage";
 
 let timerIntervalId: number | null = null;
@@ -29,16 +29,16 @@ export function startRoundTimer(): void {
           void startNewRound();
         }, 600);
       } else {
-         setTimeout(()=> {
-           renderGameOverMessage();
-        }, 1000)
-        // spara score innan vi byter till gameover vy
-        const activePlayerName = getStoredActivePlayerName();
-        if (activePlayerName) {
-          void saveGameResult(activePlayerName, state.score, state.level);
-        }
-        setTimeout(() => {
-          void renderGameOver();
+        renderGameOverMessage();
+        const finalScore = state.score;
+        const finalLevel = state.level;
+        setTimeout(async () => {
+          const activePlayerName = getStoredActivePlayerName();
+          const isNewRecord =
+            activePlayerName && finalScore > 0
+              ? await saveGameResult(activePlayerName, finalScore, finalLevel)
+              : false;
+          await renderGameOver(isNewRecord);
         }, 2500);
       }
     }

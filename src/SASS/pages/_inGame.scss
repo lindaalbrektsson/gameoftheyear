@@ -110,6 +110,25 @@
   }
 }
 
+.drop-score {
+  animation: drop-score 0.6s ease-out;
+  display: inline-block;
+}
+
+@keyframes drop-score {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.9);
+    color: $color-red;
+    text-shadow: 1px 1px 3px white;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
 .jump-level {
   animation: jump-level 0.6s ease-out;
   display: inline-block;
