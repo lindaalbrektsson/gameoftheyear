@@ -63,7 +63,6 @@ let currentRoundShapes: Shape[] = [];
 let validAnswerIds: string[] = [];
 let clickedCorrectIds = new Set<string>();
 let roundResolved = false;
-let gameOverHandled = false;
 
 //Denna bör ligga i en egen modul (som hanterar data) och importeras dit man behöver dem.
 // Vi kan fylla på med fler variabler om vi behöver. detta hänger med och uppdateras under spelet.
@@ -253,76 +252,6 @@ export function handleTileClick(shape: Shape, shapeItem: HTMLDivElement): void {
     roundResolved = true;
     handleRoundComplete();
   }
-}
-
-async function saveFinishedGameForActivePlayer(score: number, level: number): Promise<void> {
-  const activePlayerName = getStoredActivePlayerName();
-
-  if (!activePlayerName) {
-    return;
-  }
-
-  const playersResponse = await fetch("http://localhost:3000/players");
-
-  if (!playersResponse.ok) {
-    throw new Error("Failed to fetch players before saving game");
-  }
-
-  const players = (await playersResponse.json()) as Player[];
-  const activePlayer = players.find(
-    (player) => player.playerName.toLowerCase() === activePlayerName.toLowerCase()
-  );
-
-  if (!activePlayer) {
-    throw new Error(`Could not find active player "${activePlayerName}" before saving game`);
-  }
-
-  const saveGameResponse = await fetch("http://localhost:3000/games", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      gameDate: new Date().toISOString(),
-      score,
-      level,
-      playerId: activePlayer.id,
-    }),
-  });
-
-  if (!saveGameResponse.ok) {
-    throw new Error("Failed to save finished game");
-  }
-}
-
-function wait(delayMs: number): Promise<void> {
-  return new Promise((resolve) => {
-    window.setTimeout(resolve, delayMs);
-  });
-}
-
-export function finishGame(): void {
-  if (gameOverHandled) {
-    return;
-  }
-
-  gameOverHandled = true;
-  stopRoundTimer();
-  renderGameOverMessage();
-
-  const finalScore = state.score;
-  const finalLevel = state.level;
-
-  void (async () => {
-    const saveGamePromise = saveFinishedGameForActivePlayer(finalScore, finalLevel)
-      .catch((error) => {
-        console.error("Failed to save finished game", error);
-      });
-
-    await wait(1200);
-    await saveGamePromise;
-    await renderGameOver();
-  })();
 }
 
 // LINDA:
