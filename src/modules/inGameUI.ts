@@ -227,8 +227,4 @@ export function renderGameOverMessage(): void {
     gameoverMessage.textContent = "Game Over!";
 
     gameboard.replaceChildren(gameoverMessage);
-
-    requestAnimationFrame(() => {
-        gameboard.classList.add("fade-in");
-    });
 }
