@@ -54,8 +54,7 @@
 }
 .game-over {
     font-family: $font-heading;
-    font-size: 3rem;
-    // font-size: clamp(3rem, 7vw, 150px);
+    font-size: clamp(3rem, 7vw, 150px);
 }
 .shape-and-instruction-div {
     @include panel;
