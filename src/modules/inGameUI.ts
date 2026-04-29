@@ -3,7 +3,6 @@ import { renderActivePlayerStartPage } from "./activePlayerStartPage";
 import { type Instruction } from "./API/instructions";
 import { stopRoundTimer } from "./inGameTimer";
 import { startNewRound, resetState, state, handleTileClick } from "./inGameLogic";
-//Denna kan köras från startsidorna och endgame
 
 //Deklarerar dessa variabler för att kunna använda dem i funktioner
 // let activePlayerInfo: HTMLLIElement;
@@ -167,7 +166,6 @@ export async function renderShapes(shapes: Shape[]) {
 };
 
 //Hämtar instructionShape utifrån instruktionens ruletype
-
 export async function renderInstruction(newInstruction: Instruction, newInstructionShape: Shape) {
 
     const instruction = document.createElement("p");
