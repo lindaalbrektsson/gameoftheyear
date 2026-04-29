@@ -2,7 +2,8 @@
   "players": [
     {
       "id": "p1",
-      "playerName": "Linda"
+      "playerName": "Linda",
+      "bestScore": 5150
     },
     {
       "id": "p2",
@@ -15,7 +16,8 @@
     },
     {
       "id": "p4",
-      "playerName": "Ronaldo"
+      "playerName": "Ronaldo",
+      "bestScore": 3250
     },
     {
       "playerName": "Lasse",

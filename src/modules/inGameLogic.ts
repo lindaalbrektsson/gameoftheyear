@@ -21,8 +21,6 @@ import {
 } from "./inGameUI";
 
 import { renderGameOver } from "./gameOver";
-import { saveGameResult } from "./API/scores";
-import { getStoredActivePlayerName } from "./localStorage";
 
 // Den här typen beskriver vad ett klick betyder i rundan.
 type ClickOutcome =
@@ -250,13 +248,9 @@ function handleWrongClick(shapeItem: HTMLDivElement): void {
 
   if (state.lives <= 0) {
     stopRoundTimer();
-    setTimeout(renderGameOverMessage, 1000);
-
-    const activePlayerName = getStoredActivePlayerName();
-    if (activePlayerName) {
-      void saveGameResult(activePlayerName, state.score, state.level);
-    }
-
-    setTimeout(renderGameOver, 2500);
+    renderGameOverMessage();
+    setTimeout(() => {
+      void renderGameOver();
+    }, 1200);
   }
 }
