@@ -20,7 +20,7 @@ import {
 } from "./inGameUI";
 
 import { renderGameOver } from "./gameOver";
-import { saveGameResult } from "./API/scoreAPI";
+import { saveGameResult } from "./API/scores";
 import { getStoredActivePlayerName } from "./localStorage";
 
 // LINDA:
@@ -270,7 +270,7 @@ function handleRoundComplete(): void {
         // updateLevelUI();
         void startNewRound();
     }, 800);
-    
+
 }
 
 // LINDA:
@@ -291,12 +291,12 @@ function handleWrongClick(shapeItem: HTMLDivElement): void {
         setTimeout(()=> {
             renderGameOverMessage();
         }, 1000)
-        
+
         const activePlayerName = getStoredActivePlayerName();
         if (activePlayerName) {
         void saveGameResult(activePlayerName, state.score, state.level);
         }
-        
+
         setTimeout(() => {
             void renderGameOver();
         }, 2500);
