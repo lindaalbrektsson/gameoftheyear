@@ -3,6 +3,7 @@ import {
   getInstructionShape,
   type Shape,
 } from "./API/shapes";
+import { saveGameResult } from "./API/games";
 import { getRandomInstruction, type Instruction } from "./API/instructions";
 import { startRoundTimer, stopRoundTimer } from "./inGameTimer";
 import {
@@ -21,6 +22,7 @@ import {
 } from "./inGameUI";
 
 import { renderGameOver } from "./gameOver";
+import { getStoredActivePlayerName } from "./localStorage";
 
 // Den här typen beskriver vad ett klick betyder i rundan.
 type ClickOutcome =
@@ -250,8 +252,15 @@ function handleWrongClick(shapeItem: HTMLDivElement): void {
   if (state.lives <= 0) {
     stopRoundTimer();
     renderGameOverMessage();
-    setTimeout(() => {
-      void renderGameOver();
+    const finalScore = state.score;
+    const finalLevel = state.level;
+    setTimeout(async () => {
+      const activePlayerName = getStoredActivePlayerName();
+      const isNewRecord =
+        activePlayerName && finalScore > 0
+          ? await saveGameResult(activePlayerName, finalScore, finalLevel)
+          : false;
+      await renderGameOver(isNewRecord);
     }, 1200);
   }
 }
