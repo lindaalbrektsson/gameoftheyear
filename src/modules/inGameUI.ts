@@ -217,6 +217,9 @@ export function updateLivesUI() {
 export function updateLevelUI() {
   levelCounter.textContent = state.level.toString();
   levelCounter.classList.add("jump-level");
+  setTimeout(() => {
+    levelCounter.classList.remove("jump-level");
+  }, 400);
 }
 
 export function updateScoreUI() {
@@ -230,7 +233,6 @@ export function updateScoreUI() {
 export function resetForNextRound() {
     gameboard.classList.remove("fade-in");
     gameboard.innerHTML = "";
-    levelCounter.classList.remove("jump-level");
     shapeAndInstructionDiv.innerHTML= "";
     shapesDiv.innerHTML = "";
 }
