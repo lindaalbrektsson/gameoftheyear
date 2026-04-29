@@ -63,7 +63,7 @@
   50% { transform: translateX(-3px); filter: brightness(0.3); }
   100% { transform: translateX(0); }
 }
-@media (max-height: 930px) {
+@media (max-height: 910px) {
       .triangle {
     border-left: 20px solid transparent;
     border-right: 20px solid transparent;
@@ -82,6 +82,26 @@
     height: 40px;
   }
 }
+@media (max-height: 700px) {
+      .triangle {
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-bottom-width: 30px;
+  }
+  .square {
+    width: 30px;
+    height: 30px;
+  }
+  .circle {
+    width: 30px;
+    height: 30px;
+  }
+  .star {
+    width: 30px;
+    height: 30px;
+  }
+}
+
 @include responsive(700px) {
     .triangle {
     border-left: 25px solid transparent;

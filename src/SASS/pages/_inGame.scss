@@ -54,7 +54,8 @@
 }
 .game-over {
     font-family: $font-heading;
-    font-size: clamp(2rem, 4vw, 60px);
+    font-size: 3rem;
+    // font-size: clamp(3rem, 7vw, 150px);
 }
 .shape-and-instruction-div {
     @include panel;
@@ -119,7 +120,7 @@
 }
 
 .fade-in {
-    animation: fade-in 0.7s ease-in;
+    animation: fade-in 0.5s ease-in;
 }
 
 @keyframes fade-in {
@@ -133,6 +134,8 @@
     0% { text-shadow: 2px 2px 3px $color-orange-light;}
     100% { text-shadow: 2px 2px 5px white; }
 }
+
+//Media-anpassningar
 
 @include responsive(800px) {
     .level-and-score-div, 
@@ -150,22 +153,48 @@
         font-size: 1rem;
     }
 }
-@media (max-height: 930px) {
+@media (max-height: 910px) {
         .shapes-div {
         width: calc((40px + $space-md)*7);
     }
     .instruction {
-        font-size: 1.5rem;
+        font-size: 1.2rem;
     }
+}
+
+@media (max-height: 800px) {
+    .level-and-score-div, 
+    .timer-and-lives-div,
+    .active-player-info {
+        font-size: 1.5rem;
+            .time-left {
+                width: 107px;
+            }
+            .lives {
+                width: 100px;
+            }
+    }
+    .instruction {
+        font-size: 1rem;
+    }    
+}
+@media (max-height: 700px) {
+    .shapes-div {
+        width: calc((30px + $space-md)*7);
+    }
+
 }
 @include responsive(700px) {
     .shapes-div {
         width: calc((50px + $space-md)*7);
     }
+    .instruction {
+        font-size: 1rem;
+    }    
 }
 @include responsive(470px) {
     .active-player-info {
-        font-size: 1rem;
+        font-size: 1.2rem;
     }
     .shapes-div {
         width: calc((30px + $space-md)*7);

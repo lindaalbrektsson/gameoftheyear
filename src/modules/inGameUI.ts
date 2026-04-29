@@ -5,7 +5,6 @@ import { stopRoundTimer } from "./inGameTimer";
 import { startNewRound, resetState, state, handleTileClick } from "./inGameLogic";
 //Denna kan köras från startsidorna och endgame
 
-
 //Deklarerar dessa variabler för att kunna använda dem i funktioner
 // let activePlayerInfo: HTMLLIElement;
 let gameboard: HTMLDivElement;
@@ -16,7 +15,6 @@ let levelCounter: HTMLSpanElement;
 let scoreCounter: HTMLSpanElement;
 let timer: HTMLSpanElement;
 let lives: HTMLParagraphElement;
-
 
 export function renderInGame () {
     renderHeaderMenu();
@@ -36,6 +34,7 @@ export function renderInGame () {
 
     inGameContainer.append(restartLevelScoreDiv, timerAndLivesDiv, gameboard);
     main.appendChild(inGameContainer);
+    inGameContainer.classList.add("fade-in");
 }
 
 function renderHeaderMenu () {

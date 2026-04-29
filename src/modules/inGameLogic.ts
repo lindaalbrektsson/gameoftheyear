@@ -61,7 +61,7 @@ export const state = {
     score: 0,
     timeLeft: 10,
     lives: 3,
-    difficultyLevel: 1
+    difficultyLevel: 5
 };
 
 export function resetState() {
@@ -69,7 +69,7 @@ export function resetState() {
     state.score = 0;
     state.timeLeft = 10;
     state.lives = 3;
-    state.difficultyLevel = 1;
+    state.difficultyLevel = 5;
     currentInstruction = null;
     currentInstructionShape = null;
     currentRoundShapes = [];
