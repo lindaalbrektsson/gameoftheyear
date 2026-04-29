@@ -225,7 +225,7 @@ function handleCorrectClick(shapeItem: HTMLDivElement): void {
   shapeItem.classList.add("correct");
   shapeItem.style.pointerEvents = "none";
   state.score += 100;
-  updateScoreUI();
+  updateScoreUI("increase");
 }
 
 // Det här händer när alla korrekta svar i rundan är hittade:
@@ -242,6 +242,7 @@ function handleWrongClick(shapeItem: HTMLDivElement): void {
   shapeItem.classList.add("incorrect");
   state.lives--;
   state.score = Math.max(0, state.score - 50);
+  updateScoreUI("decrease");
   updateLivesUI();
 
   setTimeout(() => {
