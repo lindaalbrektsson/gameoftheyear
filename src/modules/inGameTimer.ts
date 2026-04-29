@@ -29,7 +29,9 @@ export function startRoundTimer(): void {
           void startNewRound();
         }, 600);
       } else {
-        renderGameOverMessage();
+         setTimeout(()=> {
+           renderGameOverMessage();
+        }, 1000)
         // spara score innan vi byter till gameover vy
         const activePlayerName = getStoredActivePlayerName();
         if (activePlayerName) {
@@ -37,7 +39,7 @@ export function startRoundTimer(): void {
         }
         setTimeout(() => {
           void renderGameOver();
-        }, 1200);
+        }, 2500);
       }
     }
   }, 1000);

@@ -3,20 +3,21 @@
 
 .active-player-info {
     font-family: $font-heading;
-    font-size: 20px;
+    font-size: 2rem;
 }
 
 .in-game-container {
     width: 100%;
     padding: $space-md;
     @include stack($gap: $space-xl, $align: center);
+    height: calc(100dvh - 400px);
 }
 
 .restart-level-score-div {
     width: 100%;
     @include flex-between($align: center);
     gap: $space-md;
-    // flex-wrap: wrap;
+    min-height: 55px;
 }
 .level-and-score-div {
     display: flex;
@@ -29,7 +30,6 @@
     display: flex;
     gap: 1rem;
     align-items: flex-end;
-
     font-size: 2rem;
     .time-left {
         font-family: $font-heading;
@@ -43,6 +43,8 @@
 
 .gameboard {
     @include stack($gap: $space-md, $align: center);
+    flex: 1;
+    justify-content: center;
 }
 
 .countdown {
@@ -50,19 +52,22 @@
     font-family: $font-heading;
     margin: 0;
 }
+.game-over {
+    font-family: $font-heading;
+    font-size: clamp(3rem, 7vw, 150px);
+}
 .shape-and-instruction-div {
     @include panel;
     display: flex;
     gap: $space-xl;
     align-items: center;
     padding: $space-md;
+}
 
-    .instruction {
-        font-weight: 600;
-        font-size: 1rem;
-        margin: 0;
-    }
-
+.instruction {
+    font-weight: 600;
+    font-size: 1.5rem;
+    margin: 0;
 }
 .shapes-div {
     @include panel;
@@ -71,11 +76,11 @@
     justify-content: center;
     gap: $space-md;
     padding: $space-md;
-    width: calc((40px + $space-md)*7);
+    width: calc((70px + $space-md)*7);
 }
 
 .jump-score {
-    animation: jump-score 0.7s ease-out;
+    animation: jump-score 0.6s ease-out;
     display: inline-block;
 }
 
@@ -114,25 +119,83 @@
 }
 
 .fade-in {
-    animation: fade-in 0.7s ease-in;
+    animation: fade-in 0.5s ease-in;
 }
 
 @keyframes fade-in {
     0% { filter: brightness(0);}
     100% { filter: brightness(1); }
 }
+.highlight {
+    animation: highlight 0.6s ease;
+}
+@keyframes highlight {
+    0% { text-shadow: 2px 2px 3px $color-orange-light;}
+    100% { text-shadow: 2px 2px 5px white; }
+}
 
-@include responsive(850px) {
+//Media-anpassningar
+
+@include responsive(800px) {
     .level-and-score-div, 
-    .timer-and-lives-div {
+    .timer-and-lives-div,
+    .active-player-info {
         font-size: 1.5rem;
+            .time-left {
+                width: 107px;
+            }
+            .lives {
+                width: 100px;
+            }
+    }
+    .instruction {
+        font-size: 1rem;
     }
 }
-@include responsive(470px) {
+@media (max-height: 910px) {
+        .shapes-div {
+        width: calc((40px + $space-md)*7);
+    }
+    .instruction {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-height: 800px) {
+    .level-and-score-div, 
+    .timer-and-lives-div,
+    .active-player-info {
+        font-size: 1.5rem;
+            .time-left {
+                width: 107px;
+            }
+            .lives {
+                width: 100px;
+            }
+    }
+    .instruction {
+        font-size: 1rem;
+    }    
+}
+@media (max-height: 700px) {
     .shapes-div {
         width: calc((30px + $space-md)*7);
     }
-    .end-game-btn, .restart-btn {
-        font-family: 0;
+
+}
+@include responsive(700px) {
+    .shapes-div {
+        width: calc((50px + $space-md)*7);
+    }
+    .instruction {
+        font-size: 1rem;
+    }    
+}
+@include responsive(470px) {
+    .active-player-info {
+        font-size: 1.2rem;
+    }
+    .shapes-div {
+        width: calc((30px + $space-md)*7);
     }
 }
