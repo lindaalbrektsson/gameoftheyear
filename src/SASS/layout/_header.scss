@@ -2,19 +2,18 @@
 @use "../abstracts/mixins" as *;
 
 .header-container {
-  display: flex;
-  gap: $space-xl;
+  @include stack($space-md, center);
   padding: $space-md;
-  // flex-wrap: wrap;
   width: 100%;
   min-height: 155px;
+  justify-content: center;
+  margin-bottom: 2rem;
 }
 
 .header-logo {
   display: block;
-  justify-self: center;
   object-fit: contain;
-  width: clamp(230px, 35vw, 500px);
+  width: clamp(320px, 35vw, 500px);
   height: auto;
   flex-shrink: 0;
 }

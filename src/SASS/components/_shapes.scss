@@ -82,7 +82,7 @@
     height: 40px;
   }
 }
-@media (max-height: 700px) {
+@media (max-height: 670px) {
       .triangle {
     border-left: 15px solid transparent;
     border-right: 15px solid transparent;
@@ -121,7 +121,7 @@
     height: 50px;
   }
 }
-@include responsive(470px) {
+@include responsive(400px) {
   .triangle {
     border-left: 15px solid transparent;
     border-right: 15px solid transparent;

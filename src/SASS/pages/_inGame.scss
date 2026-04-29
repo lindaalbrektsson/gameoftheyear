@@ -7,10 +7,13 @@
 }
 
 .in-game-container {
-  width: 100%;
+  @include panel;
+  max-width: 1000px;
+  margin: 0 auto;
   padding: $space-md;
-  @include stack($gap: $space-xl, $align: center);
-  height: calc(100dvh - 400px);
+  @include stack($gap: $space-md, $align: center);
+  height: 70dvh;
+  max-height: 700px;
 }
 
 .restart-level-score-div {
@@ -18,6 +21,7 @@
   @include flex-between($align: center);
   gap: $space-md;
   min-height: 55px;
+  text-align: center;
 }
 .level-and-score-div {
   display: flex;
@@ -43,8 +47,8 @@
 
 .gameboard {
   @include stack($gap: $space-md, $align: center);
-  flex: 1;
   justify-content: center;
+  min-height: 60%;
 }
 
 .countdown {
@@ -163,6 +167,12 @@
 }
 
 //Media-anpassningar
+@include responsive(1250px) {
+  .in-game-container {
+    margin: $space-md; 
+    max-width: 100dvw;
+  }
+}
 @include responsive(800px) {
   .level-and-score-div,
   .timer-and-lives-div,
@@ -217,11 +227,11 @@
     font-size: 1rem;
   }
 }
-@include responsive(470px) {
+@include responsive(540px) {
   .active-player-info {
     font-size: 1.2rem;
   }
   .shapes-div {
-    width: calc((30px + $space-md) * 7);
+    width: calc((30px + $space-md) * 6.8);
   }
 }
