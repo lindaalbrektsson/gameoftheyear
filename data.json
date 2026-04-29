@@ -1,70 +1,7 @@
 {
   "players": [
-    {
-      "id": "p1",
-      "playerName": "Linda"
-    },
-    {
-      "id": "p2",
-      "playerName": "Belle"
-    },
-    {
-      "id": "p3",
-      "playerName": "Hanna"
-    },
-    {
-      "id": "p4",
-      "playerName": "Ronaldo"
-    },
-    {
-      "playerName": "Lasse",
-      "bestScore": 0,
-      "id": "z7YW-9Y3d7k"
-    }
   ],
   "games": [
-    {
-      "id": "g1",
-      "gameDate": "2026-04-26T18:45:00",
-      "score": 180,
-      "level": 6,
-      "playerId": "p1"
-    },
-    {
-      "id": "g2",
-      "gameDate": "2026-04-21T17:30:00",
-      "score": 95,
-      "level": 3,
-      "playerId": "p1"
-    },
-    {
-      "id": "g3",
-      "gameDate": "2026-04-26T19:15:00",
-      "score": 240,
-      "level": 7,
-      "playerId": "p2"
-    },
-    {
-      "id": "g4",
-      "gameDate": "2026-04-23T21:00:00",
-      "score": 150,
-      "level": 5,
-      "playerId": "p2"
-    },
-    {
-      "id": "g5",
-      "gameDate": "2026-04-20T16:05:00",
-      "score": 80,
-      "level": 2,
-      "playerId": "p2"
-    },
-    {
-      "id": "g6",
-      "gameDate": "2026-04-27T09:30:00",
-      "score": 310,
-      "level": 8,
-      "playerId": "p3"
-    }
   ],
   "shapes": [
     {
