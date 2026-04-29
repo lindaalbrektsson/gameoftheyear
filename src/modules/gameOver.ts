@@ -1,5 +1,6 @@
 import { renderActivePlayerStartPage } from "./activePlayerStartPage";
 import { initGameFlow } from "./inGameLogic";
+import { deleteGameRecord } from "./API/scoreAPI";
 
 const mainContainer = document.querySelector("main");
 
@@ -315,12 +316,8 @@ function createDeleteConfirmation(
 
   confirmBtn.addEventListener("click", async () => {
     try {
-      // JSON Server DELETE
-      const response = await fetch(`${API_URL}/games/${game.id}`, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) throw new Error("Failed to delete the game");
+      // modul för JSON DELETE i spelhistory
+      await deleteGameRecord(game.id);
 
       // om vi lyckas ta bort spelhistorik från db, ta bort visuellt också
       scoreRow.remove();
