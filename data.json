@@ -1,9 +1,26 @@
 {
   "players": [
     {
-      "playerName": "Linda",
-      "bestScore": 2350,
-      "id": "p9I6QC02CX8"
+      "id": "p1",
+      "playerName": "Linda"
+    },
+    {
+      "id": "p2",
+      "playerName": "Belle"
+    },
+    {
+      "id": "p3",
+      "playerName": "Hanna",
+      "bestScore": 950
+    },
+    {
+      "id": "p4",
+      "playerName": "Ronaldo"
+    },
+    {
+      "playerName": "Lasse",
+      "bestScore": 0,
+      "id": "z7YW-9Y3d7k"
     }
   ],
   "games": [
