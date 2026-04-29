@@ -102,8 +102,21 @@
   font-size: 0.95rem;
 }
 
-.player-recent-games > .panel-subtitle {
+.highscore-empty-hint {
+  margin-top: 0.45rem;
+}
+
+.player-recent-games > .panel-subtitle:not(.empty-state-message) {
   display: none;
+}
+
+.empty-state-message {
+  display: block;
+  font-style: italic;
+}
+
+.highscore-empty-hint {
+  font-style: italic;
 }
 
 .highscore-value {
