@@ -17,21 +17,38 @@ SRC
 │ styles.scss
 
 ├── Modules
-│ ├── startGame.ts
-│ ├── endGame.ts
-│ ├── restartGame.ts
+│ ├── API
+│ └── \games.ts
+│ └── \instructions.ts
+│ └── \players.ts
+│ └── \shapes.ts
+│ ├── activePlayerStartPage.ts
+│ ├── gameOver.ts
+│ ├── highscore.ts
+│ ├── howToPlay.ts
+│ ├── inGameLogic.ts
+│ ├── inGameTimer.ts
+│ ├── inGameUI.ts
+│ ├── localStorage.ts
+│ ├── startPage.ts
 
-├── SCSS
-│ ├── Base
-│ └── \_base.scss
+├── SASS
 │ ├── Abstracts
 │ └── \_variables.scss
 │ └── \_mixins.scss
-│ ├── Layout
-│ └── \_header.scss
+│ ├── Base
+│ └── \_base.scss
 │ ├── Components
 │ └── \_buttons.scss
 │ └── \_highscore.scss
+│ └── \_shapes.scss
+│ ├── Layout
+│ └── \_header.scss
+│ ├── Pages
+│ └── \_activePlayerStart.scss
+│ └── \_gameOver.scss
+│ └── \_inGame.scss
+│ └── \_startPage.scss
 
 ## Funktioner/variabler
 
@@ -40,13 +57,21 @@ SRC
 
 ## Namngivning
 
-Views: – `startPage`, `activePlayerStartPage`, `inGamePage`, `gameOverPage`
+Views: – `startPage`, `activePlayerStartPage`, `inGame`, `gameOver`
 
-- Player – `playerName`, `playerID`, `playerScore`, `playerLives`
-- Game – `startGame`, `endGame`, `restartGame`,
-- Highscore, Score (inte points)
+- Player
+- Game
+- Highscore, Score
 - Shape
 - Instruction
+- Round
+- RoundState
+- Tile
+- ActivePlayer
+- GameHistory
+- Leaderboard eller GlobalHighscoreEntry
+- HowToPlay
+- LocalStorage
 
 ## Konvention kring kommentering
 
