@@ -84,6 +84,14 @@ export async function renderGameOver(isNewRecord = false): Promise<void> {
     recentGames = sortGamesByNewest(playerGames);
   }
 
+  const latestSavedGame =
+    finalScoreThisRound > 0 &&
+    recentGames[0] &&
+    recentGames[0].score === finalScoreThisRound &&
+    recentGames[0].level === state.level
+      ? recentGames[0]
+      : null;
+
   const globalHighscoreEntries = buildGlobalHighscoreEntries(players, games);
 
   const leftColumn = document.createElement("div");
@@ -156,7 +164,7 @@ export async function renderGameOver(isNewRecord = false): Promise<void> {
   } else {
     const globalHighScoreTable = createGlobalHighscoreTable(
       globalHighscoreEntries,
-      activePlayerName,
+      latestSavedGame,
     );
     globalHighScoreList.append(globalHighScoreTable);
   }
@@ -224,7 +232,7 @@ function createRecentGamesTable(rows: Game[]): HTMLElement {
 
 function createGlobalHighscoreTable(
   rows: GlobalHighscoreEntry[],
-  activePlayerName: string | null,
+  latestSavedGame: Game | null,
 ): HTMLElement {
   const scoreTable = document.createElement("div");
   scoreTable.className = "score-table";
@@ -252,8 +260,9 @@ function createGlobalHighscoreTable(
     scoreRow.className = "score-row";
 
     if (
-      activePlayerName &&
-      row.playerName.toLowerCase() === activePlayerName.toLowerCase()
+      latestSavedGame &&
+      String(row.playerId) === String(latestSavedGame.playerId) &&
+      row.gameDate === latestSavedGame.gameDate
     ) {
       scoreRow.classList.add("active-player-highlight");
     }

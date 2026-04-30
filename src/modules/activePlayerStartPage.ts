@@ -564,11 +564,7 @@ function createGlobalHighscoreTable(
   globalHighscoreTable.append(headerRow);
 
   rows.forEach((row, index) => {
-    const scoreRow = createGlobalHighscoreRow(
-      row,
-      index,
-      activePlayerName
-    );
+    const scoreRow = createGlobalHighscoreRow(row, index, activePlayerName);
     globalHighscoreTable.append(scoreRow);
   });
 
@@ -608,7 +604,7 @@ function createGlobalHighscoreRow(
   name.classList.add("score-cell", "score-name");
 
   if (row.playerName.toLowerCase() === activePlayerName.toLowerCase()) {
-    scoreRow.classList.add("active-player-highlight");
+    scoreRow.classList.add("player-score-highlight");
   }
 
   if (rank === 0) {

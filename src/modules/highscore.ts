@@ -8,6 +8,8 @@ export type PlayerRecord = Player;
 export type GameRecord = Game;
 
 export type GlobalHighscoreEntry = {
+  playerId: string;
+  gameDate: string;
   playerName: string;
   level: number;
   score: number;
@@ -31,7 +33,7 @@ const GAME_OVER_HISTORY_PANEL_SELECTOR =
   ".game-over-container .recent-games-scoreboard.player-recent-games";
 const GAME_OVER_GLOBAL_PANEL_SELECTOR =
   ".game-over-container .global-highscore";
-const GAME_OVER_HISTORY_BOTTOM_OFFSET = 16;
+const GAME_OVER_HISTORY_BOTTOM_OFFSET = 0;
 const ACTIVE_PLAYER_HISTORY_PANEL_SELECTOR =
   ".active-player-start-page .player-recent-games";
 const ACTIVE_PLAYER_GLOBAL_PANEL_SELECTOR =
@@ -150,13 +152,14 @@ export function buildGlobalHighscoreEntries(
       }
 
       return {
+        playerId: game.playerId,
+        gameDate: game.gameDate,
         playerName,
         level: game.level,
         score: game.score,
-        gameDate: game.gameDate,
       };
     })
-    .filter((entry): entry is GlobalHighscoreEntry & { gameDate: string } => entry !== null)
+    .filter((entry): entry is GlobalHighscoreEntry => entry !== null)
     .sort((left, right) => {
       if (right.score !== left.score) {
         return right.score - left.score;
@@ -168,12 +171,7 @@ export function buildGlobalHighscoreEntries(
 
       return new Date(right.gameDate).getTime() - new Date(left.gameDate).getTime();
     })
-    .slice(0, GLOBAL_HIGHSCORE_LIMIT)
-    .map(({ playerName, level, score }) => ({
-      playerName,
-      level,
-      score,
-    }));
+    .slice(0, GLOBAL_HIGHSCORE_LIMIT);
 }
 
 function createEmptyStateMessage(message: string): HTMLParagraphElement {
@@ -288,6 +286,7 @@ function syncGameOverPanelHeight(): void {
   }
 
   if (window.innerWidth <= DESKTOP_HISTORY_BREAKPOINT) {
+    historyPanel.style.marginTop = "";
     historyPanel.style.height = "";
     historyPanel.style.minHeight = "";
     historyPanel.style.maxHeight = "";
@@ -312,6 +311,8 @@ function syncGameOverPanelHeight(): void {
   if (targetHeight <= 0) {
     return;
   }
+
+  historyPanel.style.marginTop = "";
 
   const nextHeight = `${targetHeight}px`;
 

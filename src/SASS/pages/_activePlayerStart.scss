@@ -107,6 +107,8 @@
 @include responsive($mobile-width) {
   .active-player-start-page {
     gap: 1.25rem;
+    margin-top: 0;
+    padding-top: $space-md;
   }
 
   .left-section,
