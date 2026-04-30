@@ -27,9 +27,9 @@ export function startRoundTimer(): void {
       if (state.lives > 0) {
         setTimeout(() => {
           void startNewRound();
-        }, 600);
+        }, 1000);
       } else {
-        renderGameOverMessage();
+        setTimeout(renderGameOverMessage, 1000);
         const finalScore = state.score;
         const finalLevel = state.level;
         setTimeout(async () => {
