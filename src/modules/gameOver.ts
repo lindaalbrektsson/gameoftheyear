@@ -164,7 +164,9 @@ export async function renderGameOver(isNewRecord = false): Promise<void> {
   } else {
     const globalHighScoreTable = createGlobalHighscoreTable(
       globalHighscoreEntries,
+      activePlayerName,
       latestSavedGame,
+      isNewRecord,
     );
     globalHighScoreList.append(globalHighScoreTable);
   }
@@ -232,7 +234,9 @@ function createRecentGamesTable(rows: Game[]): HTMLElement {
 
 function createGlobalHighscoreTable(
   rows: GlobalHighscoreEntry[],
+  activePlayerName: string | null,
   latestSavedGame: Game | null,
+  isNewRecord: boolean,
 ): HTMLElement {
   const scoreTable = document.createElement("div");
   scoreTable.className = "score-table";
@@ -260,6 +264,14 @@ function createGlobalHighscoreTable(
     scoreRow.className = "score-row";
 
     if (
+      activePlayerName &&
+      row.playerName.toLowerCase() === activePlayerName.toLowerCase()
+    ) {
+      scoreRow.classList.add("player-score-highlight");
+    }
+
+    if (
+      isNewRecord &&
       latestSavedGame &&
       String(row.playerId) === String(latestSavedGame.playerId) &&
       row.gameDate === latestSavedGame.gameDate
