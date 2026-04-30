@@ -1,10 +1,9 @@
 const HOW_TO_PLAY_STEPS = [
-  "Enter your name and start a new game",
-  "Click on the correct tiles based on the given rule",
+  "Click on the correct tiles based on the given instruction",
   "Complete the round before the timer runs out",
   "You have three lives, so avoid mistakes to keep playing",
-  "Each successful round gives you score",
-  "A failed round costs you a life and decreases your score",
+  "Each successful click increases your score",
+  "A failed click costs you a life and decreases your score",
   "Advance through levels as difficulty increases",
   "Try to beat your previous highscore",
   "Compete for a spot on the global leaderboard",

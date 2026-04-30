@@ -27,6 +27,11 @@ const HISTORY_TOGGLE_CLASS = "history-panel-toggle";
 const HISTORY_EXPANDED_CLASS = "is-expanded";
 const HISTORY_HAS_TOGGLE_CLASS = "has-history-toggle";
 const DESKTOP_HISTORY_BREAKPOINT = 900;
+const GAME_OVER_HISTORY_PANEL_SELECTOR =
+  ".game-over-container .recent-games-scoreboard.player-recent-games";
+const GAME_OVER_GLOBAL_PANEL_SELECTOR =
+  ".game-over-container .global-highscore";
+const GAME_OVER_HISTORY_BOTTOM_OFFSET = 16;
 const ACTIVE_PLAYER_HISTORY_PANEL_SELECTOR =
   ".active-player-start-page .player-recent-games";
 const ACTIVE_PLAYER_GLOBAL_PANEL_SELECTOR =
@@ -258,7 +263,83 @@ function enhanceHistoryPanels(): void {
     .querySelectorAll<HTMLElement>(HISTORY_PANEL_SELECTOR)
     .forEach((panel) => enhanceHistoryPanel(panel));
 
+  syncGameOverPanelHeight();
   syncActivePlayerPanelHeight();
+}
+
+function syncGameOverPanelHeight(): void {
+  if (typeof document === "undefined") {
+    return;
+  }
+
+  const historyPanel = document.querySelector<HTMLElement>(
+    GAME_OVER_HISTORY_PANEL_SELECTOR
+  );
+  const historyTable = historyPanel?.querySelector<HTMLElement>(HISTORY_TABLE_SELECTOR);
+  const historyToggleButton = historyPanel?.querySelector<HTMLElement>(
+    `.${HISTORY_TOGGLE_CLASS}`
+  );
+  const globalPanel = document.querySelector<HTMLElement>(
+    GAME_OVER_GLOBAL_PANEL_SELECTOR
+  );
+
+  if (!historyPanel || !globalPanel) {
+    return;
+  }
+
+  if (window.innerWidth <= DESKTOP_HISTORY_BREAKPOINT) {
+    historyPanel.style.height = "";
+    historyPanel.style.minHeight = "";
+    historyPanel.style.maxHeight = "";
+
+    if (historyTable) {
+      historyTable.style.maxHeight = historyPanel.classList.contains(HISTORY_EXPANDED_CLASS)
+        ? "55vh"
+        : "";
+    }
+
+    return;
+  }
+
+  const historyPanelRect = historyPanel.getBoundingClientRect();
+  const globalPanelRect = globalPanel.getBoundingClientRect();
+  const targetHeight = Math.ceil(
+    globalPanelRect.bottom -
+      historyPanelRect.top +
+      GAME_OVER_HISTORY_BOTTOM_OFFSET
+  );
+
+  if (targetHeight <= 0) {
+    return;
+  }
+
+  const nextHeight = `${targetHeight}px`;
+
+  if (historyPanel.style.height !== nextHeight) {
+    historyPanel.style.height = nextHeight;
+    historyPanel.style.minHeight = nextHeight;
+    historyPanel.style.maxHeight = nextHeight;
+  }
+
+  if (!historyTable) {
+    return;
+  }
+
+  const historyTableRect = historyTable.getBoundingClientRect();
+  const panelPaddingBottom =
+    parseFloat(window.getComputedStyle(historyPanel).paddingBottom) || 0;
+  const tableTopOffset = historyTableRect.top - historyPanelRect.top;
+
+  const availableTableHeight = historyToggleButton
+    ? historyToggleButton.getBoundingClientRect().top -
+      historyPanelRect.top -
+      tableTopOffset -
+      (parseFloat(window.getComputedStyle(historyToggleButton).marginTop) || 0)
+    : targetHeight - tableTopOffset - panelPaddingBottom;
+
+  if (availableTableHeight > 0) {
+    historyTable.style.maxHeight = `${Math.floor(availableTableHeight)}px`;
+  }
 }
 
 function syncActivePlayerPanelHeight(): void {

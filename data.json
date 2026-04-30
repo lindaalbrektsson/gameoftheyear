@@ -2,7 +2,7 @@
   "players": [
     {
       "playerName": "Berit",
-      "bestScore": 150,
+      "bestScore": 3100,
       "id": "jv6sCCyHBMk"
     }
   ],
@@ -13,6 +13,34 @@
       "level": 2,
       "playerId": "jv6sCCyHBMk",
       "id": "5e8gfV-ELok"
+    },
+    {
+      "gameDate": "2026-04-29T20:26:42",
+      "score": 500,
+      "level": 5,
+      "playerId": "jv6sCCyHBMk",
+      "id": "ZYem780F844"
+    },
+    {
+      "gameDate": "2026-04-29T20:27:20",
+      "score": 1000,
+      "level": 8,
+      "playerId": "jv6sCCyHBMk",
+      "id": "S8MxT5pTJZ8"
+    },
+    {
+      "gameDate": "2026-04-29T20:28:13",
+      "score": 1450,
+      "level": 12,
+      "playerId": "jv6sCCyHBMk",
+      "id": "NbJOte8VvQU"
+    },
+    {
+      "gameDate": "2026-04-29T20:29:27",
+      "score": 3100,
+      "level": 19,
+      "playerId": "jv6sCCyHBMk",
+      "id": "Y28x-tYsbH4"
     }
   ],
   "shapes": [

@@ -4,7 +4,7 @@
 
 ## Spelidé
 
-Spelet går ut på att följa instruktionen som dyker upp gällande vilken eller vilka symboler spelaren ska klicka på. Under visas ett antal olika symboler, och det gäller att klicka på rätt symbol innan tiden går ut. Spelaren har tre liv, som man förlorar vid feltryck eller att tiden gått ut. Spelet pågår med nya instruktioner, så länge spelaren har liv kvar.
+Spelet går ut på att följa instruktionen som dyker upp gällande vilken eller vilka symboler spelaren ska klicka på. Under visas ett antal olika symboler, och det gäller att klicka på rätt symbol/symboler innan tiden går ut. Spelaren har tre liv, som man förlorar vid feltryck eller att tiden gått ut. Spelet pågår med nya instruktioner, så länge spelaren har liv kvar.
 
 ## Mappstruktur
 
@@ -57,6 +57,9 @@ Bör inte behövas så mycket kommentarer, om man är noggrann med tydlig namngi
 Klona repot:
 https://github.com/lindaalbrektsson/gameoftheyear.git
 
-Kör:
+Kör Vite, Typescript och SASS:
 npm install
 npm run dev
+
+Öppna en till terminal och kör Json:
+npm run server
